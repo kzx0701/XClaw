@@ -1,0 +1,129 @@
+export type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'unknown'
+export type ProjectType = 'vite-vue' | 'vite-react' | 'vue-cli' | 'react' | 'unknown'
+export type AuthType = 'password' | 'privateKey'
+export type UploadStrategy = 'overwrite' | 'clear-and-upload'
+export type ExecutionMode = 'build' | 'deploy' | 'build-and-deploy'
+export type ExecutionStatus = 'idle' | 'running' | 'success' | 'error'
+
+export interface ProjectRecord {
+  id: string
+  name: string
+  localPath: string
+  projectType: ProjectType
+  packageManager: PackageManager
+  packageJsonPath: string
+  scripts: Record<string, string>
+  defaultBuildCommand: string
+  defaultOutputDir: string
+  defaultPrecheckEnabled: boolean
+  defaultPrecheckCommand: string
+  defaultDeployServerIdByEnv?: Record<string, string>
+  createdAt: string
+  updatedAt: string
+  lastUsedAt?: string
+}
+
+export interface ProjectScanResult {
+  name: string
+  localPath: string
+  packageJsonPath: string
+  projectType: ProjectType
+  packageManager: PackageManager
+  scripts: Record<string, string>
+  defaultBuildCommand: string
+  defaultOutputDir: string
+}
+
+export interface DeployEnvironmentRecord {
+  id: string
+  projectId: string
+  name: 'dev' | 'test' | 'prod' | string
+  serverId: string
+  remotePath: string
+  uploadStrategy: UploadStrategy
+  postDeployCommand: string
+  enabled: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface EnvironmentFormValue {
+  name: string
+  serverId: string
+  remotePath: string
+  uploadStrategy: UploadStrategy
+  postDeployCommand: string
+  enabled: boolean
+}
+
+export interface ServerRecord {
+  id: string
+  name: string
+  host: string
+  port: number
+  username: string
+  authType: AuthType
+  password: string
+  privateKeyPath: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ServerFormValue {
+  name: string
+  host: string
+  port: number
+  username: string
+  authType: AuthType
+  password: string
+  privateKeyPath: string
+}
+
+export interface ExecutionDraft {
+  environmentName: string
+  mode: ExecutionMode
+  overrideBuildCommand: string
+  overrideOutputDir: string
+  runPrecheck: boolean
+}
+
+export interface ExecutionSummaryItem {
+  label: string
+  value: string
+}
+
+export interface LocalBuildRequest {
+  projectPath: string
+  buildCommand: string
+  outputDir: string
+  precheckCommand: string
+  runPrecheck: boolean
+}
+
+export interface LocalBuildResult {
+  buildCommand: string
+  outputDir: string
+  outputPath: string
+  precheckCommand: string
+  precheckOutput: string
+  precheckRan: boolean
+  precheckSuccess: boolean
+  buildOutput: string
+  success: boolean
+}
+
+export interface DeployExecutionContext {
+  environmentName: string
+  outputPath: string
+  postDeployCommand: string
+  projectName: string
+  remotePath: string
+  server: ServerRecord
+  uploadStrategy: UploadStrategy
+}
+
+export interface DeployExecutionResult {
+  fallbackUsed?: boolean
+  success: boolean
+  steps: string[]
+}
