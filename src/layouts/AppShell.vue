@@ -1,8 +1,8 @@
-<template>
+﻿<template>
   <div class="grid h-screen grid-cols-[236px_minmax(0,1fr)] overflow-hidden bg-background text-foreground">
     <aside class="flex min-h-0 flex-col border-r border-border bg-[#0a0f19]">
       <div class="border-b border-border px-5 py-5">
-        <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Claw Deploy</p>
+        <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">XClaw Deploy</p>
         <div class="mt-3 flex items-center gap-3">
           <div class="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-[#101722] text-[#94a3b8]">
             <Boxes class="h-4 w-4" />
@@ -44,7 +44,7 @@
     <main class="min-w-0 bg-background">
       <header class="flex items-start justify-between gap-5 border-b border-border px-8 py-6">
         <div>
-          <h2 class="text-[22px] font-semibold tracking-tight text-slate-100">{{ panelTitle }}</h2>
+          <h2 class="text-[22px] tracking-tight text-slate-100">{{ panelTitle }}</h2>
         </div>
         <slot name="header-actions" />
       </header>

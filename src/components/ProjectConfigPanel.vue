@@ -6,7 +6,10 @@
         <p>系统会先自动识别项目的构建方式，你只需要确认或少量修改。</p>
       </div>
       <div class="header-actions">
-        <Button class="app-primary-button" label="保存项目配置" :icon="Save" :disabled="!project" @click="$emit('save-project')" />
+        <Button class="app-primary-button" :disabled="!project" @click="$emit('save-project')">
+          <Save class="h-4 w-4" />
+          <span>保存项目配置</span>
+        </Button>
       </div>
     </header>
 
@@ -15,7 +18,7 @@
         <span>默认打包命令</span>
         <InputText
           :model-value="modelValue.defaultBuildCommand"
-          fluid
+          class="w-full"
           @update:model-value="updateField('defaultBuildCommand', $event)"
         />
         <small>执行时默认使用这条命令，可以在“立即执行”里临时改。</small>
@@ -25,7 +28,7 @@
         <span>默认产物目录</span>
         <InputText
           :model-value="modelValue.defaultOutputDir"
-          fluid
+          class="w-full"
           @update:model-value="updateField('defaultOutputDir', $event)"
         />
         <small>填写构建完成后的目录名称，例如 `dist` 或 `build`。</small>
@@ -48,7 +51,7 @@
         <span>检查命令</span>
         <InputText
           :model-value="modelValue.defaultPrecheckCommand"
-          fluid
+          class="w-full"
           @update:model-value="updateField('defaultPrecheckCommand', $event)"
         />
         <small>例如 `npm run lint`，留空则不执行额外检查。</small>
@@ -62,8 +65,8 @@
 <script setup lang="ts">
 import { Save } from 'lucide-vue-next'
 
-import Button from '@/components/ui/button/Button.vue'
-import InputText from '@/components/ui/input/Input.vue'
+import { Button } from '@/components/ui/button'
+import { Input as InputText } from '@/components/ui/input'
 import Switch from '@/components/ui/switch/Switch.vue'
 
 import type { ProjectAiRecommendation, ProjectRecord } from '@/types/task'
@@ -136,10 +139,6 @@ function updateBoolean(field: keyof ProjectRecord, value: boolean | undefined) {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px 20px;
-}
-
-.full-span {
-  grid-column: 1 / -1;
 }
 
 .field,

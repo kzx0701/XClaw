@@ -56,7 +56,7 @@
           <KeyRound class="h-4 w-4" aria-hidden="true" />
         </div>
         <p>
-          它是 OpenClaw 网关的访问令牌。只有在网关配置为 <code>token</code> 鉴权时才需要填写；没填时，WebSocket
+          它是 OpenClaw 网关的访问令牌。只有在网关配置里启用 <code>token</code> 鉴权时才需要填写；没填时，WebSocket
           虽然可能建立成功，但认证握手会失败，随后连接会被网关自动关闭。
         </p>
         <p class="guide-note">
@@ -69,7 +69,7 @@
         <InputText
           :model-value="gatewayUrl"
           placeholder="ws://127.0.0.1:18789"
-          fluid
+          class="w-full"
           @update:model-value="$emit('update:gateway-url', $event ?? '')"
         />
         <small class="field-help">本地默认端口通常是 <code>18789</code>。如果你改过网关端口，这里需要同步修改。</small>
@@ -82,25 +82,26 @@
             :model-value="gatewayToken"
             :type="showGatewayToken ? 'text' : 'password'"
             placeholder="输入 OpenClaw Gateway Token"
-            fluid
+            class="w-full"
             @update:model-value="$emit('update:gateway-token', $event ?? '')"
           />
           <Button
-            :icon="Copy"
-            severity="secondary"
-            outlined
+            variant="outline"
             :disabled="!gatewayToken.trim()"
             aria-label="复制 Gateway Token"
             @click="copyGatewayToken"
-          />
+          >
+            <Copy class="h-4 w-4" />
+          </Button>
           <Button
-            :icon="showGatewayToken ? EyeOff : Eye"
-            severity="secondary"
-            text
-            rounded
+            variant="ghost"
+            size="icon"
             :aria-label="showGatewayToken ? '隐藏 Gateway Token' : '显示 Gateway Token'"
             @click="showGatewayToken = !showGatewayToken"
-          />
+          >
+            <EyeOff v-if="showGatewayToken" class="h-4 w-4" />
+            <Eye v-else class="h-4 w-4" />
+          </Button>
         </div>
         <small class="field-help">
           当前鉴权模式是 <code>{{ authMode }}</code>。在这个模式下，Token 不正确或为空都会导致握手失败。
@@ -108,53 +109,30 @@
       </label>
 
       <div class="actions">
-        <Button
-          class="app-primary-button"
-          label="连接网关"
-          :icon="PlugZap"
-          :disabled="connectionStatus === 'connected'"
-          @click="$emit('connect')"
-        />
-        <Button
-          label="导入本机配置"
-          :icon="Download"
-          severity="secondary"
-          outlined
-          :loading="isImportingLocalConfig"
-          @click="$emit('import-local-config')"
-        />
-        <Button
-          :label="isProbing ? '检测中...' : '检测网关'"
-          :icon="Search"
-          severity="secondary"
-          outlined
-          :loading="isProbing"
-          @click="$emit('probe')"
-        />
-        <Button
-          label="保存配置"
-          :icon="Save"
-          severity="secondary"
-          outlined
-          :loading="isSavingConfig"
-          @click="$emit('save-config')"
-        />
-        <Button
-          label="断开连接"
-          :icon="Unplug"
-          severity="secondary"
-          text
-          :disabled="connectionStatus !== 'connected'"
-          @click="$emit('disconnect')"
-        />
-        <Button
-          label="发送测试消息"
-          :icon="Send"
-          severity="secondary"
-          text
-          :disabled="connectionStatus !== 'connected'"
-          @click="$emit('send-ping')"
-        />
+        <Button class="app-primary-button" :disabled="connectionStatus === 'connected'" @click="$emit('connect')">
+          <PlugZap class="h-4 w-4" />
+          <span>连接网关</span>
+        </Button>
+        <Button variant="outline" :disabled="isImportingLocalConfig" @click="$emit('import-local-config')">
+          <Download class="h-4 w-4" />
+          <span>{{ isImportingLocalConfig ? '导入中...' : '导入本机配置' }}</span>
+        </Button>
+        <Button variant="outline" :disabled="isProbing" @click="$emit('probe')">
+          <Search class="h-4 w-4" />
+          <span>{{ isProbing ? '检测中...' : '检测网关' }}</span>
+        </Button>
+        <Button variant="outline" :disabled="isSavingConfig" @click="$emit('save-config')">
+          <Save class="h-4 w-4" />
+          <span>{{ isSavingConfig ? '保存中...' : '保存配置' }}</span>
+        </Button>
+        <Button variant="ghost" :disabled="connectionStatus !== 'connected'" @click="$emit('disconnect')">
+          <Unplug class="h-4 w-4" />
+          <span>断开连接</span>
+        </Button>
+        <Button variant="ghost" :disabled="connectionStatus !== 'connected'" @click="$emit('send-ping')">
+          <Send class="h-4 w-4" />
+          <span>发送测试消息</span>
+        </Button>
       </div>
 
       <Alert
@@ -171,7 +149,7 @@
           <Info class="h-4 w-4" aria-hidden="true" />
         </div>
         <ul class="tips-list">
-          <li>地址填对了，但一会自动关闭：通常是 Token 缺失、错误，或者当前账号没有握手权限。</li>
+          <li>地址填对了，但一会自动关闭：通常是 Token 缺失、错误，或者当前账户没有握手权限。</li>
           <li>完全连不上：通常是 OpenClaw 网关没有启动，或者端口不是 <code>18789</code>。</li>
           <li>日志里如果只看到 <code>connect.challenge</code>，没有看到“握手完成”，说明认证阶段还没通过。</li>
         </ul>
@@ -198,8 +176,8 @@ import {
 } from 'lucide-vue-next'
 import Alert from '@/components/ui/alert/Alert.vue'
 import Badge from '@/components/ui/badge/Badge.vue'
-import Button from '@/components/ui/button/Button.vue'
-import InputText from '@/components/ui/input/Input.vue'
+import { Button } from '@/components/ui/button'
+import { Input as InputText } from '@/components/ui/input'
 
 import { resolveAlertToneClass, resolveAlertVariant, resolveBadgeToneClass, resolveBadgeVariant } from '@/lib/ui-status'
 import { showToast } from '@/services/ui/toast'

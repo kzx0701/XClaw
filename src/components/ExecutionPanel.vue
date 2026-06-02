@@ -5,14 +5,10 @@
         <h3>立即执行</h3>
         <p>确认当前环境和构建产物后，直接开始本次任务。</p>
       </div>
-      <Button
-        class="app-primary-button"
-        :label="status === 'running' ? '执行中...' : '开始执行'"
-        :icon="Play"
-        :loading="status === 'running'"
-        :disabled="!canRun || status === 'running'"
-        @click="$emit('run')"
-      />
+      <Button class="app-primary-button" :disabled="!canRun || status === 'running'" @click="$emit('run')">
+        <Play class="h-4 w-4" />
+        <span>{{ status === 'running' ? '执行中...' : '开始执行' }}</span>
+      </Button>
     </header>
 
     <div v-if="modelValue && project" class="execution-grid">
@@ -24,33 +20,37 @@
 
       <label class="field">
         <span>本次任务</span>
-        <Select
-          :model-value="modelValue.mode"
-          :options="modeOptions"
-          option-label="label"
-          option-value="value"
-          fluid
-          @update:model-value="updateField('mode', $event)"
-        />
+        <Select :model-value="modelValue.mode" @update:model-value="updateField('mode', $event)">
+          <SelectTrigger class="w-full">
+            <SelectValue placeholder="请选择任务类型" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem v-for="option in modeOptions" :key="option.value" :value="option.value">
+              {{ option.label }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </label>
 
       <label class="field">
         <span>部署环境</span>
-        <Select
-          :model-value="modelValue.environmentName"
-          :options="props.environmentOptions"
-          option-label="label"
-          option-value="value"
-          fluid
-          @update:model-value="updateField('environmentName', $event)"
-        />
+        <Select :model-value="modelValue.environmentName" @update:model-value="updateField('environmentName', $event)">
+          <SelectTrigger class="w-full">
+            <SelectValue placeholder="请选择部署环境" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem v-for="option in props.environmentOptions" :key="option.value" :value="option.value">
+              {{ option.label }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </label>
 
       <label v-if="modelValue.mode !== 'deploy'" class="field">
         <span>本次打包命令</span>
         <InputText
           :model-value="modelValue.overrideBuildCommand"
-          fluid
+          class="w-full"
           @update:model-value="updateField('overrideBuildCommand', $event)"
         />
       </label>
@@ -59,7 +59,7 @@
         <span>本次产物目录</span>
         <InputText
           :model-value="modelValue.overrideOutputDir"
-          fluid
+          class="w-full"
           @update:model-value="updateField('overrideOutputDir', $event)"
         />
       </label>
@@ -112,9 +112,15 @@ import { computed } from 'vue'
 import { Play } from 'lucide-vue-next'
 import Alert from '@/components/ui/alert/Alert.vue'
 import AlertDescription from '@/components/ui/alert/AlertDescription.vue'
-import Button from '@/components/ui/button/Button.vue'
-import InputText from '@/components/ui/input/Input.vue'
-import Select from '@/components/ui/select/Select.vue'
+import { Button } from '@/components/ui/button'
+import { Input as InputText } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import Switch from '@/components/ui/switch/Switch.vue'
 
 import { resolveAlertToneClass, resolveAlertVariant } from '@/lib/ui-status'

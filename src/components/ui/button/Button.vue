@@ -1,12 +1,11 @@
 <template>
   <Primitive
     data-slot="button"
-    :data-variant="resolvedVariant"
-    :data-size="resolvedSize"
     :as="as"
     :as-child="asChild"
     :disabled="disabled || loading"
     :class="cn(buttonVariants({ variant: resolvedVariant, size: resolvedSize }), rounded ? 'rounded-full' : '', props.class)"
+    v-bind="delegatedProps"
   >
     <LoaderCircle v-if="loading" class="h-4 w-4 animate-spin" />
     <component :is="icon" v-else-if="icon" class="h-4 w-4" />
@@ -19,6 +18,7 @@ import type { PrimitiveProps } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 import type { ButtonVariants } from '.'
 import { computed, useSlots } from 'vue'
+import { reactiveOmit } from '@vueuse/core'
 import { LoaderCircle } from 'lucide-vue-next'
 import { Primitive } from 'reka-ui'
 import { cn } from '@/lib/utils'
@@ -50,7 +50,9 @@ const props = withDefaults(defineProps<Props>(), {
   outlined: false,
   rounded: false,
   severity: 'primary',
+  size: undefined,
   text: false,
+  variant: undefined,
 })
 
 const slots = useSlots()
@@ -61,14 +63,6 @@ const resolvedVariant = computed<ButtonVariants['variant']>(() => {
   }
 
   if (props.text) {
-    if (props.severity === 'danger') {
-      return 'ghost'
-    }
-
-    if (props.severity === 'secondary' || props.severity === 'contrast') {
-      return 'ghost'
-    }
-
     return 'ghost'
   }
 
@@ -98,4 +92,19 @@ const resolvedSize = computed<ButtonVariants['size']>(() => {
 
   return 'default'
 })
+
+const delegatedProps = reactiveOmit(
+  props,
+  'class',
+  'variant',
+  'size',
+  'disabled',
+  'icon',
+  'label',
+  'loading',
+  'outlined',
+  'rounded',
+  'severity',
+  'text',
+)
 </script>

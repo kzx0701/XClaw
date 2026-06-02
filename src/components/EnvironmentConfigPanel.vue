@@ -6,7 +6,10 @@
         <p>先整理好环境配置，执行发布时就可以直接选择复用。</p>
       </div>
       <div class="actions">
-        <Button class="app-primary-button" label="新增配置" :icon="Plus" :disabled="!projectId" @click="$emit('create-environment')" />
+        <Button class="app-primary-button" :disabled="!projectId" @click="$emit('create-environment')">
+          <Plus class="h-4 w-4" />
+          <span>新增配置</span>
+        </Button>
       </div>
     </header>
 
@@ -35,17 +38,17 @@
             <div class="environment-card-actions">
               <Button
                 v-if="environment.deletable"
-                :icon="Trash2"
-                severity="danger"
-                text
-                rounded
+                variant="ghost"
+                size="icon"
                 class="delete-environment-button"
                 aria-label="删除环境"
                 title="删除环境"
                 @click.stop="$emit('delete-environment-card', environment.name)"
-              />
+              >
+                <Trash2 class="h-4 w-4" />
+              </Button>
               <span class="environment-status-text" :data-status="environment.configured ? 'configured' : 'pending'">
-                {{ environment.configured ? "已配置" : "待配置" }}
+                {{ environment.configured ? '已配置' : '待配置' }}
               </span>
             </div>
           </div>
@@ -61,138 +64,142 @@
         <Compass class="empty-icon" aria-hidden="true" />
         <h4>还没有部署环境</h4>
         <p>先新增一个环境配置，后续执行部署时就可以直接选择。</p>
-        <Button class="app-primary-button" label="新增第一个环境" :icon="Plus" @click="$emit('create-environment')" />
+        <Button class="app-primary-button" @click="$emit('create-environment')">
+          <Plus class="h-4 w-4" />
+          <span>新增第一个环境</span>
+        </Button>
       </div>
     </div>
 
     <p v-else class="muted-paragraph">请先导入并选中项目。</p>
 
-    <Drawer
-      :visible="editorVisible"
-      position="right"
-      dismissable
-      modal
-      :show-close-icon="false"
-      :style="{ width: 'min(560px, 92vw)' }"
-      class="environment-drawer"
-      @update:visible="handleDrawerVisibleChange"
-    >
-      <template #header>
-        <div class="drawer-head">
+    <Drawer :open="editorVisible" direction="right" dismissible modal @update:open="handleDrawerOpenChange">
+      <DrawerContent
+        class="environment-drawer border-[rgba(148,163,184,0.12)] bg-[#141a28] text-[#cbd5e1] shadow-[0_18px_40px_rgba(2,6,23,0.45)]"
+        :style="{ width: 'min(560px, 92vw)' }"
+      >
+        <DrawerHeader class="drawer-head">
           <div class="drawer-head-copy">
             <p class="drawer-eyebrow">环境配置</p>
-            <h3>{{ editorTitle }}</h3>
+            <DrawerTitle>{{ editorTitle }}</DrawerTitle>
           </div>
-        </div>
-      </template>
+        </DrawerHeader>
 
-      <div v-if="editorDraft" class="drawer-body">
-        <section class="drawer-section">
-          <label class="field">
-            <span>环境名称</span>
-            <InputText
-              :model-value="editorDraft.name"
-              :disabled="isPresetEnvironment"
-              fluid
-              placeholder="例如：开发环境"
-              @update:model-value="updateField('name', $event)"
-            />
-          </label>
-
-          <div class="toggle-field">
+        <div v-if="editorDraft" class="drawer-body">
+          <section class="drawer-section">
             <label class="field">
-              <span>启用环境</span>
-              <div class="switch-row">
-                <Switch :model-value="editorDraft.enabled" @update:model-value="updateBoolean('enabled', Boolean($event))" />
-              </div>
-            </label>
-          </div>
-
-          <label class="field">
-            <span>目标服务器</span>
-            <Select
-              :model-value="editorDraft.serverId"
-              :options="serverOptions"
-              option-label="label"
-              option-value="value"
-              placeholder="请选择服务器"
-              fluid
-              @update:model-value="updateField('serverId', $event)"
-            />
-          </label>
-
-          <label class="field">
-            <span>远端部署目录</span>
-            <div class="field-inline-action">
+              <span>环境名称</span>
               <InputText
-                :model-value="editorDraft.remotePath"
-                fluid
-                placeholder="/root/www/project"
-                @update:model-value="updateField('remotePath', $event)"
+                :model-value="editorDraft.name"
+                :disabled="isPresetEnvironment"
+                class="w-full"
+                placeholder="例如：开发环境"
+                @update:model-value="updateField('name', $event)"
               />
-              <Button
-                label="检测"
-                :icon="FolderSearch"
-                severity="secondary"
-                outlined
-                @click="$emit('check-environment')"
-              />
+            </label>
+
+            <div class="toggle-field">
+              <label class="field">
+                <span>启用环境</span>
+                <div class="switch-row">
+                  <Switch :model-value="editorDraft.enabled" @update:model-value="updateBoolean('enabled', Boolean($event))" />
+                </div>
+              </label>
             </div>
-            <small>填写服务器上要发布到的目录，例如 `/root/www/admin`。</small>
-          </label>
 
-          <label class="field">
-            <span>上传方式</span>
-            <Select
-              :model-value="editorDraft.uploadStrategy"
-              :options="uploadStrategyOptions"
-              option-label="label"
-              option-value="value"
-              fluid
-              @update:model-value="updateField('uploadStrategy', $event)"
-            />
-            <small>一般情况下直接覆盖即可；需要清空目录后再传时，再切换到“清空后上传”。</small>
-          </label>
+            <label class="field">
+              <span>目标服务器</span>
+              <Select :model-value="editorDraft.serverId" @update:model-value="updateField('serverId', $event)">
+                <SelectTrigger class="w-full">
+                  <SelectValue placeholder="请选择服务器" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="server in serverOptions" :key="server.value" :value="server.value">
+                    {{ server.label }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </label>
 
-          <label class="field">
-            <span>部署后命令</span>
-            <InputText
-              :model-value="editorDraft.postDeployCommand"
-              fluid
-              placeholder="例如：nginx -s reload"
-              @update:model-value="updateField('postDeployCommand', $event)"
-            />
-            <small>可选。发布完成后在服务器上执行，例如重载 Nginx。</small>
-          </label>
-        </section>
+            <label class="field">
+              <span>远端部署目录</span>
+              <div class="field-inline-action">
+                <InputText
+                  :model-value="editorDraft.remotePath"
+                  class="w-full"
+                  placeholder="/root/www/project"
+                  @update:model-value="updateField('remotePath', $event)"
+                />
+                <Button variant="outline" @click="$emit('check-environment')">
+                  <FolderSearch class="h-4 w-4" />
+                  <span>检测</span>
+                </Button>
+              </div>
+              <small>填写服务器上要发布到的目录，例如 `/root/www/admin`。</small>
+            </label>
 
-        <Alert
-          v-if="selectedServer"
-          :variant="resolveAlertVariant('secondary')"
-          :class="[resolveAlertToneClass('secondary'), 'server-summary']"
-        >
-          已绑定服务器：{{ selectedServer.name }} / {{ selectedServer.host }}:{{ selectedServer.port }}
-        </Alert>
-        <Alert
-          v-else
-          :variant="resolveAlertVariant('secondary')"
-          :class="[resolveAlertToneClass('secondary'), 'server-summary']"
-        >
-          还没有绑定服务器，保存后也可以继续补充。
-        </Alert>
-      </div>
+            <label class="field">
+              <span>上传方式</span>
+              <Select :model-value="editorDraft.uploadStrategy" @update:model-value="updateField('uploadStrategy', $event)">
+                <SelectTrigger class="w-full">
+                  <SelectValue placeholder="请选择上传方式" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="option in uploadStrategyOptions" :key="option.value" :value="option.value">
+                    {{ option.label }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <small>一般情况下直接覆盖即可；需要清空目录后再传时，再切换到“清空后上传”。</small>
+            </label>
 
-      <template #footer>
+            <label class="field">
+              <span>部署后命令</span>
+              <InputText
+                :model-value="editorDraft.postDeployCommand"
+                class="w-full"
+                placeholder="例如：nginx -s reload"
+                @update:model-value="updateField('postDeployCommand', $event)"
+              />
+              <small>可选。发布完成后在服务器上执行，例如重载 Nginx。</small>
+            </label>
+          </section>
+
+          <Alert
+            v-if="selectedServer"
+            :variant="resolveAlertVariant('secondary')"
+            :class="[resolveAlertToneClass('secondary'), 'server-summary']"
+          >
+            已绑定服务器：{{ selectedServer.name }} / {{ selectedServer.host }}:{{ selectedServer.port }}
+          </Alert>
+          <Alert
+            v-else
+            :variant="resolveAlertVariant('secondary')"
+            :class="[resolveAlertToneClass('secondary'), 'server-summary']"
+          >
+            还没有绑定服务器，保存后也可以继续补充。
+          </Alert>
+        </div>
+
         <div class="drawer-actions">
           <div class="drawer-actions-start">
-            <Button v-if="canDelete" label="删除环境" :icon="Trash2" severity="danger" text @click="$emit('delete-environment')" />
-            <Button label="重置配置" :icon="RotateCcw" severity="danger" outlined @click="$emit('reset-environment')" />
+            <Button v-if="canDelete" variant="ghost" @click="$emit('delete-environment')">
+              <Trash2 class="h-4 w-4" />
+              <span>删除环境</span>
+            </Button>
+            <Button variant="outline" @click="$emit('reset-environment')">
+              <RotateCcw class="h-4 w-4" />
+              <span>重置配置</span>
+            </Button>
           </div>
           <div class="drawer-actions-end">
-            <Button class="app-primary-button" label="保存配置" :icon="Save" @click="$emit('save-environment')" />
+            <Button class="app-primary-button" @click="$emit('save-environment')">
+              <Save class="h-4 w-4" />
+              <span>保存配置</span>
+            </Button>
           </div>
         </div>
-      </template>
+      </DrawerContent>
     </Drawer>
   </article>
 </template>
@@ -201,10 +208,16 @@
 import { computed } from 'vue'
 import { ChevronRight, Compass, FolderSearch, Plus, RotateCcw, Save, Trash2 } from 'lucide-vue-next'
 import Alert from '@/components/ui/alert/Alert.vue'
-import Button from '@/components/ui/button/Button.vue'
-import Drawer from '@/components/ui/drawer/Drawer.vue'
-import InputText from '@/components/ui/input/Input.vue'
-import Select from '@/components/ui/select/Select.vue'
+import { Button } from '@/components/ui/button'
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
+import { Input as InputText } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import Switch from '@/components/ui/switch/Switch.vue'
 
 import { resolveAlertToneClass, resolveAlertVariant } from '@/lib/ui-status'
@@ -251,7 +264,7 @@ const emit = defineEmits<{
 }>()
 
 const selectedServer = computed(() =>
-  props.editorDraft ? (props.servers.find((server) => server.id === props.editorDraft?.serverId) ?? null) : null,
+  props.editorDraft ? (props.servers.find((server) => server.id === props.editorDraft.serverId) ?? null) : null,
 )
 
 const serverOptions = computed(() =>
@@ -267,9 +280,13 @@ const editorTitle = computed(() => {
   }
 
   const environmentName =
-    props.editorDraft?.name === 'test' ? '测试环境' : props.editorDraft?.name === 'prod' ? '生产环境' : props.editorDraft?.name
+    props.editorDraft?.name === 'test'
+      ? '测试环境'
+      : props.editorDraft?.name === 'prod'
+        ? '生产环境'
+        : props.editorDraft?.name
 
-  return `编辑 ${environmentName}`;
+  return `编辑 ${environmentName}`
 })
 
 function updateField(field: keyof EnvironmentFormValue, value: string | UploadStrategy | undefined) {
@@ -283,8 +300,19 @@ function updateField(field: keyof EnvironmentFormValue, value: string | UploadSt
   })
 }
 
-function handleDrawerVisibleChange(nextVisible: boolean) {
-  if (!nextVisible) {
+function updateBoolean(field: keyof EnvironmentFormValue, value: boolean | undefined) {
+  if (!props.editorDraft) {
+    return
+  }
+
+  emit('update:editorDraft', {
+    ...props.editorDraft,
+    [field]: Boolean(value),
+  })
+}
+
+function handleDrawerOpenChange(nextOpen: boolean) {
+  if (!nextOpen) {
     emit('close-editor')
   }
 }
@@ -347,11 +375,11 @@ function handleDrawerVisibleChange(nextVisible: boolean) {
     background-color 160ms ease;
 }
 
-.environment-card[data-preset="test"] {
+.environment-card[data-preset='test'] {
   background: #162033;
 }
 
-.environment-card[data-preset="prod"] {
+.environment-card[data-preset='prod'] {
   background: #182132;
 }
 
@@ -364,7 +392,6 @@ function handleDrawerVisibleChange(nextVisible: boolean) {
 .environment-card-top,
 .environment-card-foot,
 .environment-card-main,
-.server-preview-head,
 .drawer-actions {
   display: flex;
   align-items: center;
@@ -372,7 +399,6 @@ function handleDrawerVisibleChange(nextVisible: boolean) {
 
 .environment-card-top,
 .environment-card-foot,
-.server-preview-head,
 .drawer-actions {
   justify-content: space-between;
 }
@@ -400,7 +426,7 @@ function handleDrawerVisibleChange(nextVisible: boolean) {
 }
 
 .environment-status-text::before {
-  content: "";
+  content: '';
   width: 7px;
   height: 7px;
   margin-right: 6px;
@@ -408,19 +434,19 @@ function handleDrawerVisibleChange(nextVisible: boolean) {
   background: rgba(148, 163, 184, 0.35);
 }
 
-.environment-status-text[data-status="configured"] {
+.environment-status-text[data-status='configured'] {
   color: #86efac;
 }
 
-.environment-status-text[data-status="configured"]::before {
+.environment-status-text[data-status='configured']::before {
   background: #10b981;
 }
 
-.environment-status-text[data-status="pending"] {
+.environment-status-text[data-status='pending'] {
   color: #fbbf24;
 }
 
-.environment-status-text[data-status="pending"]::before {
+.environment-status-text[data-status='pending']::before {
   background: #f97316;
 }
 
@@ -514,10 +540,6 @@ function handleDrawerVisibleChange(nextVisible: boolean) {
   text-transform: uppercase;
 }
 
-.drawer-head h3 {
-  margin: 0;
-}
-
 .drawer-body {
   display: grid;
   gap: 12px;
@@ -543,8 +565,7 @@ function handleDrawerVisibleChange(nextVisible: boolean) {
 }
 
 .summary-item span,
-.field small,
-.server-preview p {
+.field small {
   color: #64748b;
 }
 
@@ -585,11 +606,6 @@ function handleDrawerVisibleChange(nextVisible: boolean) {
   min-height: 36px;
 }
 
-.switch-row small {
-  margin: 0;
-  line-height: 1;
-}
-
 .drawer-actions {
   width: 100%;
   display: flex;
@@ -624,8 +640,7 @@ function handleDrawerVisibleChange(nextVisible: boolean) {
     align-items: stretch;
   }
 
-  .environment-list,
-  .summary-grid {
+  .environment-list {
     grid-template-columns: 1fr;
   }
 }

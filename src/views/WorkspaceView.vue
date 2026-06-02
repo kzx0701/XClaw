@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <AppShell>
     <template v-if="appStore.activePanel === 'config' && selectedProjectId" #header-actions>
       <div class="workspace-header-actions">
@@ -65,7 +65,7 @@
             </div>
 
             <div class="project-card-foot">
-              <span>最近更新 {{ formatProjectUpdatedAt(project.updatedAt) }}</span>
+              <span>鏈€杩戞洿鏂?{{ formatProjectUpdatedAt(project.updatedAt) }}</span>
               <div class="project-card-actions">
                 <Button
                   class="quick-deploy-button"
@@ -91,12 +91,60 @@
           </article>
         </div>
 
-        <div v-else class="empty-state compact-empty">
-          <FolderOpen class="empty-state-icon" aria-hidden="true" />
-          <h4>还没有项目</h4>
-          <p>导入一个本地前端项目后，这里会保留项目记录，后续可以直接进入详情继续使用。</p>
-          <Button class="app-primary-button" label="导入第一个项目" :icon="Plus" @click="handlePickDirectory" />
-        </div>
+        <section v-else class="project-empty-shell">
+          <div class="project-empty-hero">
+            <div class="project-empty-copy">
+              <div class="project-empty-copy-head">
+                <span class="project-empty-eyebrow">项目工作台</span>
+                <span class="project-empty-divider" aria-hidden="true" />
+              </div>
+              <h2>从项目开始，搭好部署工作台</h2>
+              <p>
+                导入一个本地前端项目后，这里会保留项目记录，并串联环境配置、服务器连接和部署执行流程。
+              </p>
+
+              <div class="project-empty-highlights" aria-hidden="true">
+                <span>自动识别构建配置</span>
+                <span>统一管理部署记录</span>
+                <span>面向测试与生产环境</span>
+              </div>
+
+              <div class="project-empty-actions">
+                <Button class="app-primary-button" :loading="isImporting" @click="handlePickDirectory">
+                  <Plus class="h-4 w-4" />
+                  <span>{{ isImporting ? '导入中...' : '导入第一个项目' }}</span>
+                </Button>
+                <div class="project-empty-tip">
+                
+                  <small>支持含 `package.json` 的 Vue / React 前端项目</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="project-empty-visual" aria-hidden="true">
+              <img class="project-empty-visual-image" :src="projectFolderBackground" alt="" />
+            </div>
+          </div>
+
+          <div class="project-empty-guide">
+            <article class="project-empty-step">
+              <span>01</span>
+              <strong>导入项目</strong>
+              <p>选择本地项目目录，自动识别构建命令和产物目录。</p>
+            </article>
+            <article class="project-empty-step">
+              <span>02</span>
+              <strong>配置环境</strong>
+              <p>绑定服务器、远端目录和上传策略，准备测试或生产环境。</p>
+            </article>
+            <article class="project-empty-step">
+              <span>03</span>
+              <strong>执行部署</strong>
+              <p>在一个工作台里完成打包、部署、验证与结果回看。</p>
+            </article>
+          </div>
+
+        </section>
       </article>
 
       <div v-else class="project-detail-workspace">
@@ -112,7 +160,7 @@
           <div class="insight-panel">
             <article class="panel-card script-card project-script-card" :style="projectScriptCardStyle">
               <header class="card-head">
-                <h3>脚本摘要</h3>
+                <h3>鑴氭湰鎽樿</h3>
               </header>
               <ul v-if="latestScannedProject" class="task-list script-list">
                 <li v-for="(command, name) in latestScannedProject.scripts" :key="name">
@@ -122,7 +170,7 @@
                   </div>
                 </li>
               </ul>
-              <p v-else class="muted-paragraph">导入项目后，这里展示 package.json scripts。</p>
+              <p v-else class="muted-paragraph">导入项目后，这里会展示 `package.json` 中的 scripts。</p>
             </article>
           </div>
         </div>
@@ -192,7 +240,7 @@
       <article class="panel-card log-card">
         <header class="card-head">
           <div>
-            <h3>本次运行日志</h3>
+            <h3>鏈杩愯鏃ュ織</h3>
             <p class="section-note">日志页保留更详细的技术信息，方便排查执行问题。</p>
           </div>
           <Badge :variant="resolveBadgeVariant('contrast')" :class="['rounded-full', resolveBadgeToneClass('contrast')]">
@@ -274,8 +322,8 @@
 
       <div class="project-delete-dialog-body">
         <div class="project-delete-target">
-          <span>即将删除</span>
-          <strong>{{ projectPendingDelete?.name || '当前项目' }}</strong>
+          <span>鍗冲皢鍒犻櫎</span>
+            <strong>{{ projectPendingDelete?.name || '当前项目' }}</strong>
           <code v-if="projectPendingDelete?.localPath">{{ projectPendingDelete.localPath }}</code>
         </div>
       </div>
@@ -352,7 +400,7 @@
           :variant="resolveAlertVariant('info')"
           :class="resolveAlertToneClass('info')"
         >
-          将使用当前项目的默认打包命令与产物目录执行构建，然后部署到所选环境。
+          灏嗕娇鐢ㄥ綋鍓嶉」鐩殑榛樿鎵撳寘鍛戒护涓庝骇鐗╃洰褰曟墽琛屾瀯寤猴紝鐒跺悗閮ㄧ讲鍒版墍閫夌幆澧冦€?
         </Alert>
 
         <Alert
@@ -373,7 +421,7 @@
 
         <article class="quick-deploy-log-card">
           <header>
-            <span>部署进度</span>
+            <span>閮ㄧ讲杩涘害</span>
             <small>{{ quickDeployProgressLabel }}</small>
           </header>
           <div class="quick-deploy-log-stream">
@@ -429,6 +477,7 @@ import Badge from '@/components/ui/badge/Badge.vue'
 import Button from '@/components/ui/button/Button.vue'
 import Dialog from '@/components/ui/dialog/Dialog.vue'
 import Menu from '@/components/ui/menu/Menu.vue'
+import projectFolderBackground from '@/assets/images/folder-bg2.png'
 import projectFolderIcon from '@/assets/images/folder.png'
 
 import EnvironmentConfigPanel from '@/components/EnvironmentConfigPanel.vue'
@@ -522,7 +571,7 @@ const gatewayConfigSource = ref<'manual' | 'local-openclaw'>('manual')
 const gatewayToken = ref('')
 const gatewayUrl = ref('')
 const gatewayLogs = ref<GatewayLogEntry[]>([])
-const gatewayStage = ref('等待连接')
+const gatewayStage = ref('绛夊緟杩炴帴')
 const gatewayProbeSummary = ref('')
 const gatewayProbeStatus = ref<'idle' | 'success' | 'warn' | 'error'>('idle')
 const isImportingLocalConfig = ref(false)
@@ -784,7 +833,7 @@ const quickDeployMenuItems = computed(() =>
       openQuickDeployDialog(item)
     },
     icon: item.environment.name === 'prod' ? ShieldCheck : Globe2,
-    label: `部署到${formatEnvironmentLabel(item.environment.name)}`,
+    label: `部署到 ${formatEnvironmentLabel(item.environment.name)}`,
   })),
 )
 
@@ -849,11 +898,11 @@ const quickDeployStatusLabel = computed(() => {
   }
 
   if (quickDeployStage.value === 'success') {
-    return '部署成功'
+    return '閮ㄧ讲鎴愬姛'
   }
 
   if (quickDeployStage.value === 'error') {
-    return '部署失败'
+    return '閮ㄧ讲澶辫触'
   }
 
   return '待确认'
@@ -964,7 +1013,7 @@ const gatewayStageDescription = computed(() => {
   }
 
   if (appStore.connectionStatus === 'connecting') {
-    return '当前正在建立 WebSocket 并等待 OpenClaw 完成握手认证。'
+    return '当前正在建立 WebSocket，并等待 OpenClaw 完成握手认证。'
   }
 
   if (reconnectCountdown.value !== null) {
@@ -1128,7 +1177,7 @@ async function refreshProjects() {
     projectAiRecommendation.value = null
     executionDraft.value = selected ? createExecutionDraft(selected) : null
     appStore.setSelectedProjectName(selected?.name ?? '项目')
-    appStore.setBannerMessage(`已载入 ${projects.value.length} 个项目记录`)
+    appStore.setBannerMessage(`已载入 ${projects.value.length} 条项目记录`)
     projectPathInput.value = selected?.localPath ?? ''
 
     if (selected) {
@@ -1257,8 +1306,8 @@ async function handlePickDirectory() {
     projectPathInput.value = selectedPath
     await handleImport()
   } catch (error) {
-    importError.value = getErrorMessage(error, '目录选择失败')
-    appStore.setBannerMessage('目录选择失败')
+    importError.value = getErrorMessage(error, '鐩綍閫夋嫨澶辫触')
+    appStore.setBannerMessage('鐩綍閫夋嫨澶辫触')
   }
 }
 
@@ -1276,7 +1325,7 @@ async function handleSelectProject(projectId: string) {
   executionDraft.value = createExecutionDraft(selected, environmentDraft.value?.name ?? 'dev')
   projectPathInput.value = selected.localPath
   appStore.setSelectedProjectName(selected.name)
-  appStore.setBannerMessage(`已切换到 ${selected.name}`)
+  appStore.setBannerMessage(`宸插垏鎹㈠埌 ${selected.name}`)
 
   projects.value = await markProjectAsUsed(projectId)
   latestScannedProject.value = projects.value.find((project) => project.id === projectId) ?? selected
@@ -1318,7 +1367,7 @@ function handleCreateEnvironment() {
   selectedEnvironmentName.value = null
   environmentDraft.value = createEnvironmentRecordDraft('')
   isEnvironmentEditorVisible.value = true
-  appStore.setBannerMessage('已打开新增环境面板')
+  appStore.setBannerMessage('宸叉墦寮€鏂板鐜闈㈡澘')
 }
 
 async function handleSelectEnvironment(name: string) {
@@ -1330,6 +1379,7 @@ async function handleSelectEnvironment(name: string) {
   selectedEnvironmentName.value = name
   await syncEnvironmentByName(name)
   isEnvironmentEditorVisible.value = true
+  appStore.setBannerMessage(`宸茶浇鍏ョ幆澧冿細${name}`)
   appStore.setBannerMessage(`已载入环境：${name}`)
 }
 
@@ -1532,7 +1582,7 @@ async function handleConfirmQuickDeploy() {
 
     historySummary = `一键部署成功，已发布到${formatEnvironmentLabel(option.environment.name)}`
     quickDeployStage.value = 'success'
-    quickDeployMessage.value = `${option.project.name} 已成功部署到${formatEnvironmentLabel(option.environment.name)}。`
+    quickDeployMessage.value = `${option.project.name} 已成功部署到 ${formatEnvironmentLabel(option.environment.name)}。`
     pushQuickDeployLog(quickDeployMessage.value)
     pushGatewayLog('success', quickDeployMessage.value)
     appStore.setBannerMessage(quickDeployMessage.value)
@@ -1593,7 +1643,7 @@ async function handleDeleteProject(projectId: string) {
   }
 
   if (deleted) {
-    appStore.setBannerMessage(`已删除项目记录：${deleted.name}`)
+    appStore.setBannerMessage(`宸插垹闄ら」鐩褰曪細${deleted.name}`)
   }
 
   await refreshProjects()
@@ -1671,7 +1721,7 @@ async function handleRunProjectAiAnalysis() {
   }
 
   if (gatewayConfigSource.value === 'local-openclaw' && !openResponsesEnabled.value) {
-    showToast('当前 OpenClaw 未启用 OpenResponses 能力，AI 判断暂不可用。需要先在 OpenClaw 配置中开启该 HTTP 端点。', 'warning')
+    showToast('当前 OpenClaw 未启用 OpenResponses 能力，AI 判断暂不可用，需要先在 OpenClaw 配置中开启该 HTTP 端点。', 'warning')
     return
   }
 
@@ -1691,14 +1741,14 @@ async function handleRunProjectAiAnalysis() {
     pushGatewayLog('success', 'AI 已返回项目构建建议')
     pushGatewayLog(
       'info',
-      `AI 建议：命令=${recommendation.recommendedBuildCommand || '未给出'}，目录=${recommendation.recommendedOutputDir || '未给出'}`,
+      `AI 建议：命令 ${recommendation.recommendedBuildCommand || '未给出'}，目录 ${recommendation.recommendedOutputDir || '未给出'}`,
     )
     appStore.setBannerMessage('AI 已返回项目构建建议')
     showToast('AI 判断完成', 'success')
   } catch (error) {
     const rawMessage = getErrorMessage(
       error,
-      'AI 判断失败，请确认 OpenClaw 网关已启用 /v1/responses，并且当前 Token 有调用权限',
+      'AI 判断失败，请确认 OpenClaw 网关已启用 /v1/responses，并且当前 Token 有调用权限。',
     )
     const message = rawMessage.includes('HTTP 404')
       ? '当前 OpenClaw Gateway 未暴露 /v1/responses 接口，所以 AI 判断不可用。请先在 OpenClaw 配置中启用 OpenResponses HTTP 端点，再重试。'
@@ -1812,7 +1862,7 @@ function handleConfirmDeleteEnvironment() {
 
   const environmentName = environmentDraft.value.name
   confirm.require({
-    message: `删除后将移除环境配置“${environmentName}”。这个操作不会删除服务器记录。`,
+    message: `删除后将移除环境配置 “${environmentName}”。这个操作不会删除服务器记录。`,
     header: '确认删除环境',
     icon: TriangleAlert,
     rejectLabel: '取消',
@@ -1826,7 +1876,7 @@ function handleConfirmDeleteEnvironment() {
 
 function handleConfirmDeleteEnvironmentByName(name: string) {
   confirm.require({
-    message: `删除后将移除环境配置“${name}”。这个操作不会删除服务器记录。`,
+    message: `删除后将移除环境配置 “${name}”。这个操作不会删除服务器记录。`,
     header: '确认删除环境',
     icon: TriangleAlert,
     rejectLabel: '取消',
@@ -1847,7 +1897,7 @@ async function handleSaveServer() {
   }
 
   if (serverDraft.value.authType === 'password' && !serverDraft.value.password.trim()) {
-    showToast('密码认证模式下必须填写服务器密码', 'warning')
+    showToast('瀵嗙爜璁よ瘉妯″紡涓嬪繀椤诲～鍐欐湇鍔″櫒瀵嗙爜', 'warning')
     return
   }
 
@@ -1872,7 +1922,7 @@ async function handleSaveServer() {
   }
 
   appStore.setBannerMessage(`已保存服务器：${savedServer.name}`)
-  showToast('服务器配置已保存', 'success')
+  showToast('鏈嶅姟鍣ㄩ厤缃凡淇濆瓨', 'success')
 }
 
 function handleCreateServer() {
@@ -1885,13 +1935,13 @@ function handleCreateServer() {
 function handleCloseCreateServer() {
   isCreatingServer.value = false
   serverDraft.value = createEmptyServerDraft()
-  appStore.setBannerMessage('已关闭新增服务器面板')
+  appStore.setBannerMessage('宸插叧闂柊澧炴湇鍔″櫒闈㈡澘')
 }
 
 function handleBackToServerList() {
   selectedServerId.value = null
   serverDraft.value = createEmptyServerDraft()
-  appStore.setBannerMessage('已返回服务器列表')
+  appStore.setBannerMessage('宸茶繑鍥炴湇鍔″櫒鍒楄〃')
 }
 
 function handleSelectServer(serverId: string) {
@@ -1923,7 +1973,7 @@ async function handleDeleteServer() {
   }
 
   appStore.setBannerMessage(`已删除服务器：${currentServer?.name ?? ''}`)
-  showToast('服务器已删除', 'success')
+  showToast('鏈嶅姟鍣ㄥ凡鍒犻櫎', 'success')
 }
 
 async function handleCheckServer() {
@@ -1933,7 +1983,7 @@ async function handleCheckServer() {
   }
 
   if (serverDraft.value.authType === 'password' && !serverDraft.value.password.trim()) {
-    showToast('密码认证模式下必须填写服务器密码', 'warning')
+    showToast('瀵嗙爜璁よ瘉妯″紡涓嬪繀椤诲～鍐欐湇鍔″櫒瀵嗙爜', 'warning')
     return
   }
 
@@ -2164,7 +2214,7 @@ async function handleRunExecution() {
       'success',
     )
   } catch (error) {
-    const message = getErrorMessage(error, mode === 'build' ? '执行本地打包失败' : '执行部署任务失败')
+    const message = getErrorMessage(error, mode === 'build' ? '鎵ц鏈湴鎵撳寘澶辫触' : '鎵ц閮ㄧ讲浠诲姟澶辫触')
     historySummary =
       mode === 'build'
         ? '本地打包失败'
@@ -2224,10 +2274,10 @@ async function persistGatewayConfig() {
     appStore.setBannerMessage('已保存网关连接配置')
     showToast('网关配置已保存', 'success')
   } catch (error) {
-    const message = getErrorMessage(error, '保存网关连接配置失败')
+    const message = getErrorMessage(error, '淇濆瓨缃戝叧杩炴帴閰嶇疆澶辫触')
     pushGatewayLog('error', message)
-    appStore.setBannerMessage('保存网关连接配置失败')
-    showToast('保存网关配置失败', 'error')
+    appStore.setBannerMessage('淇濆瓨缃戝叧杩炴帴閰嶇疆澶辫触')
+    showToast('淇濆瓨缃戝叧閰嶇疆澶辫触', 'error')
   } finally {
     isSavingGatewayConfig.value = false
   }
@@ -2296,7 +2346,7 @@ async function probeGatewayConnection() {
     gatewayProbeStatus.value = 'error'
     gatewayProbeSummary.value = '请先填写网关地址，再执行检测。'
     pushGatewayLog('error', gatewayProbeSummary.value)
-    appStore.setBannerMessage('请先填写网关地址')
+    appStore.setBannerMessage('璇峰厛濉啓缃戝叧鍦板潃')
     return
   }
 
@@ -2438,7 +2488,7 @@ async function connectGateway(trigger: GatewayConnectTrigger = 'manual') {
     onClose: (event) => {
       appStore.setConnectionStatus('disconnected')
       gatewayStage.value = '连接关闭'
-      pushGatewayLog('warn', `连接已关闭，code=${event.code}${event.reason ? `, reason=${event.reason}` : ''}`)
+      pushGatewayLog('warn', `杩炴帴宸插叧闂紝code=${event.code}${event.reason ? `, reason=${event.reason}` : ''}`)
 
       if (!manualDisconnectRequested) {
         scheduleGatewayReconnect()
@@ -2519,7 +2569,7 @@ onMounted(() => {
       }
     })
     .catch((error) => {
-      pushGatewayLog('warn', getErrorMessage(error, '读取本地网关配置失败'))
+      pushGatewayLog('warn', getErrorMessage(error, '璇诲彇鏈湴缃戝叧閰嶇疆澶辫触'))
     })
 })
 
@@ -3197,25 +3247,228 @@ watch(
   color: #64748b;
 }
 
-.compact-empty {
-  justify-items: start;
+.project-empty-shell {
+  display: grid;
+  gap: 22px;
+  grid-column: 1 / -1;
 }
 
-.empty-state-icon {
-  width: 20px;
-  height: 20px;
-  color: #64748b;
+.project-empty-hero {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  align-items: stretch;
+  min-height: 420px;
+  padding: 34px 34px 32px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.14), transparent 34%),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.96) 0%, rgba(15, 23, 42, 0.9) 48%, rgba(15, 23, 42, 0.62) 72%, rgba(15, 23, 42, 0.28) 100%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(15, 23, 42, 0.84));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 20px 40px rgba(2, 6, 23, 0.22);
 }
 
-.compact-empty h4,
-.compact-empty p {
+.project-empty-hero::after {
+  content: '';
+  position: absolute;
+  right: -140px;
+  bottom: -160px;
+  width: 340px;
+  height: 340px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.14), transparent 70%);
+  pointer-events: none;
+}
+
+.project-empty-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: flex-start;
+  gap: 26px;
+  min-width: 0;
+  max-width: 640px;
+  padding-top: 10px;
+}
+
+.project-empty-copy-head {
+  display: grid;
+  gap: 12px;
+}
+
+.project-empty-eyebrow {
+  color: #8fb4ff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.project-empty-divider {
+  width: 44px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(96, 165, 250, 0.65), rgba(96, 165, 250, 0));
+}
+
+.project-empty-copy h2 {
   margin: 0;
+  max-width: 560px;
+  color: #f8fafc;
+  font-size: 32px;
+  line-height: 1.08;
+  letter-spacing: -0.038em;
+  text-wrap: balance;
 }
 
-.compact-empty p {
+.project-empty-copy p {
+  margin: 0;
+  max-width: 560px;
+  color: #93a4bf;
+  font-size: 15px;
+  line-height: 1.95;
+}
+
+.project-empty-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  max-width: 540px;
+  margin-top: -2px;
+}
+
+.project-empty-highlights span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.22);
+  color: #9fb0c9;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.project-empty-actions {
+  display: grid;
+  gap: 14px;
+  width: fit-content;
+  padding-top: 18px;
+}
+
+.project-empty-actions :deep(.app-primary-button) {
+  min-width: 272px;
+  min-height: 44px;
+  padding-inline: 20px;
+  border-radius: 12px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 10px 26px rgba(37, 99, 235, 0.22);
+}
+
+.project-empty-actions :deep(.app-primary-button span) {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.project-empty-tip {
+  display: grid;
+  gap: 3px;
+  padding-left: 4px;
+}
+
+.project-empty-tip span {
+  color: #e2e8f0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.project-empty-tip small {
+  color: #708198;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.project-empty-visual {
+  position: relative;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.project-empty-visual-image {
+  position: absolute;
+  right: -60px;
+  top: 50%;
+  width: min(550px, 56vw);
+  max-width: none;
+  transform: translateY(-48%);
+  opacity: 0.76;
+  filter: drop-shadow(0 28px 60px rgba(2, 6, 23, 0.34));
+  user-select: none;
+}
+
+.project-empty-guide {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.project-empty-step {
+  display: grid;
+  gap: 10px;
+  padding: 20px 18px 18px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(30, 41, 59, 0.16), rgba(20, 26, 40, 0.96)),
+    #141a28;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.02),
+    0 8px 20px rgba(2, 6, 23, 0.14);
+  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.project-empty-step::before {
+  content: '';
+  width: 28px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #60a5fa, rgba(96, 165, 250, 0));
+}
+
+.project-empty-step span {
+  color: #60a5fa;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.project-empty-step strong {
+  color: #f8fafc;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.project-empty-step p {
+  margin: 0;
+  color: #8fa1bc;
   font-size: 13px;
-  line-height: 1.65;
-  color: #64748b;
+  line-height: 1.7;
+}
+
+.project-empty-step:hover {
+  border-color: rgba(96, 165, 250, 0.18);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 960px) {
@@ -3229,6 +3482,69 @@ watch(
 
   .project-card-list {
     grid-template-columns: 1fr;
+  }
+
+  .project-empty-guide {
+    grid-template-columns: 1fr;
+  }
+
+  .project-empty-hero {
+    padding: 20px;
+    min-height: 360px;
+  }
+
+  .project-empty-copy h2 {
+    font-size: 26px;
+  }
+
+  .project-empty-copy {
+    gap: 22px;
+    max-width: 100%;
+  }
+
+  .project-empty-visual-image {
+    right: -150px;
+    width: min(620px, 78vw);
+    opacity: 0.18;
+  }
+}
+
+@media (max-width: 640px) {
+  .project-empty-shell {
+    gap: 16px;
+  }
+
+  .project-empty-hero {
+    padding: 18px;
+    min-height: 320px;
+  }
+
+  .project-empty-copy h2 {
+    font-size: 22px;
+  }
+
+  .project-empty-highlights {
+    gap: 8px;
+  }
+
+  .project-empty-actions :deep(.app-primary-button) {
+    min-width: 240px;
+  }
+
+  .project-empty-copy {
+    gap: 18px;
+    max-width: 100%;
+  }
+
+  .project-empty-copy p,
+  .project-empty-highlights {
+    max-width: 100%;
+  }
+
+  .project-empty-visual-image {
+    right: -160px;
+    width: 520px;
+    opacity: 0.14;
   }
 }
 </style>
