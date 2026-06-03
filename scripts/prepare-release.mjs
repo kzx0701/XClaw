@@ -25,7 +25,7 @@ run("git", [
   "src-tauri/tauri.conf.json",
   "src-tauri/Cargo.toml",
   "src-tauri/tauri.windows.conf.json",
-  ".github/workflows/release-windows.yml",
+  ".github/workflows/release.yml",
   "docs/windows-release.md",
 ]);
 run("git", ["commit", "-m", `release: bump version to ${version}`]);
