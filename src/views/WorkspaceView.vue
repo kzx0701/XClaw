@@ -2972,7 +2972,7 @@ watch(
   margin: 0;
   max-width: 560px;
   color: #f8fafc;
-  font-size: 32px;
+  font-size: 28px;
   line-height: 1.08;
   letter-spacing: -0.038em;
   text-wrap: balance;
@@ -3059,12 +3059,12 @@ watch(
 
 .project-empty-visual-image {
   position: absolute;
-  right: -60px;
+  right: -20px;
   top: 50%;
-  width: min(550px, 56vw);
+  width: min(500px, 56vw);
   max-width: none;
   transform: translateY(-48%);
-  opacity: 0.76;
+  opacity: 0.8;
   filter: drop-shadow(0 28px 60px rgba(2, 6, 23, 0.34));
   user-select: none;
 }
