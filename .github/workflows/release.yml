@@ -11,8 +11,18 @@ permissions:
 
 jobs:
   release-macos:
-    name: Build macOS DMG
-    runs-on: macos-latest
+    name: Build macOS DMG (${{ matrix.platform.name }})
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - name: macOS Intel
+            runner: macos-13
+            target: x86_64-apple-darwin
+          - name: macOS Apple Silicon
+            runner: macos-14
+            target: aarch64-apple-darwin
 
     steps:
       - name: Checkout repository
@@ -32,7 +42,7 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-apple-darwin,x86_64-apple-darwin
+          targets: ${{ matrix.platform.target }}
 
       - name: Install frontend dependencies
         run: pnpm install --frozen-lockfile
@@ -45,7 +55,12 @@ jobs:
         with:
           tagName: ${{ github.ref_name }}
           releaseName: "XClaw ${{ github.ref_name }}"
-          releaseBody: "macOS DMG installer for XClaw."
+          releaseBody: |
+            macOS installers for XClaw.
+
+            Download the build that matches your Mac:
+            - `aarch64` for Apple Silicon (M1/M2/M3/M4)
+            - `x64` for Intel Mac
           releaseDraft: false
           prerelease: false
-          args: --target universal-apple-darwin
+          args: --target ${{ matrix.platform.target }}
