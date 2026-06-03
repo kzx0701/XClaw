@@ -10,23 +10,9 @@ permissions:
   contents: write
 
 jobs:
-  build-macos:
-    name: Build macOS (${{ matrix.platform.name }})
-    runs-on: ${{ matrix.platform.runner }}
-    strategy:
-      fail-fast: false
-      matrix:
-        platform:
-          - name: Intel
-            runner: macos-13
-            target: x86_64-apple-darwin
-            artifact_name: xclaw-macos-intel-dmg
-            output_name: XClaw-macOS-Intel.dmg
-          - name: AppleSilicon
-            runner: macos-14
-            target: aarch64-apple-darwin
-            artifact_name: xclaw-macos-apple-silicon-dmg
-            output_name: XClaw-macOS-Apple-Silicon.dmg
+  build-macos-apple-silicon:
+    name: Build macOS (Apple Silicon)
+    runs-on: macos-14
 
     steps:
       - name: Checkout repository
@@ -46,7 +32,7 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.platform.target }}
+          targets: aarch64-apple-darwin
 
       - name: Install frontend dependencies
         run: pnpm install --frozen-lockfile
@@ -54,44 +40,19 @@ jobs:
       - name: Build Tauri app
         env:
           APPLE_SIGNING_IDENTITY: "-"
-        run: pnpm tauri build --target ${{ matrix.platform.target }}
+        run: pnpm tauri build --target aarch64-apple-darwin
 
       - name: Collect DMG asset
         run: |
           mkdir -p release-assets
-          dmg_path=$(find src-tauri/target/${{ matrix.platform.target }}/release/bundle/dmg -name "*.dmg" -type f | head -n 1)
+          dmg_path=$(find src-tauri/target/aarch64-apple-darwin/release/bundle/dmg -name "*.dmg" -type f | head -n 1)
           if [ -z "$dmg_path" ]; then
             echo "DMG file not found"
             exit 1
           fi
-          cp "$dmg_path" "release-assets/${{ matrix.platform.output_name }}"
+          cp "$dmg_path" release-assets/XClaw-macOS-Apple-Silicon.dmg
 
-      - name: Upload DMG artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.platform.artifact_name }}
-          path: release-assets/${{ matrix.platform.output_name }}
-          if-no-files-found: error
-
-  publish-release:
-    name: Publish GitHub Release
-    runs-on: ubuntu-latest
-    needs: build-macos
-
-    steps:
-      - name: Download Intel DMG
-        uses: actions/download-artifact@v4
-        with:
-          name: xclaw-macos-intel-dmg
-          path: release-assets
-
-      - name: Download Apple Silicon DMG
-        uses: actions/download-artifact@v4
-        with:
-          name: xclaw-macos-apple-silicon-dmg
-          path: release-assets
-
-      - name: Publish release assets
+      - name: Publish release asset
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
@@ -103,10 +64,11 @@ jobs:
 
             ## 安装说明
             - `XClaw-macOS-Apple-Silicon.dmg`：适用于 Apple Silicon（M1 / M2 / M3 / M4）
-            - `XClaw-macOS-Intel.dmg`：适用于 Intel Mac
+
+            ## Intel 版本
+            - Intel Mac 安装包不再默认随每次发版自动生成。
+            - 如有需要，可单独手动触发 Intel 构建流程。
 
             ## 说明
             - 首次安装如遇到 macOS 安全提示，请在系统设置中允许打开应用。
-          files: |
-            release-assets/XClaw-macOS-Apple-Silicon.dmg
-            release-assets/XClaw-macOS-Intel.dmg
+          files: release-assets/XClaw-macOS-Apple-Silicon.dmg
