@@ -178,6 +178,9 @@ jobs:
           $config | ConvertTo-Json -Depth 10 | Set-Content -Path $outputPath
 
       - name: Build Tauri app
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         run: pnpm tauri build --target x86_64-pc-windows-msvc --config src-tauri/tauri.windows.ci.conf.json
 
       - name: Collect NSIS installer
