@@ -2,11 +2,11 @@
   <div class="app-shell-root grid h-screen grid-cols-[236px_minmax(0,1fr)] overflow-hidden text-foreground">
     <aside class="app-shell-sidebar flex min-h-0 flex-col border-r border-border">
       <div class="flex h-24 flex-col justify-center border-b border-border px-5">
-        <div class="flex justify-center">
-          <XClawWordmark font-size="1.52rem" />
+        <div class="flex justify-center items-baseline gap-2">
+          <XClawWordmark font-size="1.52rem" @click="openReleasePage" />
+          <p class="text-center text-[10px] font-medium tracking-[0.04em] text-[#6f819d]">v {{ appVersion }}</p>
         </div>
-        <p class="mt-2 text-center text-[12px] font-medium leading-4 tracking-[0.04em] text-[#6f819d]">企业级项目自动化打包部署工具</p>
-        <p class="mt-0.5 text-center text-[12px] font-medium leading-4 tracking-[0.04em] text-[#6f819d]">v {{ appVersion }}</p>
+        <p class="mt-3 text-center text-[12px] font-medium leading-4 tracking-[0.04em] text-[#6f819d]">企业级项目自动化部署工具</p>
       </div>
 
       <nav class="flex flex-col gap-2 px-4 py-5" aria-label="主菜单">
@@ -15,7 +15,7 @@
           :key="item.value"
           type="button"
           :data-active="appStore.activePanel === item.value"
-          class="group flex h-11 items-center gap-3 rounded-lg border border-transparent px-3 text-left text-sm font-medium text-slate-300 transition-all duration-150 hover:bg-[#141b28] hover:text-slate-100 data-[active=true]:border-[#22324c] data-[active=true]:bg-[#141d2a] data-[active=true]:text-slate-50"
+          class="group flex h-11 cursor-pointer items-center gap-3 rounded-lg border border-transparent px-3 text-left text-sm font-medium text-slate-300 transition-all duration-150 hover:bg-[#141b28] hover:text-slate-100 data-[active=true]:border-[#22324c] data-[active=true]:bg-[#141d2a] data-[active=true]:text-slate-50"
           @click="appStore.setActivePanel(item.value)"
         >
           <component
@@ -60,6 +60,7 @@
 import { computed, onMounted, ref, useSlots } from "vue";
 import { FolderKanban, FileText, Server } from "lucide-vue-next";
 import { getVersion } from "@tauri-apps/api/app";
+import { invoke } from "@tauri-apps/api/core";
 
 import StatusPill from "@/components/StatusPill.vue";
 import XClawWordmark from "@/components/XClawWordmark.vue";
@@ -68,6 +69,7 @@ import { useAppStore } from "@/stores/app";
 const appStore = useAppStore();
 const slots = useSlots();
 const appVersion = ref("1.0.0");
+const releaseUrl = "https://github.com/kzx0701/XClaw/releases";
 
 const navItems = [
   {
@@ -115,6 +117,14 @@ const gatewayStatusLabel = computed(() => {
   return "未连接";
 });
 
+async function openReleasePage() {
+  try {
+    await invoke("open_external_url", { url: releaseUrl });
+  } catch {
+    window.open(releaseUrl, "_blank", "noopener,noreferrer");
+  }
+}
+
 onMounted(async () => {
   try {
     appVersion.value = await getVersion();
@@ -128,14 +138,11 @@ onMounted(async () => {
 .app-shell-root {
   background:
     radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 28%),
-    radial-gradient(circle at bottom left, rgba(37, 99, 235, 0.08), transparent 32%),
-    linear-gradient(180deg, #111a2a 0%, #0f1726 100%);
+    radial-gradient(circle at bottom left, rgba(37, 99, 235, 0.08), transparent 32%), linear-gradient(180deg, #111a2a 0%, #0f1726 100%);
 }
 
 .app-shell-sidebar {
-  background:
-    linear-gradient(180deg, rgba(17, 26, 42, 0.98), rgba(13, 20, 34, 0.98)),
-    #0d1422;
+  background: linear-gradient(180deg, rgba(17, 26, 42, 0.98), rgba(13, 20, 34, 0.98)), #0d1422;
 }
 
 .app-shell-main {

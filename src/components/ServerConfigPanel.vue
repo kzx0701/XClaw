@@ -22,6 +22,8 @@
 
           <template #meta>
             <span class="server-auth-badge" :data-auth-type="server.authType">
+              <KeyRound v-if="server.authType === 'password'" class="h-3 w-3" aria-hidden="true" />
+              <ShieldCheck v-else class="h-3 w-3" aria-hidden="true" />
               {{ server.authType === "password" ? "密码认证" : "私钥认证" }}
             </span>
           </template>
@@ -245,7 +247,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { Eye, EyeOff, Plus, Save, Server, Trash2, Wifi } from "lucide-vue-next";
+import { Eye, EyeOff, KeyRound, Plus, Save, Server, ShieldCheck, Trash2, Wifi } from "lucide-vue-next";
 
 import serverBackground from "@/assets/images/server-bg.png";
 import ResourceCard from "@/components/ResourceCard.vue";
@@ -345,6 +347,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 .server-auth-badge {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   justify-self: start;
   min-height: 22px;
   padding: 0 9px;
@@ -379,7 +382,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   border: 1px solid transparent;
   border-radius: 999px;
   background: transparent;
-  color: #94a3b8;
+  color: #f28b82;
   cursor: pointer;
   transition:
     background-color 150ms ease,
@@ -410,15 +413,15 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   grid-template-columns: minmax(0, 1fr);
   min-height: 400px;
   padding: 34px 34px 32px;
-  border: 1px solid rgba(148, 163, 184, 0.14);
+  border: 1px solid rgba(148, 163, 184, 0.16);
   border-radius: 14px;
   background:
-    radial-gradient(circle at top left, rgba(59, 130, 246, 0.14), transparent 34%),
-    linear-gradient(90deg, rgba(15, 23, 42, 0.96) 0%, rgba(15, 23, 42, 0.9) 48%, rgba(15, 23, 42, 0.62) 72%, rgba(15, 23, 42, 0.28) 100%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(15, 23, 42, 0.84));
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 34%),
+    linear-gradient(90deg, rgba(20, 31, 48, 0.98) 0%, rgba(19, 29, 46, 0.94) 50%, rgba(18, 28, 43, 0.76) 74%, rgba(16, 24, 38, 0.42) 100%),
+    linear-gradient(180deg, rgba(20, 30, 47, 0.98), rgba(16, 24, 39, 0.9));
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.03),
-    0 20px 40px rgba(2, 6, 23, 0.22);
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 20px 40px rgba(2, 6, 23, 0.24);
 }
 
 .server-empty-hero::after {
@@ -566,12 +569,14 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   display: grid;
   gap: 10px;
   padding: 20px 18px 18px;
-  border: 1px solid rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.14);
   border-radius: 12px;
-  background: linear-gradient(180deg, rgba(30, 41, 59, 0.16), rgba(20, 26, 40, 0.96)), #141a28;
+  background:
+    linear-gradient(180deg, rgba(30, 41, 59, 0.82), rgba(22, 30, 45, 0.96)),
+    #1a2436;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.02),
-    0 8px 20px rgba(2, 6, 23, 0.14);
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 10px 22px rgba(2, 6, 23, 0.16);
   transition:
     border-color 0.2s ease,
     transform 0.2s ease,
@@ -602,14 +607,16 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .server-empty-step p {
   margin: 0;
-  color: #8fa1bc;
+  color: #a7b6cc;
   font-size: 13px;
   line-height: 1.7;
 }
 
 .server-empty-step:hover {
-  border-color: rgba(96, 165, 250, 0.18);
-  transform: translateY(-1px);
+  border-color: rgba(96, 165, 250, 0.22);
+  background:
+    linear-gradient(180deg, rgba(34, 47, 68, 0.9), rgba(24, 34, 51, 0.98)),
+    #1d2940;
 }
 
 .password-field {
@@ -660,7 +667,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 .server-create-header {
   padding: 22px 24px 18px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-  background: linear-gradient(180deg, rgba(23, 32, 48, 0.98), rgba(20, 26, 40, 0.94)), #141a28;
+  background: linear-gradient(180deg, rgba(31, 42, 61, 0.98), rgba(23, 33, 49, 0.96)), #1a2436;
 }
 
 .server-create-head-copy {
@@ -681,7 +688,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .server-create-header :deep(p:last-child) {
-  color: #8fa1bc;
+  color: #9fb0c7;
   font-size: 13px;
   line-height: 1.7;
 }
@@ -700,9 +707,12 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   display: grid;
   gap: 14px;
   padding: 18px;
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid rgba(148, 163, 184, 0.12);
   border-radius: 12px;
-  background: rgba(16, 23, 34, 0.32);
+  background:
+    linear-gradient(180deg, rgba(29, 40, 58, 0.94), rgba(22, 31, 46, 0.98)),
+    #1a2436;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .server-create-section-head {
@@ -719,7 +729,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .server-create-section-head p {
   margin: 0;
-  color: #8fa1bc;
+  color: #9fb0c7;
   font-size: 12px;
   line-height: 1.7;
 }
@@ -761,7 +771,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   justify-content: stretch;
   padding: 16px 24px 18px;
   border-top: 1px solid rgba(148, 163, 184, 0.1);
-  background: linear-gradient(180deg, rgba(20, 26, 40, 0.92), rgba(17, 24, 39, 0.98)), #141a28;
+  background: linear-gradient(180deg, rgba(27, 38, 55, 0.94), rgba(22, 31, 46, 0.98)), #1a2436;
 }
 
 .server-create-actions :deep(button) {

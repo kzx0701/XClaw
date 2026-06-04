@@ -136,9 +136,15 @@
                     placeholder="/root/www/project"
                     @update:model-value="updateField('remotePath', $event)"
                   />
-                  <Button variant="outline" @click="$emit('check-environment')">
-                    <FolderSearch class="h-4 w-4" />
-                    <span>检测</span>
+                  <Button
+                    class="environment-check-button"
+                    :loading="isCheckingEnvironment"
+                    :disabled="isCheckingEnvironment"
+                    variant="outline"
+                    @click="$emit('check-environment')"
+                  >
+                    <FolderSearch v-if="!isCheckingEnvironment" class="h-4 w-4" />
+                    <span>{{ isCheckingEnvironment ? '检测中' : '检测' }}</span>
                   </Button>
                 </div>
                 <small>填写服务器上要发布到的目录，例如 `/root/www/admin`。</small>
@@ -237,6 +243,7 @@ const props = defineProps<{
   editorMode: 'create' | 'edit'
   editorVisible: boolean
   environmentCards: EnvironmentCardItem[]
+  isCheckingEnvironment: boolean
   isPresetEnvironment: boolean
   projectId: string | null
   servers: ServerRecord[]
@@ -348,9 +355,9 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .card-head p {
   margin: 8px 0 0;
-  color: #8b9bb3;
+  color: #a7b6cc;
   font-size: 12px;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .actions {
@@ -540,7 +547,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 .drawer-head {
   padding: 22px 24px 18px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-  background: linear-gradient(180deg, rgba(23, 32, 48, 0.98), rgba(20, 26, 40, 0.94)), #141a28;
+  background: linear-gradient(180deg, rgba(31, 42, 61, 0.98), rgba(23, 33, 49, 0.96)), #1a2436;
 }
 
 .drawer-head-copy {
@@ -571,9 +578,12 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   display: grid;
   gap: 14px;
   padding: 18px;
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid rgba(148, 163, 184, 0.12);
   border-radius: 12px;
-  background: rgba(16, 23, 34, 0.32);
+  background:
+    linear-gradient(180deg, rgba(29, 40, 58, 0.94), rgba(22, 31, 46, 0.98)),
+    #1a2436;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .drawer-section-head {
@@ -593,7 +603,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .drawer-section-head p {
-  color: #8b9bb3;
+  color: #a7b6cc;
   font-size: 12px;
   line-height: 1.7;
 }
@@ -627,7 +637,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .field small {
-  color: #64748b;
+  color: #9aabc2;
   line-height: 1.6;
 }
 
@@ -658,7 +668,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   justify-content: stretch;
   padding: 16px 24px 18px;
   border-top: 1px solid rgba(148, 163, 184, 0.1);
-  background: linear-gradient(180deg, rgba(20, 26, 40, 0.92), rgba(17, 24, 39, 0.98)), #141a28;
+  background: linear-gradient(180deg, rgba(27, 38, 55, 0.94), rgba(22, 31, 46, 0.98)), #1a2436;
 }
 
 .environment-create-actions :deep(button) {
@@ -670,6 +680,20 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   justify-content: center;
 }
 
+.environment-check-button {
+  min-width: 92px;
+  justify-content: center;
+  background: #1f2c43;
+  color: #dbe7ff;
+  border-color: rgba(96, 165, 250, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.environment-check-button:hover {
+  background: #273754;
+  color: #f8fbff;
+}
+
 :deep(.environment-drawer) {
   display: flex;
   flex-direction: column;
@@ -678,7 +702,9 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   height: 100vh;
   padding: 0;
   overflow: hidden;
-  background: #141a28;
+  background:
+    linear-gradient(180deg, rgba(29, 40, 58, 0.98), rgba(21, 29, 44, 1)),
+    #1a2436;
 }
 
 @media (max-width: 960px) {

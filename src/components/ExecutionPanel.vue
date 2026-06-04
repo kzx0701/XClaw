@@ -204,9 +204,9 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
 
 .card-head p {
   margin: 8px 0 0;
-  color: #8b9bb3;
+  color: #a7b6cc;
   font-size: 12px;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .execution-grid {
@@ -226,7 +226,7 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
 
 .helper-message-copy {
   display: block;
-  color: #b8c4d8;
+  color: #c3d0e2;
   line-height: 1.7;
   white-space: normal;
   word-break: break-word;
@@ -285,7 +285,7 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
 }
 
 .summary-head small {
-  color: #8b9bb3;
+  color: #9fb0c7;
   font-size: 12px;
 }
 
@@ -301,11 +301,11 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
   padding: 14px 16px;
   border: 1px solid rgba(148, 163, 184, 0.12);
   border-radius: 8px;
-  background: #101722;
+  background: #162132;
 }
 
 .summary-item span {
-  color: #8fa1bc;
+  color: #9db0c7;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -321,7 +321,7 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
 
 .muted-paragraph {
   margin: 0;
-  color: #8b9bb3;
+  color: #8ea0ba;
 }
 
 @media (max-width: 960px) {

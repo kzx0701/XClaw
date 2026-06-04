@@ -35,7 +35,7 @@ jobs:
           targets: aarch64-apple-darwin
 
       - name: Install frontend dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build Tauri app
         env:
@@ -59,20 +59,16 @@ jobs:
           name: XClaw ${{ github.ref_name }}
           body: |
             ## 更新内容
-            - 本版本已完成构建并提供 macOS 与 Windows 安装包。
-            - 如需补充更详细的功能更新、修复说明和已知问题，可在 GitHub Release 页面手动编辑本说明。
+            - 新增应用标题跳转 github 仓库主页
+            - 重构一键部署链路
+            - 更新界面样式
+            - 修复导入项目时文件选择器语言显示异常的问题
+            - 修复其他已知问题
 
             ## 安装说明
             - `XClaw-macOS-Apple-Silicon.dmg`：适用于 Apple Silicon（M1 / M2 / M3 / M4）
             - `XClaw-Windows-x64-setup.exe`：适用于 Windows x64
 
-            ## Intel 版本
-            - Intel Mac 安装包不再默认随每次发版自动生成。
-            - 如有需要，可单独手动触发 Intel 构建流程。
-
-            ## 说明
-            - macOS 首次安装如遇到系统安全提示，请在系统设置中允许打开应用。
-            - Windows 内部测试版本当前未启用正式代码签名，首次安装可能看到系统安全提示。
           files: release-assets/XClaw-macOS-Apple-Silicon.dmg
 
   build-windows-x64:
@@ -100,7 +96,7 @@ jobs:
           targets: x86_64-pc-windows-msvc
 
       - name: Install frontend dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Import Windows certificate
         shell: pwsh

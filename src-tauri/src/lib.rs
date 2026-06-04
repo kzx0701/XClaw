@@ -1,5 +1,6 @@
 mod deploy;
 mod execution;
+mod external;
 mod openclaw;
 mod openclaw_ai;
 mod project;
@@ -12,6 +13,7 @@ pub fn run() {
             deploy::check_server_connection,
             deploy::run_local_deploy,
             execution::run_local_build,
+            external::open_external_url,
             openclaw::load_local_openclaw_gateway_config,
             openclaw_ai::request_project_ai_review,
             project::scan_project,

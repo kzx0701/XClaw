@@ -53,6 +53,9 @@ function handleOutsideInteract(event: Event) {
     :direction="direction"
     :dismissible="dismissable"
     :modal="modal"
+    :handle-only="true"
+    :snap-points="[]"
+    :active-snap-point="null"
     :should-scale-background="false"
     @update:open="handleOpenChange"
   >

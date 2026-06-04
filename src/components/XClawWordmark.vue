@@ -1,33 +1,34 @@
 <template>
-  <button
-    type="button"
-    class="xclaw-wordmark"
-    :style="wordmarkStyle"
-    :data-text="text"
-    :aria-label="text"
-  >
+  <button type="button" class="xclaw-wordmark" :style="wordmarkStyle" :data-text="text" :aria-label="text" @click="$emit('click')">
     <span class="xclaw-wordmark-actual">&nbsp;{{ text }}&nbsp;</span>
     <span aria-hidden="true" class="xclaw-wordmark-hover">&nbsp;{{ text }}&nbsp;</span>
   </button>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from "vue";
 
-const props = withDefaults(defineProps<{
-  accentColor?: string
-  fontSize?: string
-  text?: string
-}>(), {
-  accentColor: '#60a5fa',
-  fontSize: '1.18rem',
-  text: 'XCLAW',
-})
+const props = withDefaults(
+  defineProps<{
+    accentColor?: string;
+    fontSize?: string;
+    text?: string;
+  }>(),
+  {
+    accentColor: "#60a5fa",
+    fontSize: "1.5rem",
+    text: "XCLAW",
+  },
+);
+
+defineEmits<{
+  click: [];
+}>();
 
 const wordmarkStyle = computed(() => ({
-  '--animation-color': props.accentColor,
-  '--fs-size': props.fontSize,
-}))
+  "--animation-color": props.accentColor,
+  "--fs-size": props.fontSize,
+}));
 </script>
 
 <style scoped>
@@ -38,8 +39,8 @@ const wordmarkStyle = computed(() => ({
   height: auto;
   border: none;
   background: transparent;
-  cursor: default;
-  letter-spacing: 0.26em;
+  cursor: pointer;
+  letter-spacing: 0.1em;
   text-decoration: none;
   font-size: var(--fs-size);
   font-family: var(--font-sans);
@@ -64,7 +65,9 @@ const wordmarkStyle = computed(() => ({
   color: var(--animation-color);
   border-right: var(--border-right) solid var(--animation-color);
   overflow: hidden;
-  transition: width 0.45s ease, filter 0.45s ease;
+  transition:
+    width 0.45s ease,
+    filter 0.45s ease;
   white-space: nowrap;
   -webkit-text-stroke: 1px var(--animation-color);
 }

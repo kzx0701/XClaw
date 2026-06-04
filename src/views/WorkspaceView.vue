@@ -13,265 +13,264 @@
     <PageTransition :transition-key="workspacePanelKey">
       <section v-if="appStore.activePanel === 'config' && !selectedProjectId" class="panel-grid">
         <article class="project-list-page">
-        <header class="project-toolbar">
-          <Button class="app-primary-button" label="导入项目" :icon="Plus" :loading="isImporting" @click="handlePickDirectory" />
-        </header>
+          <header class="project-toolbar">
+            <Button class="app-primary-button" label="导入项目" :icon="Plus" :loading="isImporting" @click="handlePickDirectory" />
+          </header>
 
-        <Alert v-if="importError" :variant="resolveAlertVariant('error')" :class="resolveAlertToneClass('error')">
-          {{ importError }}
-        </Alert>
+          <Alert v-if="importError" :variant="resolveAlertVariant('error')" :class="resolveAlertToneClass('error')">
+            {{ importError }}
+          </Alert>
 
-        <div v-if="projectSummaries.length > 0" class="project-card-list">
-          <ResourceCard
-            v-for="project in projectSummaries"
-            :key="project.id"
-            :description="project.path"
-            :title="project.name"
-            @select="handleSelectProject(project.id)"
-          >
-            <template #icon>
-              <img class="project-icon-image" :src="projectFolderIcon" alt="" aria-hidden="true" />
-            </template>
+          <div v-if="projectSummaries.length > 0" class="project-card-list">
+            <ResourceCard
+              v-for="project in projectSummaries"
+              :key="project.id"
+              :description="project.path"
+              :title="project.name"
+              @select="handleSelectProject(project.id)"
+            >
+              <template #icon>
+                <img class="project-icon-image" :src="projectFolderIcon" alt="" aria-hidden="true" />
+              </template>
 
-            <template #meta>
-              <span class="project-type-badge">{{ project.type }}</span>
-            </template>
+              <template #meta>
+                <span class="project-type-badge">{{ project.type }}</span>
+              </template>
 
-            <template #actions>
-                <Button
-                  class="quick-deploy-button"
+              <template #actions>
+                <button
                   type="button"
-                  :icon="Send"
-                  severity="primary"
-                  text
-                  rounded
+                  class="quick-deploy-button"
                   :disabled="!hasQuickDeployOptions(project.id)"
                   title="一键部署"
-                  @click.stop="toggleQuickDeployMenu($event, project.id)"
-                />
-                <button type="button" class="delete-project-button" title="删除项目记录" @click.stop="openProjectDeleteDialog(project.id)">
+                  @click.stop="openQuickDeployWorkspace(project.id)"
+                >
+                  <Send class="h-4 w-4" aria-hidden="true" />
+                </button>
+                <button type="button" class="delete-project-button" title="删除项目" @click.stop="openProjectDeleteDialog(project.id)">
                   <Trash2 class="h-4 w-4" aria-hidden="true" />
                 </button>
-            </template>
-          </ResourceCard>
-        </div>
+              </template>
+            </ResourceCard>
+          </div>
 
-        <section v-else class="project-empty-shell">
-          <div class="project-empty-hero">
-            <div class="project-empty-copy">
-              <div class="project-empty-copy-head">
-                <span class="project-empty-eyebrow">项目工作台</span>
-                <span class="project-empty-divider" aria-hidden="true" />
-              </div>
-              <h2>从项目开始，搭好部署工作台</h2>
-              <p>导入一个本地前端项目后，这里会保留项目记录，并串联环境配置、服务器连接和部署执行流程。</p>
+          <section v-else class="project-empty-shell">
+            <div class="project-empty-hero">
+              <div class="project-empty-copy">
+                <div class="project-empty-copy-head">
+                  <span class="project-empty-eyebrow">项目工作台</span>
+                  <span class="project-empty-divider" aria-hidden="true" />
+                </div>
+                <h2>从项目开始，搭好部署工作台</h2>
+                <p>导入一个本地前端项目后，这里会保留项目记录，并串联环境配置、服务器连接和部署执行流程。</p>
 
-              <div class="project-empty-highlights" aria-hidden="true">
-                <span>自动识别构建配置</span>
-                <span>统一管理部署记录</span>
-                <span>面向测试与生产环境</span>
-              </div>
+                <div class="project-empty-highlights" aria-hidden="true">
+                  <span>自动识别构建配置</span>
+                  <span>统一管理部署记录</span>
+                  <span>面向测试与生产环境</span>
+                </div>
 
-              <div class="project-empty-actions">
-                <Button class="app-primary-button" :loading="isImporting" @click="handlePickDirectory">
-                  <Plus class="h-4 w-4" />
-                  <span>{{ isImporting ? "导入中..." : "导入第一个项目" }}</span>
-                </Button>
-                <div class="project-empty-tip">
-                  <small>支持含 `package.json` 的 Vue / React 前端项目</small>
+                <div class="project-empty-actions">
+                  <Button class="app-primary-button" :loading="isImporting" @click="handlePickDirectory">
+                    <Plus class="h-4 w-4" />
+                    <span>{{ isImporting ? "导入中..." : "导入第一个项目" }}</span>
+                  </Button>
+                  <div class="project-empty-tip">
+                    <small>支持含 `package.json` 的 Vue / React 前端项目</small>
+                  </div>
                 </div>
               </div>
+
+              <div class="project-empty-visual" aria-hidden="true">
+                <img class="project-empty-visual-image" :src="projectFolderBackground" alt="" />
+              </div>
             </div>
 
-            <div class="project-empty-visual" aria-hidden="true">
-              <img class="project-empty-visual-image" :src="projectFolderBackground" alt="" />
+            <div class="project-empty-guide">
+              <article class="project-empty-step">
+                <span>01</span>
+                <strong>导入项目</strong>
+                <p>选择本地项目目录，自动识别构建命令和产物目录。</p>
+              </article>
+              <article class="project-empty-step">
+                <span>02</span>
+                <strong>配置环境</strong>
+                <p>绑定服务器、远端目录和上传策略，准备测试或生产环境。</p>
+              </article>
+              <article class="project-empty-step">
+                <span>03</span>
+                <strong>执行部署</strong>
+                <p>在一个工作台里完成打包、部署、验证与结果回看。</p>
+              </article>
             </div>
-          </div>
-
-          <div class="project-empty-guide">
-            <article class="project-empty-step">
-              <span>01</span>
-              <strong>导入项目</strong>
-              <p>选择本地项目目录，自动识别构建命令和产物目录。</p>
-            </article>
-            <article class="project-empty-step">
-              <span>02</span>
-              <strong>配置环境</strong>
-              <p>绑定服务器、远端目录和上传策略，准备测试或生产环境。</p>
-            </article>
-            <article class="project-empty-step">
-              <span>03</span>
-              <strong>执行部署</strong>
-              <p>在一个工作台里完成打包、部署、验证与结果回看。</p>
-            </article>
-          </div>
-        </section>
-      </article>
-
+          </section>
+        </article>
       </section>
 
       <section v-else-if="appStore.activePanel === 'config'" class="panel-grid">
-      <div class="project-detail-workspace">
-        <Alert v-if="importError" :variant="resolveAlertVariant('error')" :class="resolveAlertToneClass('error')">
-          {{ importError }}
-        </Alert>
+        <div class="project-detail-workspace">
+          <Alert v-if="importError" :variant="resolveAlertVariant('error')" :class="resolveAlertToneClass('error')">
+            {{ importError }}
+          </Alert>
 
-        <div class="project-insight-row">
-          <div class="insight-panel insight-panel-wide">
-            <ProjectOverviewCard ref="projectOverviewCardRef" :project="latestScannedProject" />
-          </div>
+          <div class="project-insight-row">
+            <div class="insight-panel insight-panel-wide">
+              <ProjectOverviewCard :project="latestScannedProject" />
+            </div>
 
-          <div class="insight-panel">
-            <article class="panel-card script-card project-script-card" :style="projectScriptCardStyle">
-              <header class="card-head">
-                <h3>脚本摘要</h3>
-              </header>
-              <ul v-if="latestScannedProject" class="task-list script-list">
-                <li v-for="(command, name) in latestScannedProject.scripts" :key="name">
-                  <div class="task-item script-item">
-                    <span class="script-name">{{ name }}</span>
-                    <code>{{ command }}</code>
+            <div class="insight-panel">
+              <article class="panel-card script-card project-script-card">
+                <header class="card-head">
+                  <div>
+                    <h3>脚本摘要</h3>
+                    <p class="section-note">展示 `package.json` 中的脚本命令，便于快速核对当前项目的执行入口。</p>
                   </div>
-                </li>
-              </ul>
-              <p v-else class="muted-paragraph">导入项目后，这里会展示 `package.json` 中的 scripts。</p>
-            </article>
+                </header>
+                <ul v-if="latestScannedProject" class="task-list script-list">
+                  <li v-for="(command, name) in latestScannedProject.scripts" :key="name">
+                    <div class="task-item script-item">
+                      <span class="script-name">{{ name }}</span>
+                      <code>{{ command }}</code>
+                    </div>
+                  </li>
+                </ul>
+                <p v-else class="muted-paragraph">导入项目后，这里会展示 `package.json` 中的 scripts。</p>
+              </article>
+            </div>
+          </div>
+
+          <div class="project-detail-stack">
+            <ExecutionPanel
+              v-model="executionDraft"
+              :can-run="canRunExecution"
+              :environment-options="executionEnvironmentOptions"
+              :project="latestScannedProject"
+              :status="executionStatus"
+              :status-message="executionStatusMessage"
+              :summary="executionSummary"
+              @run="handleRunExecution"
+            />
+
+            <ProjectConfigPanel
+              v-model="projectDraft"
+              :ai-recommendation="projectAiRecommendation"
+              :is-ai-analyzing="isAiAnalyzingProject"
+              :project="latestScannedProject"
+              @apply-ai-recommendation="handleApplyProjectAiRecommendation"
+              @run-ai-analysis="handleRunProjectAiAnalysis"
+              @save-project="handleSaveProjectConfig"
+            />
+
+            <EnvironmentConfigPanel
+              :can-delete="environmentEditorMode === 'edit' && Boolean(environmentDraft?.name && !isPresetEnvironment)"
+              :editor-draft="environmentDraft"
+              :editor-mode="environmentEditorMode"
+              :editor-visible="isEnvironmentEditorVisible"
+              :environment-cards="environmentCards"
+              :is-checking-environment="isCheckingEnvironment"
+              :is-preset-environment="isPresetEnvironment"
+              :project-id="selectedProjectId"
+              :servers="servers"
+              @check-environment="handleCheckEnvironment"
+              @close-editor="handleCloseEnvironmentEditor"
+              @create-environment="handleCreateEnvironment"
+              @delete-environment="handleConfirmDeleteEnvironment"
+              @delete-environment-card="handleConfirmDeleteEnvironmentByName"
+              @reset-environment="handleResetEnvironmentDraft"
+              @save-environment="handleSaveEnvironment"
+              @select-environment="handleSelectEnvironment"
+              @update:editor-draft="environmentDraft = $event"
+            />
           </div>
         </div>
+      </section>
 
-        <div class="project-detail-stack">
-          <ExecutionPanel
-            v-model="executionDraft"
-            :can-run="canRunExecution"
-            :environment-options="executionEnvironmentOptions"
-            :project="latestScannedProject"
-            :status="executionStatus"
-            :status-message="executionStatusMessage"
-            :summary="executionSummary"
-            @run="handleRunExecution"
-          />
+      <section v-else-if="appStore.activePanel === 'servers'" class="panel-grid">
+        <ServerConfigPanel
+          :is-creating="isCreatingServer"
+          v-model="serverDraft"
+          :selected-server-id="selectedServerId"
+          :servers="servers"
+          @check-server="handleCheckServer"
+          @close-create="handleCloseCreateServer"
+          @create-server="handleCreateServer"
+          @delete-server-card="handleConfirmDeleteServerById"
+          @save-server="handleSaveServer"
+          @select-server="handleSelectServer"
+        />
+      </section>
 
-          <ProjectConfigPanel
-            v-model="projectDraft"
-            :ai-recommendation="projectAiRecommendation"
-            :is-ai-analyzing="isAiAnalyzingProject"
-            :project="latestScannedProject"
-            @apply-ai-recommendation="handleApplyProjectAiRecommendation"
-            @run-ai-analysis="handleRunProjectAiAnalysis"
-            @save-project="handleSaveProjectConfig"
-          />
-
-          <EnvironmentConfigPanel
-            :can-delete="environmentEditorMode === 'edit' && Boolean(environmentDraft?.name && !isPresetEnvironment)"
-            :editor-draft="environmentDraft"
-            :editor-mode="environmentEditorMode"
-            :editor-visible="isEnvironmentEditorVisible"
-            :environment-cards="environmentCards"
-            :is-preset-environment="isPresetEnvironment"
-            :project-id="selectedProjectId"
-            :servers="servers"
-            @check-environment="handleCheckEnvironment"
-            @close-editor="handleCloseEnvironmentEditor"
-            @create-environment="handleCreateEnvironment"
-            @delete-environment="handleConfirmDeleteEnvironment"
-            @delete-environment-card="handleConfirmDeleteEnvironmentByName"
-            @reset-environment="handleResetEnvironmentDraft"
-            @save-environment="handleSaveEnvironment"
-            @select-environment="handleSelectEnvironment"
-            @update:editor-draft="environmentDraft = $event"
-          />
-        </div>
-      </div>
-    </section>
-
-    <section v-else-if="appStore.activePanel === 'servers'" class="panel-grid">
-      <ServerConfigPanel
-        :is-creating="isCreatingServer"
-        v-model="serverDraft"
-        :selected-server-id="selectedServerId"
-        :servers="servers"
-        @check-server="handleCheckServer"
-        @close-create="handleCloseCreateServer"
-        @create-server="handleCreateServer"
-        @delete-server-card="handleConfirmDeleteServerById"
-        @save-server="handleSaveServer"
-        @select-server="handleSelectServer"
-      />
-    </section>
-
-    <section v-else class="panel-grid">
-      <article class="panel-card log-card">
-        <header class="card-head">
-          <div>
-            <h3>鏈杩愯鏃ュ織</h3>
-            <p class="section-note">日志页保留更详细的技术信息，方便排查执行问题。</p>
+      <section v-else class="panel-grid">
+        <article class="panel-card log-card">
+          <header class="card-head">
+            <div>
+              <h3>鏈杩愯鏃ュ織</h3>
+              <p class="section-note">日志页保留更详细的技术信息，方便排查执行问题。</p>
+            </div>
+            <Badge :variant="resolveBadgeVariant('contrast')" :class="['rounded-full', resolveBadgeToneClass('contrast')]">
+              {{ gatewayStage }}
+            </Badge>
+          </header>
+          <div class="log-stream">
+            <p v-for="entry in gatewayLogs" :key="entry.id" :data-level="entry.level">
+              [{{ entry.timestamp.slice(11, 19) }}] {{ entry.message }}
+            </p>
+            <p v-if="gatewayLogs.length === 0" class="muted">连接网关后，这里会展示实时消息和日志。</p>
           </div>
-          <Badge :variant="resolveBadgeVariant('contrast')" :class="['rounded-full', resolveBadgeToneClass('contrast')]">
-            {{ gatewayStage }}
-          </Badge>
-        </header>
-        <div class="log-stream">
-          <p v-for="entry in gatewayLogs" :key="entry.id" :data-level="entry.level">
-            [{{ entry.timestamp.slice(11, 19) }}] {{ entry.message }}
-          </p>
-          <p v-if="gatewayLogs.length === 0" class="muted">连接网关后，这里会展示实时消息和日志。</p>
-        </div>
-      </article>
+        </article>
 
-      <article class="panel-card">
-        <header class="card-head">
-          <h3>当前状态</h3>
-          <Badge :variant="resolveBadgeVariant('contrast')" :class="['rounded-full', resolveBadgeToneClass('contrast')]">
-            {{ appStore.connectionLabel }}
-          </Badge>
-        </header>
-        <ul class="task-list">
-          <li>项目导入：已完成</li>
-          <li>环境配置：已完成</li>
-          <li>网关连接：{{ appStore.connectionLabel }}</li>
-          <li>当前阶段：{{ gatewayStage }}</li>
-        </ul>
-        <p class="muted-paragraph">{{ gatewayStageDescription }}</p>
-      </article>
+        <article class="panel-card">
+          <header class="card-head">
+            <h3>当前状态</h3>
+            <Badge :variant="resolveBadgeVariant('contrast')" :class="['rounded-full', resolveBadgeToneClass('contrast')]">
+              {{ appStore.connectionLabel }}
+            </Badge>
+          </header>
+          <ul class="task-list">
+            <li>项目导入：已完成</li>
+            <li>环境配置：已完成</li>
+            <li>网关连接：{{ appStore.connectionLabel }}</li>
+            <li>当前阶段：{{ gatewayStage }}</li>
+          </ul>
+          <p class="muted-paragraph">{{ gatewayStageDescription }}</p>
+        </article>
 
-      <TaskHistoryPanel
-        :records="taskHistoryRecords"
-        :selected-record-id="selectedTaskHistoryId"
-        @select-record="selectedTaskHistoryId = $event"
-      />
+        <TaskHistoryPanel
+          :records="taskHistoryRecords"
+          :selected-record-id="selectedTaskHistoryId"
+          @select-record="selectedTaskHistoryId = $event"
+        />
 
-      <GatewayPanel
-        :auth-mode="gatewayAuthMode"
-        :connection-status="appStore.connectionStatus"
-        :connection-status-label="gatewayConnectionLabel"
-        :gateway-config-source="gatewayConfigSource"
-        :gateway-token="gatewayToken"
-        :gateway-url="gatewayUrl"
-        :is-importing-local-config="isImportingLocalConfig"
-        :is-probing="isProbingGateway"
-        :is-saving-config="isSavingGatewayConfig"
-        :probe-status="gatewayProbeStatus"
-        :probe-summary="gatewayProbeSummary"
-        @connect="connectGateway"
-        @disconnect="disconnectGateway"
-        @import-local-config="handleImportLocalGatewayConfig"
-        @probe="probeGatewayConnection"
-        @save-config="persistGatewayConfig"
-        @send-ping="sendGatewayPing"
-        @update:gateway-token="gatewayToken = $event"
-        @update:gateway-url="gatewayUrl = $event"
-      />
-    </section>
+        <GatewayPanel
+          :auth-mode="gatewayAuthMode"
+          :connection-status="appStore.connectionStatus"
+          :connection-status-label="gatewayConnectionLabel"
+          :gateway-config-source="gatewayConfigSource"
+          :gateway-token="gatewayToken"
+          :gateway-url="gatewayUrl"
+          :is-importing-local-config="isImportingLocalConfig"
+          :is-probing="isProbingGateway"
+          :is-saving-config="isSavingGatewayConfig"
+          :probe-status="gatewayProbeStatus"
+          :probe-summary="gatewayProbeSummary"
+          @connect="connectGateway"
+          @disconnect="disconnectGateway"
+          @import-local-config="handleImportLocalGatewayConfig"
+          @probe="probeGatewayConnection"
+          @save-config="persistGatewayConfig"
+          @send-ping="sendGatewayPing"
+          @update:gateway-token="gatewayToken = $event"
+          @update:gateway-url="gatewayUrl = $event"
+        />
+      </section>
     </PageTransition>
-
-    <Menu ref="deployMenu" :model="quickDeployMenuItems" popup class="quick-deploy-menu" />
 
     <Dialog
       v-model:visible="isQuickDeployDialogVisible"
       modal
-      :closable="quickDeployStage !== 'running'"
-      :dismissable-mask="quickDeployStage !== 'running'"
-      :close-on-escape="quickDeployStage !== 'running'"
+      :closable="true"
+      :dismissable-mask="true"
+      :close-on-escape="true"
       class="quick-deploy-dialog"
       :style="{ width: 'min(560px, calc(100vw - 32px))' }"
       @hide="handleCloseQuickDeployDialog"
@@ -279,103 +278,64 @@
       <template #header>
         <div class="quick-deploy-dialog-header">
           <div>
-            <strong>一键部署确认</strong>
+            <strong>一键部署</strong>
             <p>{{ quickDeployDialogTitle }}</p>
           </div>
-          <Badge
-            :variant="resolveBadgeVariant(quickDeployStatusSeverity)"
-            :class="['rounded-full', resolveBadgeToneClass(quickDeployStatusSeverity)]"
-          >
-            {{ quickDeployStatusLabel }}
-          </Badge>
         </div>
       </template>
 
       <div class="quick-deploy-dialog-body">
-        <div class="quick-deploy-summary-grid">
-          <article class="quick-deploy-summary-item">
-            <span>项目</span>
-            <strong>{{ quickDeploySelectedProject?.name || "--" }}</strong>
-          </article>
-          <article class="quick-deploy-summary-item">
-            <span>环境</span>
-            <strong>{{ quickDeploySelectedEnvironmentLabel }}</strong>
-          </article>
-          <article class="quick-deploy-summary-item">
-            <span>部署服务器</span>
-            <strong>{{ quickDeploySelectedServerLabel }}</strong>
-          </article>
-          <article class="quick-deploy-summary-item">
-            <span>部署策略</span>
-            <strong>{{ quickDeploySelectedStrategyLabel }}</strong>
-          </article>
+        <div class="quick-deploy-context-bar">
+          <strong>{{ quickDeploySelectedProject?.name || "--" }}</strong>
+          <span class="quick-deploy-project-type">{{ quickDeploySelectedProject?.projectType || "unknown" }}</span>
         </div>
 
-        <article class="quick-deploy-path-card">
-          <span>远端部署目录</span>
-          <code>{{ quickDeploySelectedRemotePath }}</code>
-        </article>
-
-        <Alert v-if="quickDeployStage === 'confirm'" :variant="resolveAlertVariant('info')" :class="resolveAlertToneClass('info')">
-          灏嗕娇鐢ㄥ綋鍓嶉」鐩殑榛樿鎵撳寘鍛戒护涓庝骇鐗╃洰褰曟墽琛屾瀯寤猴紝鐒跺悗閮ㄧ讲鍒版墍閫夌幆澧冦€?
-        </Alert>
-
-        <Alert
-          v-else-if="quickDeployStage === 'success'"
-          :variant="resolveAlertVariant('success')"
-          :class="resolveAlertToneClass('success')"
-        >
-          {{ quickDeployMessage }}
-        </Alert>
-
-        <Alert v-else-if="quickDeployStage === 'error'" :variant="resolveAlertVariant('error')" :class="resolveAlertToneClass('error')">
-          {{ quickDeployMessage }}
-        </Alert>
-
-        <article class="quick-deploy-log-card">
-          <header>
-            <span>閮ㄧ讲杩涘害</span>
-            <small>{{ quickDeployProgressLabel }}</small>
-          </header>
-          <div class="quick-deploy-log-stream">
-            <p v-for="entry in quickDeployLogs" :key="entry">{{ entry }}</p>
-            <p v-if="quickDeployLogs.length === 0" class="muted">确认后会在这里持续展示部署进度。</p>
-          </div>
-        </article>
+        <div class="quick-deploy-option-list">
+          <article
+            v-for="option in quickDeployDialogOptions"
+            :key="option.environment.name"
+            class="quick-deploy-option-card"
+            :data-state="quickDeployEnvironmentName === option.environment.name ? quickDeployStage : 'idle'"
+          >
+            <div class="quick-deploy-option-main">
+              <span class="quick-deploy-option-icon">
+                <Server class="h-4 w-4" aria-hidden="true" />
+              </span>
+              <div class="quick-deploy-option-copy">
+                <div class="quick-deploy-option-head">
+                  <strong>{{ formatEnvironmentLabel(option.environment.name) }}</strong>
+                </div>
+                <p>{{ option.server ? `${option.server.name} · ${option.server.host}:${option.server.port}` : "未绑定服务器" }}</p>
+              </div>
+            </div>
+            <Button
+              class="quick-deploy-option-action"
+              :loading="quickDeployStage === 'running' && quickDeployEnvironmentName === option.environment.name"
+              :disabled="!option.server || !option.environment.remotePath.trim() || quickDeployStage === 'running'"
+              size="sm"
+              variant="secondary"
+              @click="startQuickDeploy(option)"
+            >
+              <Send v-if="!(quickDeployStage === 'running' && quickDeployEnvironmentName === option.environment.name)" class="h-4 w-4" />
+              <span>
+                {{ quickDeployStage === "running" && quickDeployEnvironmentName === option.environment.name ? "部署中" : "部署" }}
+              </span>
+            </Button>
+          </article>
+        </div>
       </div>
-
-      <template #footer>
-        <div class="quick-deploy-dialog-footer">
-          <Button
-            v-if="quickDeployStage === 'confirm'"
-            label="取消"
-            severity="secondary"
-            text
-            @click="isQuickDeployDialogVisible = false"
-          />
-          <Button
-            v-if="quickDeployStage === 'confirm'"
-            class="app-primary-button"
-            label="确认部署"
-            :icon="Send"
-            @click="handleConfirmQuickDeploy"
-          />
-          <Button v-else label="关闭" severity="secondary" @click="isQuickDeployDialogVisible = false" />
-        </div>
-      </template>
     </Dialog>
   </AppShell>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from "vue";
-import { FolderOpen, Globe2, Plus, Send, ShieldCheck, TriangleAlert, Trash2 } from "lucide-vue-next";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from "vue";
+import { FolderOpen, Globe2, Plus, Send, Server, ShieldCheck, TriangleAlert, Trash2 } from "lucide-vue-next";
 
 import Alert from "@/components/ui/alert/Alert.vue";
 import Badge from "@/components/ui/badge/Badge.vue";
 import Button from "@/components/ui/button/Button.vue";
 import Dialog from "@/components/ui/dialog/Dialog.vue";
-import Menu from "@/components/ui/menu/Menu.vue";
 import projectFolderBackground from "@/assets/images/folder-bg2.png";
 import projectFolderIcon from "@/assets/images/folder.png";
 
@@ -437,8 +397,6 @@ const confirm = useConfirm();
 appStore.setConnectionStatus("disconnected");
 
 const projectPathInput = ref("");
-const projectOverviewCardRef = useTemplateRef<InstanceType<typeof ProjectOverviewCard> | null>("projectOverviewCardRef");
-const projectInsightHeight = ref<number | null>(null);
 const isImporting = ref(false);
 const importError = ref("");
 const projects = ref<ProjectRecord[]>([]);
@@ -453,6 +411,7 @@ const environmentDraft = ref<EnvironmentFormValue | null>(null);
 const selectedEnvironmentName = ref<string | null>(null);
 const isEnvironmentEditorVisible = ref(false);
 const environmentEditorMode = ref<"create" | "edit">("edit");
+const isCheckingEnvironment = ref(false);
 const servers = ref<ServerRecord[]>([]);
 const taskHistoryRecords = ref<TaskHistoryRecord[]>([]);
 const selectedTaskHistoryId = ref<string | null>(null);
@@ -475,7 +434,6 @@ const isProbingGateway = ref(false);
 const openResponsesEnabled = ref(false);
 const reconnectCountdown = ref<number | null>(null);
 const isSavingGatewayConfig = ref(false);
-const deployMenu = ref();
 const projectPendingDeleteId = ref<string | null>(null);
 const quickDeployProjectId = ref<string | null>(null);
 const quickDeployEnvironmentName = ref<string | null>(null);
@@ -489,8 +447,6 @@ let reconnectInterval: number | null = null;
 let reconnectAttempts = 0;
 let manualDisconnectRequested = false;
 let shouldReconnectGateway = false;
-let projectOverviewResizeObserver: ResizeObserver | null = null;
-
 type GatewayConnectTrigger = "manual" | "startup" | "reconnect";
 
 type QuickDeployEnvironmentOption = {
@@ -542,6 +498,17 @@ function getErrorMessage(error: unknown, fallback: string) {
   }
 
   return fallback;
+}
+
+function isLikelyNetworkPermissionPrompt(message: string) {
+  const normalized = message.toLowerCase();
+
+  return (
+    normalized.includes("no route to host") ||
+    normalized.includes("network is unreachable") ||
+    normalized.includes("os error 65") ||
+    normalized.includes("couldn't connect to host")
+  );
 }
 
 function summarizeGatewayMessage(message: GatewayMessage): { level: GatewayLogEntry["level"]; text: string } | null {
@@ -722,14 +689,8 @@ const quickDeployOptionsByProject = computed(() => {
   return result;
 });
 
-const quickDeployMenuItems = computed(() =>
-  (quickDeployProjectId.value ? (quickDeployOptionsByProject.value.get(quickDeployProjectId.value) ?? []) : []).map((item) => ({
-    command: () => {
-      openQuickDeployDialog(item);
-    },
-    icon: item.environment.name === "prod" ? ShieldCheck : Globe2,
-    label: `部署到 ${formatEnvironmentLabel(item.environment.name)}`,
-  })),
+const quickDeployDialogOptions = computed(() =>
+  quickDeployProjectId.value ? (quickDeployOptionsByProject.value.get(quickDeployProjectId.value) ?? []) : [],
 );
 
 const quickDeploySelectedOption = computed<QuickDeployEnvironmentOption | null>(() => {
@@ -741,7 +702,17 @@ const quickDeploySelectedOption = computed<QuickDeployEnvironmentOption | null>(
   return options.find((item) => item.environment.name === quickDeployEnvironmentName.value) ?? null;
 });
 
-const quickDeploySelectedProject = computed(() => quickDeploySelectedOption.value?.project ?? null);
+const quickDeploySelectedProject = computed(() => {
+  if (quickDeploySelectedOption.value?.project) {
+    return quickDeploySelectedOption.value.project;
+  }
+
+  if (!quickDeployProjectId.value) {
+    return null;
+  }
+
+  return projects.value.find((project) => project.id === quickDeployProjectId.value) ?? null;
+});
 
 const quickDeploySelectedEnvironmentLabel = computed(() =>
   quickDeploySelectedOption.value ? formatEnvironmentLabel(quickDeploySelectedOption.value.environment.name) : "--",
@@ -764,67 +735,7 @@ const quickDeploySelectedStrategyLabel = computed(() =>
 const quickDeploySelectedRemotePath = computed(() => quickDeploySelectedOption.value?.environment.remotePath?.trim() || "--");
 
 const quickDeployDialogTitle = computed(() => {
-  if (quickDeployStage.value === "running") {
-    return "部署任务正在执行，窗口会持续展示实时进度。";
-  }
-
-  if (quickDeployStage.value === "success") {
-    return "部署已完成，你可以查看结果后手动关闭当前窗口。";
-  }
-
-  if (quickDeployStage.value === "error") {
-    return "部署已结束，请根据结果信息确认是否需要调整配置。";
-  }
-
-  return "请确认本次部署的目标环境与策略。";
-});
-
-const quickDeployStatusLabel = computed(() => {
-  if (quickDeployStage.value === "running") {
-    return "部署中";
-  }
-
-  if (quickDeployStage.value === "success") {
-    return "閮ㄧ讲鎴愬姛";
-  }
-
-  if (quickDeployStage.value === "error") {
-    return "閮ㄧ讲澶辫触";
-  }
-
-  return "待确认";
-});
-
-const quickDeployStatusSeverity = computed(() => {
-  if (quickDeployStage.value === "running") {
-    return "warn";
-  }
-
-  if (quickDeployStage.value === "success") {
-    return "success";
-  }
-
-  if (quickDeployStage.value === "error") {
-    return "danger";
-  }
-
-  return "secondary";
-});
-
-const quickDeployProgressLabel = computed(() => {
-  if (quickDeployStage.value === "running") {
-    return "执行中";
-  }
-
-  if (quickDeployStage.value === "success") {
-    return "已完成";
-  }
-
-  if (quickDeployStage.value === "error") {
-    return "已失败";
-  }
-
-  return "等待开始";
+  return "选择当前项目已配置的环境，直接发起部署。";
 });
 
 const environmentCards = computed(() => {
@@ -934,27 +845,6 @@ const executionSummary = computed<ExecutionSummaryItem[]>(() => {
     },
   ];
 });
-
-const projectScriptCardStyle = computed(() => {
-  if (!projectInsightHeight.value) {
-    return undefined;
-  }
-
-  return {
-    height: `${projectInsightHeight.value}px`,
-  };
-});
-
-function syncProjectInsightHeight() {
-  const element = projectOverviewCardRef.value?.overviewCardRef ?? null;
-
-  if (!element) {
-    projectInsightHeight.value = null;
-    return;
-  }
-
-  projectInsightHeight.value = Math.ceil(element.getBoundingClientRect().height);
-}
 
 const canRunExecution = computed(() => {
   if (!latestScannedProject.value || !executionDraft.value) {
@@ -1299,13 +1189,16 @@ function resetQuickDeployState() {
   quickDeployLogs.value = [];
 }
 
-function toggleQuickDeployMenu(event: Event, projectId: string) {
+function openQuickDeployWorkspace(projectId: string) {
   if (!hasQuickDeployOptions(projectId)) {
     return;
   }
 
   quickDeployProjectId.value = projectId;
-  deployMenu.value?.toggle(event);
+  quickDeployStage.value = "confirm";
+  quickDeployMessage.value = "";
+  quickDeployLogs.value = [];
+  isQuickDeployDialogVisible.value = true;
 }
 
 function openQuickDeployDialog(option: QuickDeployEnvironmentOption) {
@@ -1317,14 +1210,14 @@ function openQuickDeployDialog(option: QuickDeployEnvironmentOption) {
   isQuickDeployDialogVisible.value = true;
 }
 
-function handleCloseQuickDeployDialog() {
-  if (quickDeployStage.value === "running") {
-    isQuickDeployDialogVisible.value = true;
-    return;
-  }
-
-  resetQuickDeployState();
+async function startQuickDeploy(option: QuickDeployEnvironmentOption) {
+  openQuickDeployDialog(option);
+  await nextTick();
+  await new Promise((resolve) => requestAnimationFrame(() => resolve(undefined)));
+  await handleConfirmQuickDeploy();
 }
+
+function handleCloseQuickDeployDialog() {}
 
 async function handleConfirmQuickDeploy() {
   const option = quickDeploySelectedOption.value;
@@ -1534,7 +1427,7 @@ function openProjectDeleteDialog(projectId: string) {
   }
 
   confirm.require({
-    message: `删除后会移除应用中的项目 “${project.name}” 记录，不会删除你的本地源码目录。`,
+    message: `删除后会移除应用中的项目 “${project.name}”，不会删除你的本地源码。`,
     header: "确认删除项目",
     icon: TriangleAlert,
     rejectLabel: "取消",
@@ -1689,8 +1582,9 @@ async function handleSaveEnvironment() {
     projectDraft.value = latestScannedProject.value ? { ...latestScannedProject.value } : null;
   }
 
-  appStore.setBannerMessage(`已保存 ${environmentDraft.value.name} 环境配置`);
-  showToast(`${environmentDraft.value.name} 环境配置已保存`, "success");
+  const environmentLabel = formatEnvironmentLabel(environmentDraft.value.name);
+  appStore.setBannerMessage(`已保存 ${environmentLabel} 配置`);
+  showToast(`${environmentLabel} 配置已保存`, "success");
   isEnvironmentEditorVisible.value = false;
   await refreshProjectEnvironmentMap();
 
@@ -1934,7 +1828,9 @@ async function handleCheckEnvironment() {
     return;
   }
 
-  pushGatewayLog("info", `开始检测环境 ${environmentDraft.value.name} 的远端目录权限`);
+  const environmentLabel = formatEnvironmentLabel(environmentDraft.value.name);
+  pushGatewayLog("info", `开始检测环境 ${environmentLabel} 的远端目录权限`);
+  isCheckingEnvironment.value = true;
 
   try {
     const result = await runServerConnectionCheck({
@@ -1948,14 +1844,16 @@ async function handleCheckEnvironment() {
     });
 
     result.steps.forEach((step) => pushGatewayLog("info", step));
-    pushGatewayLog("success", `环境 ${environmentDraft.value.name} 连接与目录检测通过`);
-    appStore.setBannerMessage(`环境 ${environmentDraft.value.name} 检测通过`);
-    showToast(`环境 ${environmentDraft.value.name} 检测通过`, "success");
+    pushGatewayLog("success", `环境 ${environmentLabel} 连接与目录检测通过`);
+    appStore.setBannerMessage(`${environmentLabel} 检测通过`);
+    showToast(`${environmentLabel} 检测通过`, "success");
   } catch (error) {
     const message = getErrorMessage(error, "环境连接检测失败");
     pushGatewayLog("error", message);
     appStore.setBannerMessage(message);
     showToast(message, "error");
+  } finally {
+    isCheckingEnvironment.value = false;
   }
 }
 
@@ -2097,18 +1995,22 @@ async function handleRunExecution() {
     showToast(mode === "build" ? "本地打包执行成功" : mode === "deploy" ? "远端部署执行成功" : "打包与部署执行成功", "success");
   } catch (error) {
     const message = getErrorMessage(error, mode === "build" ? "鎵ц鏈湴鎵撳寘澶辫触" : "鎵ц閮ㄧ讲浠诲姟澶辫触");
+    const isPermissionPrompt = mode !== "build" && isLikelyNetworkPermissionPrompt(message);
     historySummary =
       mode === "build"
         ? "本地打包失败"
         : mode === "deploy"
           ? `远端部署失败，目标环境 ${executionDraft.value.environmentName}`
           : `打包并部署失败，目标环境 ${executionDraft.value.environmentName}`;
-    historyErrorMessage = message;
-    executionStatus.value = "error";
-    executionStatusMessage.value = message;
-    pushGatewayLog("error", message);
-    appStore.setBannerMessage(message);
-    showToast(message, "error");
+    historyErrorMessage = isPermissionPrompt ? "首次网络访问需要系统授权，请点击允许后重新执行。" : message;
+    executionStatus.value = isPermissionPrompt ? "idle" : "error";
+    executionStatusMessage.value = isPermissionPrompt ? "首次网络访问需要系统授权，请先点击“允许”，然后重新执行任务。" : message;
+    pushGatewayLog(
+      isPermissionPrompt ? "warn" : "error",
+      isPermissionPrompt ? "检测到系统本地网络访问授权弹窗，请允许后重新执行任务。" : message,
+    );
+    appStore.setBannerMessage(isPermissionPrompt ? "请先允许 XClaw 访问本地网络，然后重新执行任务。" : message);
+    showToast(isPermissionPrompt ? "请先允许 XClaw 访问本地网络，然后重新执行任务。" : message, isPermissionPrompt ? "warning" : "error");
   } finally {
     const finishedAt = new Date().toISOString();
     const newLogs = gatewayLogs.value
@@ -2425,16 +2327,6 @@ onMounted(() => {
   void refreshProjects();
   void refreshServers();
   pushGatewayLog("info", "网关日志面板已就绪");
-  syncProjectInsightHeight();
-
-  projectOverviewResizeObserver = new ResizeObserver(() => {
-    syncProjectInsightHeight();
-  });
-
-  const overviewElement = projectOverviewCardRef.value?.overviewCardRef ?? null;
-  if (overviewElement) {
-    projectOverviewResizeObserver.observe(overviewElement);
-  }
 
   void loadGatewayConfig()
     .then((config) => {
@@ -2457,8 +2349,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   clearReconnectState();
   gatewayClient?.disconnect();
-  projectOverviewResizeObserver?.disconnect();
-  projectOverviewResizeObserver = null;
 });
 
 watch(
@@ -2469,22 +2359,6 @@ watch(
     }
 
     void syncEnvironmentByName(environmentName);
-  },
-);
-
-watch(
-  () => [selectedProjectId.value, latestScannedProject.value?.id, latestScannedProject.value?.updatedAt],
-  () => {
-    requestAnimationFrame(() => {
-      projectOverviewResizeObserver?.disconnect();
-      const overviewElement = projectOverviewCardRef.value?.overviewCardRef ?? null;
-
-      if (overviewElement) {
-        projectOverviewResizeObserver?.observe(overviewElement);
-      }
-
-      syncProjectInsightHeight();
-    });
   },
 );
 </script>
@@ -2536,21 +2410,39 @@ watch(
 }
 
 .quick-deploy-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex: 0 0 auto;
-  color: #60a5fa;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 999px;
   border: 1px solid transparent;
   background: transparent;
+  color: #7eb6ff;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
 }
 
 .quick-deploy-button:not(:disabled):hover {
-  background: rgba(59, 130, 246, 0.12);
-  border-color: rgba(59, 130, 246, 0.18);
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.16);
   color: #bfdbfe;
 }
 
 .quick-deploy-button:disabled {
   color: rgba(100, 116, 139, 0.5);
   opacity: 1;
+  cursor: not-allowed;
+}
+
+.quick-deploy-button:active {
+  transform: scale(0.98);
 }
 
 .delete-project-button {
@@ -2564,7 +2456,7 @@ watch(
   border: 1px solid transparent;
   border-radius: 999px;
   background: transparent;
-  color: #94a3b8;
+  color: #f28b82;
   cursor: pointer;
   transition:
     background-color 150ms ease,
@@ -2599,15 +2491,19 @@ watch(
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.75fr);
   gap: 20px;
-  align-items: start;
+  align-items: stretch;
 }
 
 .insight-panel {
   min-width: 0;
+  display: flex;
 }
 
 .project-script-card {
-  min-height: 372px;
+  flex: 1;
+  height: 100%;
+  min-height: 420px;
+  max-height: 420px;
   overflow: hidden;
 }
 
@@ -2625,11 +2521,11 @@ watch(
   min-width: 0;
   min-height: 240px;
   padding: 20px;
-  border: 1px solid rgba(148, 163, 184, 0.14);
+  border: 1px solid rgba(148, 163, 184, 0.16);
   border-radius: 8px;
-  background: #141a28;
+  background: linear-gradient(180deg, rgba(28, 38, 56, 0.96), rgba(22, 30, 45, 0.98)), #1a2436;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
     0 12px 24px rgba(2, 6, 23, 0.18);
 }
 
@@ -2664,79 +2560,137 @@ watch(
   gap: 14px;
 }
 
-.quick-deploy-summary-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+.quick-deploy-context-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 0 2px 2px;
 }
 
-.quick-deploy-summary-item,
-.quick-deploy-path-card,
-.quick-deploy-log-card {
-  border: 1px solid rgba(148, 163, 184, 0.12);
-  border-radius: 8px;
-  background: #101722;
+.quick-deploy-context-bar strong {
+  color: #f8fafc;
+  font-size: 15px;
+  line-height: 1.3;
 }
 
-.quick-deploy-summary-item {
-  display: grid;
-  gap: 6px;
-  padding: 14px 16px;
-}
-
-.quick-deploy-summary-item span,
-.quick-deploy-path-card span,
-.quick-deploy-log-card header span,
-.quick-deploy-log-card header small {
-  color: #64748b;
+.quick-deploy-project-type {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.11);
+  color: #93c5fd;
   font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
-.quick-deploy-summary-item strong,
-.quick-deploy-path-card code {
-  color: #e2e8f0;
-  font-size: 13px;
-  line-height: 1.5;
-  word-break: break-all;
-}
-
-.quick-deploy-path-card {
-  display: grid;
-  gap: 8px;
-  padding: 14px 16px;
-}
-
-.quick-deploy-path-card code {
-  padding: 0;
-  background: transparent;
-}
-
-.quick-deploy-log-card {
+.quick-deploy-option-list {
   display: grid;
   gap: 10px;
-  padding: 14px 16px;
 }
 
-.quick-deploy-log-card header {
+.quick-deploy-option-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(29, 40, 58, 0.84), rgba(22, 31, 46, 0.96)), #1a2436;
+}
+
+.quick-deploy-option-card[data-state="running"] {
+  border-color: rgba(96, 165, 250, 0.22);
+  background: linear-gradient(180deg, rgba(31, 45, 66, 0.92), rgba(24, 36, 55, 0.98)), #1d2940;
+}
+
+.quick-deploy-option-card[data-state="success"] {
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.quick-deploy-option-card[data-state="error"] {
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.quick-deploy-option-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.quick-deploy-option-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
 
-.quick-deploy-log-stream {
-  max-height: 220px;
-  overflow: auto;
-  padding-right: 4px;
+.quick-deploy-option-copy strong {
+  color: #f8fafc;
+  font-size: 14px;
+  line-height: 1.35;
 }
 
-.quick-deploy-log-stream p {
-  margin: 0;
-  color: #cbd5e1;
+.quick-deploy-option-copy p {
+  color: #a7b6cc;
   font-size: 12px;
-  line-height: 1.55;
-  white-space: pre-wrap;
-  word-break: break-word;
+  line-height: 1.6;
+}
+
+.quick-deploy-option-copy p {
+  margin: 0;
+}
+
+.quick-deploy-option-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.quick-deploy-option-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(59, 130, 246, 0.12);
+  color: #93c5fd;
+  flex: 0 0 auto;
+}
+
+.quick-deploy-option-action {
+  min-width: 68px;
+  height: 30px;
+  padding-inline: 10px;
+  border-color: rgba(96, 165, 250, 0.14);
+  background: rgba(40, 57, 86, 0.86);
+  color: #dbe7ff;
+  box-shadow: none;
+  font-size: 12px;
+}
+
+.quick-deploy-option-action:hover:not(:disabled) {
+  background: rgba(51, 72, 107, 0.96);
+  border-color: rgba(147, 197, 253, 0.2);
+  color: #f8fbff;
+}
+
+.quick-deploy-option-action :deep(svg) {
+  width: 13px;
+  height: 13px;
+}
+
+.quick-deploy-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .quick-deploy-dialog-footer {
@@ -2745,6 +2699,12 @@ watch(
   justify-content: flex-end;
   gap: 10px;
   width: 100%;
+}
+
+.quick-deploy-footer-tip {
+  color: #8ea0ba;
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .panel-card h3 {
@@ -2780,9 +2740,9 @@ watch(
 
 .section-note {
   margin: 8px 0 0;
-  color: #8b9bb3;
+  color: #a7b6cc;
   font-size: 12px;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .task-list {
@@ -2805,7 +2765,7 @@ watch(
 .task-item code {
   padding: 6px 10px;
   border-radius: 8px;
-  background: #101722;
+  background: #162132;
   color: #dbeafe;
   font-family: "SFMono-Regular", "Menlo", monospace;
   font-size: 11px;
@@ -2862,7 +2822,7 @@ watch(
   gap: 10px;
   padding: 16px;
   border-radius: 8px;
-  background: #101722;
+  background: #162132;
   color: #d8ebe4;
   font-family: "SFMono-Regular", "Menlo", monospace;
   font-size: 12px;
@@ -2892,12 +2852,12 @@ watch(
 }
 
 .muted {
-  color: #64748b;
+  color: #8ea0ba;
 }
 
 .muted-paragraph {
   margin: 0;
-  color: #64748b;
+  color: #8ea0ba;
 }
 
 .project-empty-shell {
@@ -2915,15 +2875,15 @@ watch(
   align-items: stretch;
   min-height: 420px;
   padding: 34px 34px 32px;
-  border: 1px solid rgba(148, 163, 184, 0.14);
+  border: 1px solid rgba(148, 163, 184, 0.16);
   border-radius: 14px;
   background:
-    radial-gradient(circle at top left, rgba(59, 130, 246, 0.14), transparent 34%),
-    linear-gradient(90deg, rgba(15, 23, 42, 0.96) 0%, rgba(15, 23, 42, 0.9) 48%, rgba(15, 23, 42, 0.62) 72%, rgba(15, 23, 42, 0.28) 100%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(15, 23, 42, 0.84));
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 34%),
+    linear-gradient(90deg, rgba(20, 31, 48, 0.98) 0%, rgba(19, 29, 46, 0.94) 50%, rgba(18, 28, 43, 0.76) 74%, rgba(16, 24, 38, 0.42) 100%),
+    linear-gradient(180deg, rgba(20, 30, 47, 0.98), rgba(16, 24, 39, 0.9));
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.03),
-    0 20px 40px rgba(2, 6, 23, 0.22);
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 20px 40px rgba(2, 6, 23, 0.24);
 }
 
 .project-empty-hero::after {
@@ -3079,12 +3039,12 @@ watch(
   display: grid;
   gap: 10px;
   padding: 20px 18px 18px;
-  border: 1px solid rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.14);
   border-radius: 12px;
-  background: linear-gradient(180deg, rgba(30, 41, 59, 0.16), rgba(20, 26, 40, 0.96)), #141a28;
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.82), rgba(22, 30, 45, 0.96)), #1a2436;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.02),
-    0 8px 20px rgba(2, 6, 23, 0.14);
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 10px 22px rgba(2, 6, 23, 0.16);
   transition:
     border-color 0.2s ease,
     transform 0.2s ease,
@@ -3115,14 +3075,14 @@ watch(
 
 .project-empty-step p {
   margin: 0;
-  color: #8fa1bc;
+  color: #a7b6cc;
   font-size: 13px;
   line-height: 1.7;
 }
 
 .project-empty-step:hover {
-  border-color: rgba(96, 165, 250, 0.18);
-  transform: translateY(-1px);
+  border-color: rgba(96, 165, 250, 0.22);
+  background: linear-gradient(180deg, rgba(34, 47, 68, 0.9), rgba(24, 34, 51, 0.98)), #1d2940;
 }
 
 @media (max-width: 960px) {

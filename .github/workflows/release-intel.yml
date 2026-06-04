@@ -39,7 +39,7 @@ jobs:
           targets: x86_64-apple-darwin
 
       - name: Install frontend dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build Tauri app
         env:

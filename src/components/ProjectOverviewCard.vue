@@ -1,5 +1,5 @@
 <template>
-  <article ref="overviewCardRef" class="panel-card overview-card">
+  <article class="panel-card overview-card">
     <header class="card-head">
       <div>
         <h3>项目概览</h3>
@@ -47,26 +47,20 @@
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef } from 'vue'
-
 import type { ProjectRecord } from '@/types/task'
 
 defineProps<{
   project: ProjectRecord | null
 }>()
-
-const overviewCardRef = useTemplateRef<HTMLElement>('overviewCardRef')
-
-defineExpose({
-  overviewCardRef,
-})
 </script>
 
 <style scoped>
 .overview-card {
   grid-column: 1 / -1;
-  min-height: 372px;
-  height: auto;
+  flex: 1;
+  width: 100%;
+  min-height: 420px;
+  height: 420px;
 }
 
 .card-head {
@@ -85,9 +79,9 @@ defineExpose({
 
 .card-head p {
   margin: 8px 0 0;
-  color: #8b9bb3;
+  color: #a7b6cc;
   font-size: 12px;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .overview-grid {
@@ -138,7 +132,7 @@ defineExpose({
 
 .muted-paragraph {
   margin: 0;
-  color: #8b9bb3;
+  color: #8ea0ba;
 }
 
 @media (max-width: 960px) {

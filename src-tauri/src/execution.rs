@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::process::Command;
+use tauri::async_runtime;
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -27,7 +28,13 @@ pub struct LocalBuildResult {
 }
 
 #[tauri::command]
-pub fn run_local_build(request: LocalBuildRequest) -> Result<LocalBuildResult, String> {
+pub async fn run_local_build(request: LocalBuildRequest) -> Result<LocalBuildResult, String> {
+    async_runtime::spawn_blocking(move || execute_local_build(request))
+        .await
+        .map_err(|error| format!("打包任务线程执行失败: {error}"))?
+}
+
+fn execute_local_build(request: LocalBuildRequest) -> Result<LocalBuildResult, String> {
     let project_path = Path::new(&request.project_path);
 
     if !project_path.exists() {

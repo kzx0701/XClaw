@@ -89,6 +89,10 @@ defineEmits<{
   color: #94a3b8;
 }
 
+.workspace-detail-header-button-danger {
+  color: #f28b82;
+}
+
 .workspace-detail-header-button:hover {
   background: rgba(59, 130, 246, 0.1);
   color: #bfdbfe;
