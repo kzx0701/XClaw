@@ -196,15 +196,15 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
 
 .card-head h3 {
   margin: 0;
-  color: #f8fafc;
-  font-size: 17px;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  color: #e0e0e0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
 .card-head p {
   margin: 8px 0 0;
-  color: #a7b6cc;
+  color: #8b8b9a;
   font-size: 12px;
   line-height: 1.7;
 }
@@ -226,7 +226,7 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
 
 .helper-message-copy {
   display: block;
-  color: #c3d0e2;
+  color: #a0a0b0;
   line-height: 1.7;
   white-space: normal;
   word-break: break-word;
@@ -239,10 +239,10 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
 }
 
 .field span {
-  color: #e2e8f0;
+  color: #c8c8d8;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .switch-row {
@@ -253,7 +253,7 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
 }
 
 .switch-row small {
-  color: #93a4bd;
+  color: #8b8b9a;
   font-size: 12px;
 }
 
@@ -279,13 +279,14 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
 }
 
 .summary-head h4 {
-  color: #f8fafc;
+  color: #e0e0e0;
   font-size: 14px;
+  font-weight: 600;
   line-height: 1.3;
 }
 
 .summary-head small {
-  color: #9fb0c7;
+  color: #8b8b9a;
   font-size: 12px;
 }
 
@@ -299,29 +300,29 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
   display: grid;
   gap: 6px;
   padding: 14px 16px;
-  border: 1px solid rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 8px;
-  background: #162132;
+  background: rgba(74, 127, 193, 0.06);
 }
 
 .summary-item span {
-  color: #9db0c7;
+  color: #8b8b9a;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0.01em;
 }
 
 .summary-item strong {
-  color: #f8fafc;
-  font-size: 14px;
+  color: #e0e0e0;
+  font-size: 13px;
+  font-weight: 500;
   line-height: 1.5;
   word-break: break-word;
 }
 
 .muted-paragraph {
   margin: 0;
-  color: #8ea0ba;
+  color: #8b8b9a;
 }
 
 @media (max-width: 960px) {

@@ -6,37 +6,70 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ============================================================
+   Termius-inspired Design System
+   - Deep blue-gray background (#1e1e2e)
+   - Flat cards with subtle elevation
+   - Ultra-low contrast borders
+   - Consistent 8px border-radius
+   - Minimal shadows (flat design)
+   ============================================================ */
+
 @theme {
-  --color-background: #0c111c;
-  --color-foreground: #cbd5e1;
-  --color-card: #141a28;
-  --color-card-foreground: #cbd5e1;
-  --color-popover: #141a28;
-  --color-popover-foreground: #cbd5e1;
-  --color-primary: #3b82f6;
-  --color-primary-foreground: #eff6ff;
-  --color-secondary: #1c2536;
-  --color-secondary-foreground: #cbd5e1;
-  --color-muted: #111827;
-  --color-muted-foreground: #64748b;
-  --color-accent: #1c2536;
-  --color-accent-foreground: #dbe7ff;
-  --color-destructive: #ef4444;
-  --color-destructive-foreground: #fef2f2;
-  --color-border: rgba(148, 163, 184, 0.14);
-  --color-input: rgba(148, 163, 184, 0.18);
-  --color-ring: rgba(59, 130, 246, 0.34);
-  --color-success: #10b981;
-  --color-warning: #f97316;
-  --color-danger: #ef4444;
+  /* === Background Layers === */
+  --color-background: #1e1e2e;
+  --color-foreground: #e0e0e0;
+  --color-card: #2a2a3c;
+  --color-card-foreground: #e0e0e0;
+  --color-popover: #32324a;
+  --color-popover-foreground: #e0e0e0;
+
+  /* === Primary: Muted Blue === */
+  --color-primary: #4a7fc1;
+  --color-primary-foreground: #ffffff;
+
+  /* === Secondary: Slightly lighter card === */
+  --color-secondary: #32324a;
+  --color-secondary-foreground: #c8c8d8;
+
+  /* === Muted: For disabled/inactive === */
+  --color-muted: #252538;
+  --color-muted-foreground: #8b8b9a;
+
+  /* === Accent: Hover states === */
+  --color-accent: #32324a;
+  --color-accent-foreground: #e0e0e0;
+
+  /* === Destructive === */
+  --color-destructive: #e55c5c;
+  --color-destructive-foreground: #ffffff;
+
+  /* === Semantic Colors (muted) === */
+  --color-info: #5a9fd4;
+  --color-info-foreground: #f0f9ff;
+  --color-success: #5cb85c;
+  --color-warning: #d4a03a;
+  --color-danger: #e55c5c;
+
+  /* === Borders: Ultra subtle === */
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-input: rgba(255, 255, 255, 0.08);
+  --color-ring: rgba(74, 127, 193, 0.35);
+
+  /* === Radius: Consistent 8px === */
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
-  --font-sans: "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-  --shadow-xs: inset 0 1px 0 rgba(255, 255, 255, 0.02);
-  --shadow-sm: 0 8px 18px rgba(3, 7, 18, 0.18);
-  --shadow-md: 0 12px 24px rgba(3, 7, 18, 0.2);
+
+  /* === Typography === */
+  --font-sans: "Inter", "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-heading: "Inter", "SF Pro Display", "PingFang SC", sans-serif;
+
+  /* === Shadows: Minimal, only for elevation === */
+  --shadow-xs: 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 @layer base {
@@ -69,36 +102,41 @@
 
   button {
     transition:
-      background-color 150ms ease,
-      border-color 150ms ease,
-      color 150ms ease,
-      box-shadow 150ms ease,
-      transform 150ms ease;
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease,
+      transform 100ms ease;
   }
 
-  button:active {
-    transform: scale(0.98);
+  button:not([data-no-scale]):active {
+    transform: scale(0.97);
   }
 }
 
 @layer utilities {
   .panel-surface {
-    background: #141a28;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.02),
-      0 12px 24px rgba(3, 7, 18, 0.2);
+    background: #2a2a3c;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
   }
 
   .interactive-surface {
-    background: #141a28;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.02),
-      0 8px 18px rgba(3, 7, 18, 0.18);
+    background: #2a2a3c;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease;
+  }
+
+  .interactive-surface:hover {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: #32324a;
   }
 
   .app-overlay-surface {
-    background: rgba(5, 10, 20, 0.56);
-    backdrop-filter: blur(1px);
+    background: rgba(20, 20, 35, 0.7);
+    backdrop-filter: blur(4px);
   }
 }
 
@@ -143,71 +181,79 @@
 
 :root {
   --radius: 0.5rem;
-  --background: #0c111c;
-  --foreground: #cbd5e1;
-  --card: #141a28;
-  --card-foreground: #cbd5e1;
-  --popover: #141a28;
-  --popover-foreground: #cbd5e1;
-  --primary: #3b82f6;
-  --primary-foreground: #eff6ff;
-  --secondary: #1c2536;
-  --secondary-foreground: #cbd5e1;
-  --muted: #111827;
-  --muted-foreground: #64748b;
-  --accent: #1c2536;
-  --accent-foreground: #dbe7ff;
-  --destructive: #ef4444;
-  --border: rgba(148, 163, 184, 0.14);
-  --input: rgba(148, 163, 184, 0.18);
-  --ring: rgba(59, 130, 246, 0.34);
-  --chart-1: #3b82f6;
-  --chart-2: #10b981;
-  --chart-3: #f97316;
-  --chart-4: #38bdf8;
-  --chart-5: #a78bfa;
-  --sidebar: #0a0f19;
-  --sidebar-foreground: #cbd5e1;
-  --sidebar-primary: #3b82f6;
-  --sidebar-primary-foreground: #eff6ff;
-  --sidebar-accent: #141d2a;
-  --sidebar-accent-foreground: #f8fafc;
-  --sidebar-border: rgba(148, 163, 184, 0.14);
-  --sidebar-ring: rgba(59, 130, 246, 0.34);
+
+  /* === Core Colors === */
+  --background: #1e1e2e;
+  --foreground: #e0e0e0;
+  --card: #2a2a3c;
+  --card-foreground: #e0e0e0;
+  --popover: #32324a;
+  --popover-foreground: #e0e0e0;
+  --primary: #4a7fc1;
+  --primary-foreground: #ffffff;
+  --secondary: #32324a;
+  --secondary-foreground: #c8c8d8;
+  --muted: #252538;
+  --muted-foreground: #8b8b9a;
+  --accent: #32324a;
+  --accent-foreground: #e0e0e0;
+  --destructive: #e55c5c;
+  --border: rgba(255, 255, 255, 0.06);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: rgba(74, 127, 193, 0.35);
+  --info: #5a9fd4;
+  --info-foreground: #f0f9ff;
+  --chart-1: #4a7fc1;
+  --chart-2: #5cb85c;
+  --chart-3: #d4a03a;
+  --chart-4: #5a9fd4;
+  --chart-5: #9b7ed8;
+
+  /* === Sidebar === */
+  --sidebar: #181825;
+  --sidebar-foreground: #8b8b9a;
+  --sidebar-primary: #4a7fc1;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #252538;
+  --sidebar-accent-foreground: #e0e0e0;
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+  --sidebar-ring: rgba(74, 127, 193, 0.35);
 }
 
 .dark {
-  --background: #0c111c;
-  --foreground: #cbd5e1;
-  --card: #141a28;
-  --card-foreground: #cbd5e1;
-  --popover: #141a28;
-  --popover-foreground: #cbd5e1;
-  --primary: #3b82f6;
-  --primary-foreground: #eff6ff;
-  --secondary: #1c2536;
-  --secondary-foreground: #cbd5e1;
-  --muted: #111827;
-  --muted-foreground: #64748b;
-  --accent: #1c2536;
-  --accent-foreground: #dbe7ff;
-  --destructive: #ef4444;
-  --border: rgba(148, 163, 184, 0.14);
-  --input: rgba(148, 163, 184, 0.18);
-  --ring: rgba(59, 130, 246, 0.34);
-  --chart-1: #3b82f6;
-  --chart-2: #10b981;
-  --chart-3: #f97316;
-  --chart-4: #38bdf8;
-  --chart-5: #a78bfa;
-  --sidebar: #0a0f19;
-  --sidebar-foreground: #cbd5e1;
-  --sidebar-primary: #3b82f6;
-  --sidebar-primary-foreground: #eff6ff;
-  --sidebar-accent: #141d2a;
-  --sidebar-accent-foreground: #f8fafc;
-  --sidebar-border: rgba(148, 163, 184, 0.14);
-  --sidebar-ring: rgba(59, 130, 246, 0.34);
+  --background: #1e1e2e;
+  --foreground: #e0e0e0;
+  --card: #2a2a3c;
+  --card-foreground: #e0e0e0;
+  --popover: #32324a;
+  --popover-foreground: #e0e0e0;
+  --primary: #4a7fc1;
+  --primary-foreground: #ffffff;
+  --secondary: #32324a;
+  --secondary-foreground: #c8c8d8;
+  --muted: #252538;
+  --muted-foreground: #8b8b9a;
+  --accent: #32324a;
+  --accent-foreground: #e0e0e0;
+  --destructive: #e55c5c;
+  --border: rgba(255, 255, 255, 0.06);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: rgba(74, 127, 193, 0.35);
+  --info: #5a9fd4;
+  --info-foreground: #f0f9ff;
+  --chart-1: #4a7fc1;
+  --chart-2: #5cb85c;
+  --chart-3: #d4a03a;
+  --chart-4: #5a9fd4;
+  --chart-5: #9b7ed8;
+  --sidebar: #181825;
+  --sidebar-foreground: #8b8b9a;
+  --sidebar-primary: #4a7fc1;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #252538;
+  --sidebar-accent-foreground: #e0e0e0;
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+  --sidebar-ring: rgba(74, 127, 193, 0.35);
 }
 
 @layer base {

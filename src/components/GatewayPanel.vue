@@ -266,7 +266,7 @@ defineEmits<{
 
 .card-head p {
   margin: 8px 0 0;
-  color: #64748b;
+  color: #8b8b9a;
 }
 
 .gateway-grid {
@@ -284,13 +284,13 @@ defineEmits<{
   display: grid;
   gap: 10px;
   padding: 18px;
-  border: 1px solid rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 8px;
-  background: #101722;
+  background: #252538;
 }
 
 .subtle-card {
-  background: #101722;
+  background: #252538;
 }
 
 .guide-head {
@@ -302,13 +302,13 @@ defineEmits<{
 
 .guide-card h4 {
   margin: 0;
-  color: #e2e8f0;
+  color: #e0e0e0;
   font-size: 15px;
 }
 
 .guide-card p {
   margin: 0;
-  color: #cbd5e1;
+  color: #c8c8d8;
   line-height: 1.7;
 }
 
@@ -318,12 +318,12 @@ defineEmits<{
   gap: 8px;
   margin: 0;
   padding-left: 18px;
-  color: #cbd5e1;
+  color: #c8c8d8;
   line-height: 1.7;
 }
 
 .guide-note {
-  color: #64748b;
+  color: #8b8b9a;
   font-size: 13px;
 }
 
@@ -333,13 +333,13 @@ defineEmits<{
 }
 
 .field span {
-  color: #cbd5e1;
+  color: #c8c8d8;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .field-help {
-  color: #64748b;
+  color: #8b8b9a;
   font-size: 12px;
   line-height: 1.6;
 }
@@ -350,8 +350,8 @@ defineEmits<{
 .guide-list code {
   padding: 2px 6px;
   border-radius: 999px;
-  background: rgba(59, 130, 246, 0.12);
-  color: #bfdbfe;
+  background: rgba(74, 127, 193, 0.12);
+  color: #7aa3d9;
   font-size: 12px;
 }
 

@@ -5,7 +5,7 @@
         <h3>任务历史</h3>
         <p>展示当前项目最近执行结果，便于回看成功记录和失败原因。</p>
       </div>
-      <Badge variant="outline" class="rounded-full border-[rgba(148,163,184,0.18)] bg-transparent text-[#cbd5e1]">{{ records.length }} 条</Badge>
+      <Badge variant="outline" class="rounded-md border-[rgba(255,255,255,0.08)] bg-transparent text-[#c0c0d0]">{{ records.length }} 条</Badge>
     </header>
 
     <div v-if="records.length > 0" class="history-layout">
@@ -160,16 +160,17 @@ function formatDuration(durationMs: number) {
 .card-head h3,
 .log-preview-head h4 {
   margin: 0;
-  color: #f8fafc;
-  font-size: 16px;
+  color: #e0e0e0;
+  font-size: 15px;
+  font-weight: 600;
   line-height: 1.25;
   letter-spacing: -0.01em;
 }
 
 .card-head p {
   margin: 8px 0 0;
-  color: #a7b6cc;
-  font-size: 11px;
+  color: #8b8b9a;
+  font-size: 12px;
   line-height: 1.7;
 }
 
@@ -190,28 +191,37 @@ function formatDuration(durationMs: number) {
   display: grid;
   gap: 8px;
   padding: 14px 16px;
-  border: 1px solid rgba(148, 163, 184, 0.14);
-  border-radius: 8px;
-  background: #101722;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 2px solid transparent;
+  border-radius: 0 8px 8px 0;
+  background: #252538;
   text-align: left;
   cursor: pointer;
+  transition: border-color 180ms ease, background-color 180ms ease, border-left-color 180ms ease;
 }
 
 .history-item[data-active='true'] {
-  border-color: rgba(59, 130, 246, 0.26);
-  background: #1c2536;
-  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.06);
+  border-color: rgba(74, 127, 193, 0.25);
+  border-left-color: #4a7fc1;
+  background: #2a2a3c;
+}
+
+.history-item:focus-visible {
+  outline: none;
+  border-color: rgba(74, 127, 193, 0.3);
+  box-shadow: 0 0 0 1px rgba(74, 127, 193, 0.2);
 }
 
 .history-item strong,
 .detail-item strong {
-  color: #e2e8f0;
+  color: #e0e0e0;
+  font-weight: 500;
   word-break: break-word;
 }
 
 .history-item small,
 .detail-item span {
-  color: #8ea0ba;
+  color: #8b8b9a;
 }
 
 .history-top {
@@ -220,7 +230,7 @@ function formatDuration(durationMs: number) {
   justify-content: space-between;
   gap: 8px;
   font-size: 11px;
-  color: #8ea0ba;
+  color: #8b8b9a;
 }
 
 .history-detail {
@@ -245,7 +255,7 @@ function formatDuration(durationMs: number) {
 }
 
 .error-text {
-  color: #f87171;
+  color: #e06060;
 }
 
 .log-preview {
@@ -253,7 +263,7 @@ function formatDuration(durationMs: number) {
   gap: 12px;
   padding: 16px;
   border-radius: 8px;
-  background: #101722;
+  background: #252538;
   min-width: 0;
 }
 
@@ -265,7 +275,7 @@ function formatDuration(durationMs: number) {
 }
 
 .log-preview-head h4 {
-  color: #f8fafc;
+  color: #e0e0e0;
 }
 
 .log-lines {
@@ -277,16 +287,16 @@ function formatDuration(durationMs: number) {
 
 .log-lines p {
   margin: 0;
-  color: #d7e2f0;
+  color: #c0c0d0;
   font-family: 'SFMono-Regular', 'Menlo', monospace;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.6;
   word-break: break-word;
 }
 
 .muted-paragraph {
   margin: 0;
-  color: #8ea0ba;
+  color: #8b8b9a;
   font-size: 12px;
   line-height: 1.7;
 }

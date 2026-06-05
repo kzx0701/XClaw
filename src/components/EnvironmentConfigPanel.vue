@@ -75,7 +75,7 @@
 
     <Drawer :open="editorVisible" direction="right" dismissible modal @update:open="handleDrawerOpenChange">
       <DrawerContent
-        class="environment-drawer border-[rgba(148,163,184,0.12)] bg-[#141a28] text-[#cbd5e1] shadow-[0_18px_40px_rgba(2,6,23,0.45)]"
+        class="environment-drawer border-[rgba(255,255,255,0.06)] bg-[#1e1e2e] text-[#e0e0e0] shadow-[0_18px_40px_rgba(0,0,0,0.35)]"
         :style="{ width: 'clamp(720px, 46vw, 860px)', maxWidth: '94vw' }"
       >
         <DrawerHeader class="drawer-head">
@@ -367,15 +367,16 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .card-head h3 {
   margin: 0;
-  color: #f8fafc;
-  font-size: 17px;
-  line-height: 1.25;
+  color: #e0e0e0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
   letter-spacing: -0.01em;
 }
 
 .card-head p {
   margin: 8px 0 0;
-  color: #a7b6cc;
+  color: #8b8b9a;
   font-size: 12px;
   line-height: 1.7;
 }
@@ -403,34 +404,33 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   gap: 14px;
   min-height: 146px;
   padding: 18px;
-  border: 1px solid rgba(148, 163, 184, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 8px;
-  background: #141a28;
+  background: #2a2a3c;
   color: inherit;
   text-align: left;
   cursor: pointer;
   transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    background-color 160ms ease;
+    border-color 180ms ease,
+    background-color 180ms ease,
+    transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.environment-card:active {
+  transform: scale(0.985);
 }
 
 .environment-card[data-preset='test'] {
-  background:
-    linear-gradient(180deg, rgba(59, 130, 246, 0.12) 0%, rgba(20, 26, 40, 0.98) 42%),
-    #141a28;
+  border-left: 2px solid rgba(74, 127, 193, 0.5);
 }
 
 .environment-card[data-preset='prod'] {
-  background:
-    linear-gradient(180deg, rgba(16, 185, 129, 0.1) 0%, rgba(20, 26, 40, 0.98) 42%),
-    #141a28;
+  border-left: 2px solid rgba(72, 199, 142, 0.5);
 }
 
 .environment-card:hover {
-  border-color: rgba(59, 130, 246, 0.24);
-  background: #1c2536;
-  box-shadow: 0 14px 28px rgba(2, 6, 23, 0.22);
+  border-color: rgba(74, 127, 193, 0.25);
+  background: #32324a;
 }
 
 .environment-card-top,
@@ -462,9 +462,9 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 .environment-status-text {
   display: inline-flex;
   align-items: center;
-  color: #94a3b8;
+  color: #8b8b9a;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1;
   white-space: nowrap;
 }
@@ -475,23 +475,23 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   height: 7px;
   margin-right: 6px;
   border-radius: 999px;
-  background: rgba(148, 163, 184, 0.35);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .environment-status-text[data-status='configured'] {
-  color: #86efac;
+  color: #8ad48a;
 }
 
 .environment-status-text[data-status='configured']::before {
-  background: #10b981;
+  background: #48c78e;
 }
 
 .environment-status-text[data-status='pending'] {
-  color: #fbbf24;
+  color: #d4c48a;
 }
 
 .environment-status-text[data-status='pending']::before {
-  background: #f97316;
+  background: #e0a340;
 }
 
 .environment-icon {
@@ -501,8 +501,8 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   width: 42px;
   height: 42px;
   border-radius: 8px;
-  background: #101722;
-  color: #93c5fd;
+  background: rgba(74, 127, 193, 0.12);
+  color: #6a9fd8;
   font-size: 16px;
   flex: 0 0 auto;
 }
@@ -514,8 +514,9 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .environment-card-body strong {
-  color: #e2e8f0;
+  color: #e0e0e0;
   font-size: 14px;
+  font-weight: 500;
   line-height: 1.25;
 }
 
@@ -523,7 +524,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 .environment-card-foot span,
 .muted-paragraph {
   margin: 0;
-  color: #64748b;
+  color: #6b6b7a;
 }
 
 .environment-card-body p,
@@ -539,7 +540,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   gap: 12px;
   margin-top: auto;
   padding-top: 12px;
-  border-top: 1px solid rgba(148, 163, 184, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .empty-state {
@@ -547,16 +548,16 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   justify-items: center;
   gap: 10px;
   padding: 22px 18px;
-  border: 1px dashed rgba(148, 163, 184, 0.18);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
   border-radius: 8px;
-  background: #101722;
+  background: rgba(42, 42, 60, 0.5);
   text-align: center;
 }
 
 .empty-icon {
   width: 20px;
   height: 20px;
-  color: #64748b;
+  color: #6b6b7a;
 }
 
 .empty-state h4,
@@ -566,8 +567,8 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .drawer-head {
   padding: 22px 24px 18px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-  background: linear-gradient(180deg, rgba(31, 42, 61, 0.98), rgba(23, 33, 49, 0.96)), #1a2436;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: #2a2a3c;
 }
 
 .drawer-head-copy {
@@ -577,10 +578,10 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .drawer-eyebrow {
   margin: 0 0 10px;
-  color: #64748b;
+  color: #6b6b7a;
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -598,12 +599,9 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   display: grid;
   gap: 14px;
   padding: 18px;
-  border: 1px solid rgba(148, 163, 184, 0.12);
-  border-radius: 12px;
-  background:
-    linear-gradient(180deg, rgba(29, 40, 58, 0.94), rgba(22, 31, 46, 0.98)),
-    #1a2436;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  background: #252538;
 }
 
 .drawer-section-head {
@@ -617,13 +615,14 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .drawer-section-head h4 {
-  color: #f8fafc;
+  color: #e0e0e0;
   font-size: 14px;
+  font-weight: 600;
   line-height: 1.3;
 }
 
 .drawer-section-head p {
-  color: #a7b6cc;
+  color: #8b8b9a;
   font-size: 12px;
   line-height: 1.7;
 }
@@ -650,14 +649,14 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .field span {
-  color: #cbd5e1;
+  color: #c0c0d0;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .field small {
-  color: #9aabc2;
+  color: #8b8b9a;
   line-height: 1.6;
 }
 
@@ -669,7 +668,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .switch-row small {
-  color: #93a4bd;
+  color: #8b8b9a;
   font-size: 12px;
 }
 
@@ -687,8 +686,8 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   align-items: center;
   justify-content: stretch;
   padding: 16px 24px 18px;
-  border-top: 1px solid rgba(148, 163, 184, 0.1);
-  background: linear-gradient(180deg, rgba(27, 38, 55, 0.94), rgba(22, 31, 46, 0.98)), #1a2436;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: #2a2a3c;
 }
 
 .environment-create-actions :deep(button) {
@@ -703,15 +702,15 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 .environment-check-button {
   min-width: 92px;
   justify-content: center;
-  background: #1f2c43;
-  color: #dbe7ff;
-  border-color: rgba(96, 165, 250, 0.18);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  background: #32324a;
+  color: #c0c0d0;
+  border-color: rgba(74, 127, 193, 0.18);
+  
 }
 
 .environment-check-button:hover {
-  background: #273754;
-  color: #f8fbff;
+  background: #3a3a54;
+  color: #e0e0e0;
 }
 
 :deep(.environment-drawer) {
@@ -723,8 +722,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   padding: 0;
   overflow: hidden;
   background:
-    linear-gradient(180deg, rgba(29, 40, 58, 0.98), rgba(21, 29, 44, 1)),
-    #1a2436;
+    #1e1e2e;
 }
 
 @media (max-width: 960px) {

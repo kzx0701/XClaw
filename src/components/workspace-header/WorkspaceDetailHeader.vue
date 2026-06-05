@@ -71,7 +71,7 @@ defineEmits<{
 
 .workspace-detail-header-copy h2 {
   margin: 0;
-  color: #f8fafc;
+  color: #e0e0e0;
   font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -86,7 +86,7 @@ defineEmits<{
 }
 
 .workspace-detail-header-button {
-  color: #94a3b8;
+  color: #8b8b9a;
 }
 
 .workspace-detail-header-button-danger {
@@ -94,8 +94,8 @@ defineEmits<{
 }
 
 .workspace-detail-header-button:hover {
-  background: rgba(59, 130, 246, 0.1);
-  color: #bfdbfe;
+  background: rgba(74, 127, 193, 0.1);
+  color: #c8c8d8;
 }
 
 .workspace-detail-header-button-danger:hover {

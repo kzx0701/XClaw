@@ -72,14 +72,15 @@ defineProps<{
 
 .card-head h3 {
   margin: 0;
-  color: #f8fafc;
-  font-size: 17px;
-  line-height: 1.25;
+  color: #e0e0e0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
 .card-head p {
   margin: 8px 0 0;
-  color: #a7b6cc;
+  color: #8b8b9a;
   font-size: 12px;
   line-height: 1.7;
 }
@@ -92,23 +93,23 @@ defineProps<{
 
 .overview-item {
   display: grid;
-  gap: 8px;
+  gap: 6px;
   min-width: 0;
 }
 
 .overview-item span {
-  color: #8fa1bc;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  color: #8b8b9a;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
 }
 
 .overview-item strong {
   display: block;
   min-width: 0;
-  color: #f8fafc;
-  font-size: 14px;
+  color: #e0e0e0;
+  font-size: 13px;
+  font-weight: 500;
   line-height: 1.55;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -132,7 +133,7 @@ defineProps<{
 
 .muted-paragraph {
   margin: 0;
-  color: #8ea0ba;
+  color: #8b8b9a;
 }
 
 @media (max-width: 960px) {

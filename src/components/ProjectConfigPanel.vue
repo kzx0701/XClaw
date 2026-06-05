@@ -128,15 +128,16 @@ function updateBoolean(field: keyof ProjectRecord, value: boolean | undefined) {
 
 .card-head h3 {
   margin: 0;
-  color: #f8fafc;
-  font-size: 17px;
-  line-height: 1.25;
+  color: #e0e0e0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
   letter-spacing: -0.01em;
 }
 
 .card-head p {
   margin: 8px 0 0;
-  color: #a7b6cc;
+  color: #8b8b9a;
   font-size: 12px;
   line-height: 1.7;
 }
@@ -154,13 +155,13 @@ function updateBoolean(field: keyof ProjectRecord, value: boolean | undefined) {
 }
 
 .field span {
-  color: #cbd5e1;
+  color: #c0c0d0;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .field small {
-  color: #8ea0ba;
+  color: #8b8b9a;
   line-height: 1.6;
 }
 
@@ -172,12 +173,12 @@ function updateBoolean(field: keyof ProjectRecord, value: boolean | undefined) {
 }
 
 .switch-row small {
-  color: #8ea0ba;
+  color: #8b8b9a;
 }
 
 .muted-paragraph {
   margin: 0;
-  color: #8ea0ba;
+  color: #8b8b9a;
 }
 
 @media (max-width: 960px) {

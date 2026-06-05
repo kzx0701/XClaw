@@ -21,38 +21,46 @@ defineProps<{
 }
 
 .status-pill-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 999px;
-  background: rgba(148, 163, 184, 0.55);
-  box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.08);
+  background: #8b8b9a;
+  box-shadow: 0 0 0 3px rgba(139, 139, 154, 0.12);
   flex: 0 0 auto;
 }
 
 .status-pill-text {
-  color: #cbd5e1;
+  color: #8b8b9a;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1;
   white-space: nowrap;
 }
 
 .status-pill[data-status="connected"] .status-pill-dot {
-  background: #10b981;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+  background: #48c78e;
+  box-shadow: 0 0 0 3px rgba(72, 199, 142, 0.15);
+}
+
+.status-pill[data-status="connected"] .status-pill-text {
+  color: #8ad48a;
 }
 
 .status-pill[data-status="connecting"] .status-pill-dot {
-  background: #f97316;
-  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12);
+  background: #e0a340;
+  box-shadow: 0 0 0 3px rgba(224, 163, 64, 0.15);
+}
+
+.status-pill[data-status="connecting"] .status-pill-text {
+  color: #d4c48a;
 }
 
 .status-pill[data-status="disconnected"] .status-pill-dot {
-  background: #64748b;
-  box-shadow: 0 0 0 4px rgba(100, 116, 139, 0.12);
+  background: #8b8b9a;
+  box-shadow: 0 0 0 3px rgba(139, 139, 154, 0.12);
 }
 
 .status-pill[data-status="disconnected"] .status-pill-text {
-  color: #94a3b8;
+  color: #8b8b9a;
 }
 </style>

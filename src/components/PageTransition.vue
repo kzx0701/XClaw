@@ -21,21 +21,18 @@ defineProps<{
 .page-panel-enter-active,
 .page-panel-leave-active {
   transition:
-    opacity 190ms ease,
-    transform 190ms ease,
-    filter 190ms ease;
+    opacity 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .page-panel-enter-from {
   opacity: 0;
   transform: translateY(8px);
-  filter: blur(1px);
 }
 
 .page-panel-leave-to {
   opacity: 0;
   transform: translateY(-4px);
-  filter: blur(1px);
 }
 
 @media (prefers-reduced-motion: reduce) {

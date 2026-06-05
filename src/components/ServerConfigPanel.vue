@@ -96,7 +96,7 @@
 
     <Drawer :open="isCreating" direction="right" dismissible modal @update:open="handleDrawerOpenChange">
       <DrawerContent
-        class="create-drawer server-create-drawer border-[rgba(148,163,184,0.12)] bg-[#141a28] text-[#cbd5e1] shadow-[0_18px_40px_rgba(2,6,23,0.45)]"
+        class="create-drawer server-create-drawer border-[rgba(255,255,255,0.06)] bg-[#1e1e2e] text-[#e0e0e0] shadow-[0_20px_50px_rgba(2,6,23,0.5)]"
       >
         <DrawerHeader class="server-create-header">
           <div class="server-create-head-copy">
@@ -341,34 +341,30 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .server-auth-badge {
-  margin: 0;
-}
-
-.server-auth-badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   justify-self: start;
   min-height: 22px;
   padding: 0 9px;
-  border: 1px solid rgba(148, 163, 184, 0.14);
-  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   line-height: 1;
 }
 
 .server-auth-badge[data-auth-type="password"] {
-  border-color: rgba(249, 115, 22, 0.22);
-  background: rgba(249, 115, 22, 0.12);
-  color: #fdba74;
+  border-color: rgba(212, 160, 58, 0.2);
+  background: rgba(212, 160, 58, 0.1);
+  color: #d4c48a;
 }
 
 .server-auth-badge[data-auth-type="privateKey"] {
-  border-color: rgba(16, 185, 129, 0.24);
-  background: rgba(16, 185, 129, 0.12);
-  color: #6ee7b7;
+  border-color: rgba(92, 184, 92, 0.2);
+  background: rgba(92, 184, 92, 0.1);
+  color: #8ad48a;
 }
 
 .delete-server-button {
@@ -380,25 +376,25 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   height: 30px;
   padding: 0;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: 6px;
   background: transparent;
-  color: #f28b82;
+  color: #e88a8a;
   cursor: pointer;
   transition:
     background-color 150ms ease,
     border-color 150ms ease,
     color 150ms ease,
-    transform 150ms ease;
+    transform 100ms ease;
 }
 
 .delete-server-button:hover {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.18);
-  color: #fca5a5;
+  background: rgba(229, 92, 92, 0.1);
+  border-color: rgba(229, 92, 92, 0.15);
+  color: #f0a0a0;
 }
 
 .delete-server-button:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 .server-empty-shell {
@@ -413,15 +409,9 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   grid-template-columns: minmax(0, 1fr);
   min-height: 400px;
   padding: 34px 34px 32px;
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  border-radius: 14px;
-  background:
-    radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 34%),
-    linear-gradient(90deg, rgba(20, 31, 48, 0.98) 0%, rgba(19, 29, 46, 0.94) 50%, rgba(18, 28, 43, 0.76) 74%, rgba(16, 24, 38, 0.42) 100%),
-    linear-gradient(180deg, rgba(20, 30, 47, 0.98), rgba(16, 24, 39, 0.9));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 20px 40px rgba(2, 6, 23, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  background: #2a2a3c;
 }
 
 .server-empty-hero::after {
@@ -432,7 +422,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   width: 340px;
   height: 340px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.14), transparent 70%);
+  background: radial-gradient(circle, rgba(74, 127, 193, 0.08), transparent 70%);
   pointer-events: none;
 }
 
@@ -453,35 +443,34 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .server-empty-eyebrow {
-  color: #8fb4ff;
+  color: #7aa3d9;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.12em;
 }
 
 .server-empty-divider {
   width: 44px;
   height: 1px;
-  background: linear-gradient(90deg, rgba(96, 165, 250, 0.65), rgba(96, 165, 250, 0));
+  background: linear-gradient(90deg, rgba(74, 127, 193, 0.5), rgba(74, 127, 193, 0));
 }
 
 .server-empty-copy h2 {
   margin: 0;
   max-width: 560px;
-  color: #f8fafc;
-  font-size: 28px;
-  line-height: 1.08;
-  letter-spacing: -0.038em;
+  color: #e0e0e0;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.15;
   text-wrap: balance;
 }
 
 .server-empty-copy p {
   margin: 0;
   max-width: 560px;
-  color: #93a4bf;
-  font-size: 15px;
-  line-height: 1.95;
+  color: #8b8b9a;
+  font-size: 14px;
+  line-height: 1.8;
 }
 
 .server-empty-highlights {
@@ -497,10 +486,10 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   align-items: center;
   min-height: 26px;
   padding: 0 10px;
-  border: 1px solid rgba(148, 163, 184, 0.08);
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.22);
-  color: #9fb0c9;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #8b8b9a;
   font-size: 11px;
   letter-spacing: 0.01em;
   line-height: 1;
@@ -515,17 +504,13 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .server-empty-actions :deep(.app-primary-button) {
   min-width: 272px;
-  min-height: 44px;
+  min-height: 40px;
   padding-inline: 20px;
-  border-radius: 12px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 10px 26px rgba(37, 99, 235, 0.22);
+  border-radius: 8px;
 }
 
 .server-empty-actions :deep(.app-primary-button span) {
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  font-weight: 500;
 }
 
 .server-empty-tip {
@@ -535,7 +520,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .server-empty-tip small {
-  color: #708198;
+  color: #6b6b7a;
   font-size: 11px;
   line-height: 1.6;
 }
@@ -555,7 +540,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   max-width: none;
   transform: translateY(-48%);
   opacity: 0.8;
-  filter: drop-shadow(0 28px 60px rgba(2, 6, 23, 0.34));
+  filter: drop-shadow(0 28px 60px rgba(0, 0, 0, 0.3));
   user-select: none;
 }
 
@@ -569,18 +554,14 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   display: grid;
   gap: 10px;
   padding: 20px 18px 18px;
-  border: 1px solid rgba(148, 163, 184, 0.14);
-  border-radius: 12px;
-  background:
-    linear-gradient(180deg, rgba(30, 41, 59, 0.82), rgba(22, 30, 45, 0.96)),
-    #1a2436;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.035),
-    0 10px 22px rgba(2, 6, 23, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  background: #2a2a3c;
+  cursor: pointer;
   transition:
-    border-color 0.2s ease,
-    transform 0.2s ease,
-    background 0.2s ease;
+    border-color 160ms ease,
+    background-color 160ms ease,
+    transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .server-empty-step::before {
@@ -588,35 +569,38 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   width: 28px;
   height: 2px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #60a5fa, rgba(96, 165, 250, 0));
+  background: linear-gradient(90deg, #4a7fc1, rgba(74, 127, 193, 0));
 }
 
 .server-empty-step span {
-  color: #60a5fa;
+  color: #4a7fc1;
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.08em;
 }
 
 .server-empty-step strong {
-  color: #f8fafc;
+  color: #e0e0e0;
   font-size: 15px;
+  font-weight: 500;
   line-height: 1.3;
 }
 
 .server-empty-step p {
   margin: 0;
-  color: #a7b6cc;
+  color: #8b8b9a;
   font-size: 13px;
   line-height: 1.7;
 }
 
 .server-empty-step:hover {
-  border-color: rgba(96, 165, 250, 0.22);
-  background:
-    linear-gradient(180deg, rgba(34, 47, 68, 0.9), rgba(24, 34, 51, 0.98)),
-    #1d2940;
+  border-color: rgba(255, 255, 255, 0.1);
+  background: #32324a;
+  transform: translateY(-1px);
+}
+
+.server-empty-step:active {
+  transform: scale(0.985);
 }
 
 .password-field {
@@ -630,20 +614,19 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   height: 28px;
   width: 28px;
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: #8b8b9a;
 }
 
 .password-toggle:hover {
-  color: #e2e8f0;
+  color: #c8c8d8;
 }
 
 .drawer-eyebrow {
   margin: 0 0 10px;
-  color: #64748b;
+  color: #6b6b7a;
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.08em;
 }
 
 .drawer-actions {
@@ -666,8 +649,8 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .server-create-header {
   padding: 22px 24px 18px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-  background: linear-gradient(180deg, rgba(31, 42, 61, 0.98), rgba(23, 33, 49, 0.96)), #1a2436;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: #252538;
 }
 
 .server-create-head-copy {
@@ -681,14 +664,14 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .server-create-header :deep(h2) {
-  color: #f8fafc;
-  font-size: 24px;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
+  color: #e0e0e0;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
 }
 
 .server-create-header :deep(p:last-child) {
-  color: #9fb0c7;
+  color: #8b8b9a;
   font-size: 13px;
   line-height: 1.7;
 }
@@ -707,12 +690,9 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   display: grid;
   gap: 14px;
   padding: 18px;
-  border: 1px solid rgba(148, 163, 184, 0.12);
-  border-radius: 12px;
-  background:
-    linear-gradient(180deg, rgba(29, 40, 58, 0.94), rgba(22, 31, 46, 0.98)),
-    #1a2436;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  background: #2a2a3c;
 }
 
 .server-create-section-head {
@@ -722,14 +702,15 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .server-create-section-head h4 {
   margin: 0;
-  color: #f8fafc;
+  color: #e0e0e0;
   font-size: 14px;
+  font-weight: 500;
   line-height: 1.3;
 }
 
 .server-create-section-head p {
   margin: 0;
-  color: #9fb0c7;
+  color: #8b8b9a;
   font-size: 12px;
   line-height: 1.7;
 }
@@ -751,9 +732,9 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .server-create-field-label {
-  color: #cbd5e1;
+  color: #c8c8d8;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .server-create-field-content {
@@ -770,8 +751,8 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   align-items: center;
   justify-content: stretch;
   padding: 16px 24px 18px;
-  border-top: 1px solid rgba(148, 163, 184, 0.1);
-  background: linear-gradient(180deg, rgba(27, 38, 55, 0.94), rgba(22, 31, 46, 0.98)), #1a2436;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: #252538;
 }
 
 .server-create-actions :deep(button) {
