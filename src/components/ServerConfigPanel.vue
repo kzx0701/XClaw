@@ -1,46 +1,71 @@
-﻿<template>
+<template>
   <div class="server-page">
     <article class="server-list-page">
-      <header class="server-toolbar">
-        <Button class="app-primary-button" @click="$emit('create-server')">
-          <Plus class="h-4 w-4" />
-          <span>新增服务器</span>
-        </Button>
-      </header>
+      <section class="server-toolbar-panel">
+        <div class="server-search-row">
+          <div class="server-search-field">
+            <Search class="server-search-icon h-4 w-4" />
+            <InputText
+              :model-value="searchKeyword"
+              class="server-search-input"
+              placeholder="搜索服务器名称、主机或用户名..."
+              @update:model-value="searchKeyword = String($event ?? '')"
+            />
+          </div>
+        </div>
 
-      <div v-if="servers.length > 0" class="server-card-list">
-        <ResourceCard
-          v-for="server in servers"
-          :key="server.id"
-          :description="`${server.host}:${server.port}，${server.username}`"
-          :title="server.name"
-          @select="$emit('select-server', server.id)"
-        >
-          <template #icon>
-            <Server class="h-5 w-5" aria-hidden="true" />
-          </template>
+        <div class="server-actions-row">
+          <Button class="server-add-button" variant="secondary" @click="$emit('create-server')">
+            <Plus class="h-4 w-4" />
+            <span>新增服务器</span>
+          </Button>
+        </div>
+      </section>
 
-          <template #meta>
-            <span class="server-auth-badge" :data-auth-type="server.authType">
-              <KeyRound v-if="server.authType === 'password'" class="h-3 w-3" aria-hidden="true" />
-              <ShieldCheck v-else class="h-3 w-3" aria-hidden="true" />
-              {{ server.authType === "password" ? "密码认证" : "私钥认证" }}
-            </span>
-          </template>
+      <section v-if="servers.length > 0" class="server-library-section">
+        <header class="server-section-header">
+          <h2>服务器</h2>
+        </header>
 
-          <template #actions>
-            <button
-              type="button"
-              class="delete-server-button"
-              title="删除服务器"
-              aria-label="删除服务器"
-              @click.stop="$emit('delete-server-card', server.id)"
-            >
-              <Trash2 class="h-4 w-4" aria-hidden="true" />
-            </button>
-          </template>
-        </ResourceCard>
-      </div>
+        <div v-if="filteredServers.length > 0" class="server-card-list">
+          <ResourceCard
+            v-for="server in filteredServers"
+            :key="server.id"
+            :description="`${server.host}:${server.port}，${server.username}`"
+            :title="server.name"
+            @select="$emit('select-server', server.id)"
+          >
+            <template #icon>
+              <Server class="h-5 w-5" aria-hidden="true" />
+            </template>
+
+            <template #meta>
+              <span class="server-auth-badge" :data-auth-type="server.authType">
+                <KeyRound v-if="server.authType === 'password'" class="h-3 w-3" aria-hidden="true" />
+                <ShieldCheck v-else class="h-3 w-3" aria-hidden="true" />
+                {{ server.authType === "password" ? "密码认证" : "私钥认证" }}
+              </span>
+            </template>
+
+            <template #actions>
+              <button
+                type="button"
+                class="delete-server-button"
+                title="删除服务器"
+                aria-label="删除服务器"
+                @click.stop="$emit('delete-server-card', server.id)"
+              >
+                <Trash2 class="h-4 w-4" aria-hidden="true" />
+              </button>
+            </template>
+          </ResourceCard>
+        </div>
+
+        <div v-else class="server-search-empty">
+          <p>没有匹配的服务器</p>
+          <small>试试搜索名称、主机地址或用户名。</small>
+        </div>
+      </section>
 
       <section v-else class="server-empty-shell">
         <div class="server-empty-hero">
@@ -244,10 +269,9 @@
     </Drawer>
   </div>
 </template>
-
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { Eye, EyeOff, KeyRound, Plus, Save, Server, ShieldCheck, Trash2, Wifi } from "lucide-vue-next";
+import { Eye, EyeOff, KeyRound, Plus, Save, Search, Server, ShieldCheck, Trash2, Wifi } from "lucide-vue-next";
 
 import serverBackground from "@/assets/images/server-bg.png";
 import ResourceCard from "@/components/ResourceCard.vue";
@@ -282,8 +306,20 @@ const props = defineProps<{
 }>();
 
 const showPassword = ref(false);
+const searchKeyword = ref("");
 
 const editorMode = computed(() => (props.selectedServerId ? "edit" : "create"));
+const filteredServers = computed(() => {
+  const keyword = searchKeyword.value.trim().toLowerCase();
+
+  if (!keyword) {
+    return props.servers;
+  }
+
+  return props.servers.filter((server) => {
+    return [server.name, server.host, server.username].some((field) => field.toLowerCase().includes(keyword));
+  });
+});
 
 function updateText(field: keyof ServerFormValue, value: string | AuthType | undefined) {
   emit("update:modelValue", {
@@ -322,14 +358,81 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 .server-list-page {
   grid-column: 1 / -1;
   display: grid;
-  gap: 14px;
+  gap: 16px;
 }
 
-.server-toolbar {
+.server-toolbar-panel {
+  display: grid;
+  gap: 14px;
+  margin-inline: -32px;
+  padding: 14px 32px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: #2a2a3c;
+}
+
+.server-search-row {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  padding-bottom: 4px;
+}
+
+.server-search-field {
+  position: relative;
+  width: 100%;
+}
+
+.server-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  color: #8b8b9a;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.server-search-input {
+  padding-left: 38px;
+}
+
+.server-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.server-add-button {
+  height: 34px;
+  padding-inline: 12px;
+  border-radius: 8px;
+  border-color: rgba(255, 255, 255, 0.08);
+  background: #4a4d63;
+  color: #eef0f6;
+  box-shadow: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.server-add-button:hover {
+  background: #585b72;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.server-library-section {
+  display: grid;
+  gap: 12px;
+}
+
+.server-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.server-section-header h2 {
+  margin: 0;
+  color: #e0e0e0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
 .server-card-list {
@@ -338,6 +441,31 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   gap: 16px;
   align-items: start;
   justify-content: start;
+}
+
+.server-search-empty {
+  display: grid;
+  gap: 6px;
+  padding: 18px 16px;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(42, 42, 60, 0.4);
+}
+
+.server-search-empty p,
+.server-search-empty small {
+  margin: 0;
+}
+
+.server-search-empty p {
+  color: #e0e0e0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.server-search-empty small {
+  color: #8b8b9a;
+  line-height: 1.6;
 }
 
 .server-auth-badge {
@@ -765,6 +893,11 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 @media (max-width: 960px) {
+  .server-toolbar-panel {
+    margin-inline: -24px;
+    padding-inline: 24px;
+  }
+
   .server-empty-guide,
   .server-card-list {
     grid-template-columns: 1fr;
@@ -800,6 +933,11 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 @media (max-width: 640px) {
+  .server-toolbar-panel {
+    margin-inline: -18px;
+    padding-inline: 18px;
+  }
+
   .server-empty-shell {
     gap: 16px;
   }

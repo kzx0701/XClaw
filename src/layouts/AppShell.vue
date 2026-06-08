@@ -34,21 +34,7 @@
     </aside>
 
     <main class="app-shell-main min-w-0 bg-background">
-      <header class="flex h-16 items-center border-b border-border px-8">
-        <Transition name="shell-title" mode="out-in">
-          <div :key="headerTransitionKey" class="app-shell-header-content">
-            <slot v-if="$slots.header" name="header" />
-            <template v-else>
-              <div>
-                <h2 class="text-lg font-semibold tracking-tight text-foreground">{{ panelTitle }}</h2>
-              </div>
-              <slot name="header-actions" />
-            </template>
-          </div>
-        </Transition>
-      </header>
-
-      <div class="h-[calc(100vh-65px)] overflow-auto px-8 py-6">
+      <div class="h-screen overflow-auto px-8 py-6">
         <slot />
       </div>
     </main>
@@ -56,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, useSlots } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { FolderKanban, FileText, Server } from "lucide-vue-next";
 import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
@@ -66,7 +52,6 @@ import XClawWordmark from "@/components/XClawWordmark.vue";
 import { useAppStore } from "@/stores/app";
 
 const appStore = useAppStore();
-const slots = useSlots();
 const appVersion = ref("1.0.0");
 const releaseUrl = "https://github.com/kzx0701/XClaw/releases";
 
@@ -87,22 +72,6 @@ const navItems = [
     icon: FileText,
   },
 ] as const;
-
-const panelTitle = computed(() => {
-  if (appStore.activePanel === "servers") {
-    return "服务器";
-  }
-
-  if (appStore.activePanel === "logs") {
-    return "日志";
-  }
-
-  return appStore.selectedProjectName && appStore.selectedProjectName !== "未选择项目" ? appStore.selectedProjectName : "项目";
-});
-
-const headerTransitionKey = computed(() => {
-  return slots.header ? `custom:${panelTitle.value}` : `default:${panelTitle.value}`;
-});
 
 const gatewayStatusLabel = computed(() => {
   if (appStore.connectionStatus === "connected") {
@@ -172,43 +141,5 @@ nav button[data-active="true"]::before {
   border-radius: 0 2px 2px 0;
   background: #4a7fc1;
   transform: translateY(-50%);
-}
-
-.app-shell-header-content {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.shell-title-enter-active,
-.shell-title-leave-active {
-  transition:
-    opacity 200ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.shell-title-enter-from {
-  opacity: 0;
-  transform: translateY(6px);
-}
-
-.shell-title-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .shell-title-enter-active,
-  .shell-title-leave-active {
-    transition: none;
-  }
-
-  .shell-title-enter-from,
-  .shell-title-leave-to {
-    opacity: 1;
-    transform: none;
-  }
 }
 </style>
