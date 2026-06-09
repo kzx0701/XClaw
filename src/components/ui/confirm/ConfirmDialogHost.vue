@@ -3,33 +3,33 @@
     <AlertDialogContent
       v-if="activeConfirm"
       size="sm"
-      class="max-w-[380px] gap-5 border-[rgba(255,255,255,0.06)] bg-[#2a2a3c] p-6 text-[#e0e0e0] shadow-[0_24px_60px_rgba(0,0,0,0.35)]"
+      class="max-w-[380px] gap-5 border border-[var(--border)] bg-[#fdfcfc] p-6 text-[#201d1d] shadow-none"
     >
       <AlertDialogHeader class="items-center gap-3 text-center">
         <AlertDialogMedia class="bg-[rgba(239,68,68,0.12)] text-[#e06060]">
           <component :is="activeConfirm.icon || Trash2" class="size-4" />
         </AlertDialogMedia>
-        <AlertDialogTitle class="text-center text-[17px] font-semibold tracking-[-0.01em] text-[#e0e0e0]">
+        <AlertDialogTitle class="text-center text-[16px] font-bold tracking-normal text-[#201d1d]">
           {{ activeConfirm.header }}
         </AlertDialogTitle>
-        <AlertDialogDescription class="max-w-[280px] text-center text-[13px] leading-6 text-[#8b8b9a]">
+        <AlertDialogDescription class="max-w-[280px] text-center text-[14px] leading-6 text-[#646262]">
           {{ activeConfirm.message }}
         </AlertDialogDescription>
       </AlertDialogHeader>
 
       <div
         v-if="activeConfirm.detailValue || activeConfirm.detailCode"
-        class="rounded-lg border border-[rgba(148,163,184,0.14)] bg-[#111827] px-4 py-3"
+        class="rounded-sm border border-[var(--border)] bg-[#f8f7f7] px-4 py-3"
       >
-        <p v-if="activeConfirm.detailLabel" class="mb-2 text-[11px] font-medium tracking-[0.08em] text-[#6b6b7a] uppercase">
+        <p v-if="activeConfirm.detailLabel" class="mb-2 text-[11px] font-medium tracking-[0.08em] text-[#7a7a7a] uppercase">
           {{ activeConfirm.detailLabel }}
         </p>
-        <p v-if="activeConfirm.detailValue" class="m-0 break-words text-[13px] font-semibold leading-6 text-[#e0e0e0]">
+        <p v-if="activeConfirm.detailValue" class="m-0 break-words text-[14px] font-bold leading-6 text-[#201d1d]">
           {{ activeConfirm.detailValue }}
         </p>
         <code
           v-if="activeConfirm.detailCode"
-          class="mt-1 block break-all text-[12px] leading-6 text-[#8b8b9a]"
+          class="mt-1 block break-all text-[14px] leading-6 text-[#424245]"
         >
           {{ activeConfirm.detailCode }}
         </code>
@@ -38,13 +38,13 @@
       <AlertDialogFooter class="grid grid-cols-2 gap-3 sm:grid-cols-2">
         <AlertDialogCancel
           variant="secondary"
-          class="mt-0 h-9 w-full border border-[rgba(255,255,255,0.08)] bg-[#32324a] px-3 text-sm text-[#c0c0d0] shadow-none hover:bg-[#3a3a54] hover:text-[#e0e0e0]"
+          class="mt-0 h-9 w-full border border-[var(--border)] bg-[#f8f7f7] px-3 text-sm text-[#201d1d] shadow-none hover:bg-[#f1eeee] hover:text-[#201d1d]"
         >
           {{ activeConfirm.rejectLabel }}
         </AlertDialogCancel>
         <AlertDialogAction
           :variant="activeConfirm.acceptClass === 'p-button-danger' ? 'destructive' : 'default'"
-          class="h-9 w-full border border-transparent px-3 text-sm shadow-none"
+          class="h-9 w-full border-0 px-3 text-sm shadow-none"
           @click="acceptConfirm"
         >
           {{ activeConfirm.acceptLabel }}

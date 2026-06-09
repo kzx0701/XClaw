@@ -1,5 +1,5 @@
 <template>
-  <AppShell>
+  <AppShell :content-class="workspaceContentClass">
     <PageTransition :transition-key="workspace.workspacePanelKey">
       <WorkspaceProjectListSection
         v-if="workspace.appStore.activePanel === 'config' && !workspace.selectedProjectId"
@@ -67,37 +67,13 @@
         />
       </section>
 
-      <WorkspaceLogsSection
-        v-else
-        :connection-label="workspace.appStore.connectionLabel"
-        :connection-status="workspace.appStore.connectionStatus"
-        :gateway-auth-mode="workspace.gatewayAuthMode"
-        :gateway-config-source="workspace.gatewayConfigSource"
-        :gateway-connection-label="workspace.gatewayConnectionLabel"
-        :gateway-logs="workspace.gatewayLogs"
-        :gateway-probe-status="workspace.gatewayProbeStatus"
-        :gateway-probe-summary="workspace.gatewayProbeSummary"
-        :gateway-stage="workspace.gatewayStage"
-        :gateway-stage-description="workspace.gatewayStageDescription"
-        :gateway-token="workspace.gatewayToken"
-        :gateway-url="workspace.gatewayUrl"
-        :is-importing-local-config="workspace.isImportingLocalConfig"
-        :is-probing-gateway="workspace.isProbingGateway"
-        :is-saving-gateway-config="workspace.isSavingGatewayConfig"
-        :selected-task-history-id="workspace.selectedTaskHistoryId"
-        :task-history-records="workspace.taskHistoryRecords"
-        @clear-logs="workspace.gatewayLogs = []"
-        @connect-gateway="workspace.connectGateway"
-        @copy-logs="workspace.copyGatewayLogs"
-        @disconnect-gateway="workspace.disconnectGateway"
-        @import-local-gateway-config="workspace.handleImportLocalGatewayConfig"
-        @probe-gateway="workspace.probeGatewayConnection"
-        @save-gateway-config="workspace.persistGatewayConfig"
-        @select-history-record="workspace.selectedTaskHistoryId = $event"
-        @send-gateway-ping="workspace.sendGatewayPing"
-        @update:gateway-token="workspace.gatewayToken = $event"
-        @update:gateway-url="workspace.gatewayUrl = $event"
+      <WorkspaceDeploymentLogsSection
+        v-else-if="workspace.appStore.activePanel === 'deployLogs'"
+        :records="workspace.deploymentHistoryRecords"
+        @delete-record="workspace.handleDeleteDeploymentHistoryRecord"
       />
+
+      <WorkspaceLogsSection v-else />
     </PageTransition>
 
     <WorkspaceQuickDeployDialog
@@ -121,6 +97,7 @@ import ServerConfigPanel from "@/components/ServerConfigPanel.vue"
 import AppShell from "@/layouts/AppShell.vue"
 import PageTransition from "@/components/PageTransition.vue"
 
+import WorkspaceDeploymentLogsSection from "./workspace/WorkspaceDeploymentLogsSection.vue"
 import WorkspaceLogsSection from "./workspace/WorkspaceLogsSection.vue"
 import WorkspaceProjectDetailSection from "./workspace/WorkspaceProjectDetailSection.vue"
 import WorkspaceProjectListSection from "./workspace/WorkspaceProjectListSection.vue"
@@ -128,6 +105,8 @@ import WorkspaceQuickDeployDialog from "./workspace/WorkspaceQuickDeployDialog.v
 import { useWorkspaceController } from "./workspace/useWorkspaceController"
 
 const workspace = proxyRefs(useWorkspaceController())
+
+const workspaceContentClass = computed(() => "px-8 pt-0 pb-6 bg-background")
 
 const projectListItems = computed(() =>
   workspace.projectSummaries.map((project) => ({

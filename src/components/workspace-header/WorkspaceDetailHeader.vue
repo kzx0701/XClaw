@@ -71,11 +71,12 @@ defineEmits<{
 
 .workspace-detail-header-copy h2 {
   margin: 0;
-  color: #e0e0e0;
+  color: #201d1d;
+  font-family: var(--font-heading);
   font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.5;
 }
 
 .workspace-detail-header-actions {
@@ -86,20 +87,20 @@ defineEmits<{
 }
 
 .workspace-detail-header-button {
-  color: #8b8b9a;
+  color: #424245;
 }
 
 .workspace-detail-header-button-danger {
-  color: #f28b82;
+  color: #d70015;
 }
 
 .workspace-detail-header-button:hover {
-  background: rgba(74, 127, 193, 0.1);
-  color: #c8c8d8;
+  background: #f1eeee;
+  color: #201d1d;
 }
 
 .workspace-detail-header-button-danger:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: #fca5a5;
+  background: var(--danger-tint);
+  color: #a50011;
 }
 </style>

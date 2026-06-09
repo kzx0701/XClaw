@@ -22,22 +22,22 @@ export function resolveBadgeVariant(tone: BadgeTone): BadgeVariants['variant'] {
 
 export function resolveBadgeToneClass(tone: BadgeTone): string {
   if (tone === 'success') {
-    return 'border-[#14532d] bg-[#06271a] text-[#a7f3d0]'
+    return 'border-[var(--border)] bg-[var(--success-tint)] text-[var(--success-soft)]'
   }
 
   if (tone === 'warn') {
-    return 'border-[#7c2d12] bg-[#2d160d] text-[#fdba74]'
+    return 'border-[var(--border)] bg-[var(--warning-tint)] text-[var(--warning-soft)]'
   }
 
   if (tone === 'danger') {
-    return 'border-[#7f1d1d] bg-[#2f1116] text-[#fecaca]'
+    return 'border-[var(--border)] bg-[var(--danger-tint)] text-[var(--danger-soft)]'
   }
 
   if (tone === 'contrast') {
-    return 'border-[rgba(148,163,184,0.18)] bg-transparent text-[#cbd5e1]'
+    return 'border-[var(--border)] bg-[var(--neutral-tint)] text-[#424245]'
   }
 
-  return 'border-[rgba(148,163,184,0.14)] bg-[#111827] text-[#94a3b8]'
+  return 'border-[var(--border)] bg-[var(--neutral-tint)] text-[#424245]'
 }
 
 export function resolveAlertVariant(tone: AlertTone): AlertVariants['variant'] {
@@ -50,20 +50,20 @@ export function resolveAlertVariant(tone: AlertTone): AlertVariants['variant'] {
 
 export function resolveAlertToneClass(tone: AlertTone): string {
   if (tone === 'success') {
-    return 'border-[#14532d] bg-[#06271a] text-[#a7f3d0]'
+    return 'border-[var(--border)] bg-[var(--success-tint)] text-[var(--success-soft)]'
   }
 
   if (tone === 'warn') {
-    return 'border-[#7c2d12] bg-[#2d160d] text-[#fdba74]'
+    return 'border-[var(--border)] bg-[var(--warning-tint)] text-[var(--warning-soft)]'
   }
 
   if (tone === 'error') {
-    return 'border-[#7f1d1d] bg-[#2f1116] text-[#fecaca]'
+    return 'border-[var(--border)] bg-[var(--danger-tint)] text-[var(--danger-soft)]'
   }
 
   if (tone === 'secondary') {
-    return 'border-[rgba(148,163,184,0.14)] bg-[#111827] text-[#94a3b8]'
+    return 'border-[var(--border)] bg-[var(--neutral-tint)] text-[#424245]'
   }
 
-  return 'border-[#1d4ed8] bg-[#0f1f3a] text-[#bfdbfe]'
+  return 'border-[var(--border)] bg-[var(--info-tint)] text-[#007aff]'
 }

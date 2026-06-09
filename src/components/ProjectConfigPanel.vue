@@ -3,12 +3,12 @@
     <header class="card-head">
       <div>
         <h3>构建配置</h3>
-        <p>系统会先自动识别项目的构建方式，你只需要确认或少量修改。</p>
+        <p>确认默认打包命令和产物目录，一键部署会优先使用这里的配置。</p>
       </div>
       <div class="header-actions">
         <Button class="app-primary-button" :disabled="!project" @click="$emit('save-project')">
           <Save class="h-4 w-4" />
-          <span>保存项目配置</span>
+          <span>保存构建配置</span>
         </Button>
       </div>
     </header>
@@ -111,13 +111,14 @@ function updateBoolean(field: keyof ProjectRecord, value: boolean | undefined) {
 <style scoped>
 .config-card {
   grid-column: 1 / -1;
+  gap: 17px;
 }
 
 .card-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 18px;
+  gap: 14px;
 }
 
 .header-actions {
@@ -128,41 +129,47 @@ function updateBoolean(field: keyof ProjectRecord, value: boolean | undefined) {
 
 .card-head h3 {
   margin: 0;
-  color: #e0e0e0;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
+  color: #201d1d;
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .card-head p {
-  margin: 8px 0 0;
-  color: #8b8b9a;
-  font-size: 12px;
-  line-height: 1.7;
+  margin: 6px 0 0;
+  color: #646262;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px 20px;
+  gap: 14px 18px;
 }
 
 .field,
 .toggle-field {
   display: grid;
-  gap: 9px;
+  gap: 7px;
 }
 
 .field span {
-  color: #c0c0d0;
-  font-size: 13px;
-  font-weight: 600;
+  color: #201d1d;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .field small {
-  color: #8b8b9a;
-  line-height: 1.6;
+  color: #646262;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .switch-row {
@@ -173,12 +180,12 @@ function updateBoolean(field: keyof ProjectRecord, value: boolean | undefined) {
 }
 
 .switch-row small {
-  color: #8b8b9a;
+  color: #646262;
 }
 
 .muted-paragraph {
   margin: 0;
-  color: #8b8b9a;
+  color: #646262;
 }
 
 @media (max-width: 960px) {

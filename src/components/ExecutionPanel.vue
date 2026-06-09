@@ -3,7 +3,7 @@
     <header class="card-head">
       <div>
         <h3>立即执行</h3>
-        <p>确认当前环境和构建产物后，直接开始本次任务。</p>
+        <p>临时执行一次打包或部署。常规使用可以先完成上面的环境和构建配置。</p>
       </div>
       <Button class="app-primary-button" :disabled="!canRun || status === 'running'" @click="$emit('run')">
         <Play class="h-4 w-4" />
@@ -185,34 +185,38 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
 <style scoped>
 .execution-card {
   grid-column: 1 / -1;
+  gap: 17px;
 }
 
 .card-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 18px;
+  gap: 14px;
 }
 
 .card-head h3 {
   margin: 0;
-  color: #e0e0e0;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.3;
+  color: #201d1d;
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .card-head p {
-  margin: 8px 0 0;
-  color: #8b8b9a;
-  font-size: 12px;
-  line-height: 1.7;
+  margin: 6px 0 0;
+  color: #646262;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .execution-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px 20px;
+  gap: 14px 18px;
 }
 
 .full-span {
@@ -221,13 +225,13 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
 
 .helper-message {
   margin: 0;
-  padding: 14px 16px;
+  padding: 12px 14px;
 }
 
 .helper-message-copy {
   display: block;
-  color: #a0a0b0;
-  line-height: 1.7;
+  color: #424245;
+  line-height: 1.5;
   white-space: normal;
   word-break: break-word;
 }
@@ -235,14 +239,15 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
 .field,
 .toggle-field {
   display: grid;
-  gap: 9px;
+  gap: 7px;
 }
 
 .field span {
-  color: #c8c8d8;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  color: #201d1d;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .switch-row {
@@ -253,8 +258,8 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
 }
 
 .switch-row small {
-  color: #8b8b9a;
-  font-size: 12px;
+  color: #646262;
+  font-size: 14px;
 }
 
 .mode-note {
@@ -279,50 +284,50 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
 }
 
 .summary-head h4 {
-  color: #e0e0e0;
+  color: #201d1d;
   font-size: 14px;
-  font-weight: 600;
-  line-height: 1.3;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 .summary-head small {
-  color: #8b8b9a;
-  font-size: 12px;
+  color: #646262;
+  font-size: 14px;
 }
 
 .summary-board {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  gap: 9px;
 }
 
 .summary-item {
   display: grid;
-  gap: 6px;
-  padding: 14px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  background: rgba(74, 127, 193, 0.06);
+  gap: 5px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f8f7f7;
 }
 
 .summary-item span {
-  color: #8b8b9a;
-  font-size: 12px;
+  color: #646262;
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
 }
 
 .summary-item strong {
-  color: #e0e0e0;
-  font-size: 13px;
-  font-weight: 500;
+  color: #201d1d;
+  font-size: 14px;
+  font-weight: 700;
   line-height: 1.5;
   word-break: break-word;
 }
 
 .muted-paragraph {
   margin: 0;
-  color: #8b8b9a;
+  color: #646262;
 }
 
 @media (max-width: 960px) {

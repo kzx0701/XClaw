@@ -60,7 +60,7 @@ function handleOutsideInteract(event: Event) {
     @update:open="handleOpenChange"
   >
     <DrawerContent
-      :class="cn('border-[rgba(255,255,255,0.06)] bg-[#2a2a3c] text-[#e0e0e0] shadow-[0_18px_40px_rgba(0,0,0,0.35)]', props.class)"
+      :class="cn('border border-[var(--border)] bg-[#fdfcfc] text-[#201d1d] shadow-none', props.class)"
       :style="style"
       @interact-outside="handleOutsideInteract"
       @pointer-down-outside="handleOutsideInteract"

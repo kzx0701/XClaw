@@ -1,5 +1,15 @@
 export type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'unknown'
-export type ProjectType = 'vite-vue' | 'vite-react' | 'vue-cli' | 'react' | 'unknown'
+export type ProjectType =
+  | 'vite-vue'
+  | 'vite-react'
+  | 'vue-cli'
+  | 'react'
+  | 'next'
+  | 'nuxt'
+  | 'astro'
+  | 'sveltekit'
+  | 'static-generator'
+  | 'unknown'
 export type AuthType = 'password' | 'privateKey'
 export type UploadStrategy = 'overwrite' | 'clear-and-upload'
 export type ExecutionMode = 'build' | 'deploy' | 'build-and-deploy'
@@ -157,6 +167,10 @@ export interface LocalBuildResult {
   buildCommand: string
   outputDir: string
   outputPath: string
+  artifactVerified: boolean
+  artifactResolvedBy: string
+  artifactCandidates: string[]
+  artifactMessage: string
   precheckCommand: string
   precheckOutput: string
   precheckRan: boolean

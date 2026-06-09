@@ -65,15 +65,13 @@ defineEmits<{
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid transparent;
-  border-radius: 999px;
+  border: 0;
+  border-radius: 6px;
   background: transparent;
   cursor: pointer;
   transition:
     background-color 150ms ease,
-    border-color 150ms ease,
-    color 150ms ease,
-    transform 150ms ease;
+    color 150ms ease;
 }
 
 .workspace-delete-button {
@@ -82,7 +80,6 @@ defineEmits<{
 
 .workspace-delete-button:hover {
   background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.18);
   color: #fca5a5;
 }
 
@@ -91,13 +88,12 @@ defineEmits<{
 }
 
 .workspace-back-button:hover {
-  background: rgba(59, 130, 246, 0.1);
-  border-color: rgba(59, 130, 246, 0.18);
-  color: #bfdbfe;
+  background: #f1eeee;
+  color: #201d1d;
 }
 
 .workspace-delete-button:active,
 .workspace-back-button:active {
-  transform: scale(0.98);
+  transform: none;
 }
 </style>

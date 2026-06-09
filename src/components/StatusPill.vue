@@ -24,22 +24,21 @@ defineProps<{
   width: 7px;
   height: 7px;
   border-radius: 999px;
-  background: #8b8b9a;
-  box-shadow: 0 0 0 3px rgba(139, 139, 154, 0.12);
+  background: #7a7a7a;
   flex: 0 0 auto;
 }
 
 .status-pill-text {
-  color: #8b8b9a;
-  font-size: 11px;
-  font-weight: 500;
+  color: #7a7a7a;
+  font-size: 12px;
+  font-weight: 400;
   line-height: 1;
+  letter-spacing: -0.12px;
   white-space: nowrap;
 }
 
 .status-pill[data-status="connected"] .status-pill-dot {
   background: #48c78e;
-  box-shadow: 0 0 0 3px rgba(72, 199, 142, 0.15);
 }
 
 .status-pill[data-status="connected"] .status-pill-text {
@@ -48,7 +47,6 @@ defineProps<{
 
 .status-pill[data-status="connecting"] .status-pill-dot {
   background: #e0a340;
-  box-shadow: 0 0 0 3px rgba(224, 163, 64, 0.15);
 }
 
 .status-pill[data-status="connecting"] .status-pill-text {
@@ -56,11 +54,10 @@ defineProps<{
 }
 
 .status-pill[data-status="disconnected"] .status-pill-dot {
-  background: #8b8b9a;
-  box-shadow: 0 0 0 3px rgba(139, 139, 154, 0.12);
+  background: #7a7a7a;
 }
 
 .status-pill[data-status="disconnected"] .status-pill-text {
-  color: #8b8b9a;
+  color: #7a7a7a;
 }
 </style>

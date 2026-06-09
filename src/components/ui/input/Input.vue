@@ -25,8 +25,8 @@ const modelValue = useVModel(props, "modelValue", emits, {
     v-model="modelValue"
     data-slot="input"
     :class="cn(
-      'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground h-9 w-full min-w-0 rounded-lg border border-white/[0.08] bg-[#252538] px-3 py-1 text-base shadow-none transition-[color,box-shadow,background-color,border-color] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 md:text-sm',
-      'focus-visible:border-primary/40 focus-visible:ring-primary/20 focus-visible:ring-[2px]',
+      'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground h-10 w-full min-w-0 rounded-sm border border-[var(--border)] bg-[#f8f7f7] px-3 py-1 text-base text-[#201d1d] shadow-none transition-[color,background-color,border-color] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45 md:text-sm',
+      'focus-visible:border-[#646262] focus-visible:bg-[#fdfcfc] focus-visible:ring-0',
       'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
       props.fluid ? 'w-full' : '',
       props.class,

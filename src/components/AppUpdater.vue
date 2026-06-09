@@ -200,7 +200,7 @@ onUnmounted(() => {
   height: 100%;
   min-width: 12%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  background: #0066cc;
   transition: width 180ms ease;
 }
 

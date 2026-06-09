@@ -7,7 +7,7 @@
       </div>
       <Badge
         :variant="resolveBadgeVariant(connectionSeverity)"
-        :class="['rounded-full', resolveBadgeToneClass(connectionSeverity)]"
+        :class="[resolveBadgeToneClass(connectionSeverity)]"
       >
         {{ connectionStatusLabel }}
       </Badge>
@@ -15,21 +15,21 @@
 
     <div class="gateway-grid">
       <div class="meta-row">
-        <Badge :variant="resolveBadgeVariant('contrast')" :class="['rounded-full', resolveBadgeToneClass('contrast')]">
+        <Badge :variant="resolveBadgeVariant('contrast')" :class="[resolveBadgeToneClass('contrast')]">
           auth: {{ authMode || 'unknown' }}
         </Badge>
-        <Badge :variant="resolveBadgeVariant('contrast')" :class="['rounded-full', resolveBadgeToneClass('contrast')]">
+        <Badge :variant="resolveBadgeVariant('contrast')" :class="[resolveBadgeToneClass('contrast')]">
           来源: {{ gatewayConfigSource === 'local-openclaw' ? '本机 OpenClaw' : '应用内保存' }}
         </Badge>
         <Badge
           :variant="resolveBadgeVariant(gatewayUrl.trim() ? 'success' : 'danger')"
-          :class="['rounded-full', resolveBadgeToneClass(gatewayUrl.trim() ? 'success' : 'danger')]"
+          :class="[resolveBadgeToneClass(gatewayUrl.trim() ? 'success' : 'danger')]"
         >
           地址{{ gatewayUrl.trim() ? '已填写' : '未填写' }}
         </Badge>
         <Badge
           :variant="resolveBadgeVariant(gatewayToken.trim() ? 'success' : 'danger')"
-          :class="['rounded-full', resolveBadgeToneClass(gatewayToken.trim() ? 'success' : 'danger')]"
+          :class="[resolveBadgeToneClass(gatewayToken.trim() ? 'success' : 'danger')]"
         >
           Token{{ gatewayToken.trim() ? '已填写' : '未填写' }}
         </Badge>
@@ -266,7 +266,7 @@ defineEmits<{
 
 .card-head p {
   margin: 8px 0 0;
-  color: #8b8b9a;
+  color: #646262;
 }
 
 .gateway-grid {
@@ -284,13 +284,13 @@ defineEmits<{
   display: grid;
   gap: 10px;
   padding: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  background: #252538;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fdfcfc;
 }
 
 .subtle-card {
-  background: #252538;
+  background: #f8f7f7;
 }
 
 .guide-head {
@@ -302,14 +302,15 @@ defineEmits<{
 
 .guide-card h4 {
   margin: 0;
-  color: #e0e0e0;
-  font-size: 15px;
+  color: #201d1d;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 .guide-card p {
   margin: 0;
-  color: #c8c8d8;
-  line-height: 1.7;
+  color: #424245;
+  line-height: 1.5;
 }
 
 .guide-list,
@@ -318,13 +319,13 @@ defineEmits<{
   gap: 8px;
   margin: 0;
   padding-left: 18px;
-  color: #c8c8d8;
-  line-height: 1.7;
+  color: #424245;
+  line-height: 1.5;
 }
 
 .guide-note {
-  color: #8b8b9a;
-  font-size: 13px;
+  color: #646262;
+  font-size: 14px;
 }
 
 .field {
@@ -333,15 +334,15 @@ defineEmits<{
 }
 
 .field span {
-  color: #c8c8d8;
-  font-size: 13px;
-  font-weight: 600;
+  color: #201d1d;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .field-help {
-  color: #8b8b9a;
-  font-size: 12px;
-  line-height: 1.6;
+  color: #646262;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .field-help code,
@@ -349,10 +350,11 @@ defineEmits<{
 .tips-list code,
 .guide-list code {
   padding: 2px 6px;
-  border-radius: 999px;
-  background: rgba(74, 127, 193, 0.12);
-  color: #7aa3d9;
-  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f1eeee;
+  color: #007aff;
+  font-size: 14px;
 }
 
 .token-row {

@@ -98,16 +98,20 @@ defineEmits<{
 
 .quick-deploy-dialog-header strong {
   display: block;
-  color: #e0e0e0;
+  color: #201d1d;
+  font-family: var(--font-heading);
   font-size: 16px;
-  line-height: 1.2;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .quick-deploy-dialog-header p {
   margin: 6px 0 0;
-  color: #6b6b7a;
-  font-size: 12px;
+  color: #646262;
+  font-size: 14px;
   line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .quick-deploy-dialog-body {
@@ -124,9 +128,11 @@ defineEmits<{
 }
 
 .quick-deploy-context-bar strong {
-  color: #e0e0e0;
-  font-size: 15px;
-  line-height: 1.3;
+  color: #201d1d;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .quick-deploy-project-type {
@@ -134,12 +140,14 @@ defineEmits<{
   align-items: center;
   min-height: 24px;
   padding: 0 10px;
-  border-radius: 6px;
-  background: rgba(74, 127, 193, 0.12);
-  color: #7aa3d9;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--info-tint);
+  color: #007aff;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .quick-deploy-option-list {
@@ -153,22 +161,21 @@ defineEmits<{
   justify-content: space-between;
   gap: 16px;
   padding: 12px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  background: #2a2a3c;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fdfcfc;
 }
 
 .quick-deploy-option-card[data-state="running"] {
-  border-color: rgba(74, 127, 193, 0.3);
-  background: #32324a;
+  background: #f8f7f7;
 }
 
 .quick-deploy-option-card[data-state="success"] {
-  border-color: rgba(92, 184, 92, 0.25);
+  background: var(--success-tint);
 }
 
 .quick-deploy-option-card[data-state="error"] {
-  border-color: rgba(229, 92, 92, 0.25);
+  background: var(--danger-tint);
 }
 
 .quick-deploy-option-copy {
@@ -185,15 +192,17 @@ defineEmits<{
 }
 
 .quick-deploy-option-copy strong {
-  color: #e0e0e0;
+  color: #201d1d;
   font-size: 14px;
-  line-height: 1.35;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .quick-deploy-option-copy p {
-  color: #8b8b9a;
-  font-size: 12px;
-  line-height: 1.6;
+  color: #646262;
+  font-size: 14px;
+  line-height: 1.5;
   margin: 0;
 }
 
@@ -210,9 +219,10 @@ defineEmits<{
   justify-content: center;
   width: 30px;
   height: 30px;
-  border-radius: 6px;
-  background: rgba(74, 127, 193, 0.12);
-  color: #7aa3d9;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f1eeee;
+  color: #201d1d;
   flex: 0 0 auto;
 }
 
@@ -220,17 +230,16 @@ defineEmits<{
   min-width: 68px;
   height: 30px;
   padding-inline: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: #32324a;
-  color: #c8c8d8;
-  box-shadow: none;
-  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f8f7f7;
+  color: #201d1d;
+  font-size: 14px;
 }
 
 .quick-deploy-option-action:hover:not(:disabled) {
-  background: #3a3a52;
-  border-color: rgba(255, 255, 255, 0.12);
-  color: #e0e0e0;
+  background: #f1eeee;
+  color: #201d1d;
 }
 
 .quick-deploy-option-action :deep(svg) {

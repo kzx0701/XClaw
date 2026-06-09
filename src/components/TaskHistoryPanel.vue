@@ -5,7 +5,7 @@
         <h3>任务历史</h3>
         <p>展示当前项目最近执行结果，便于回看成功记录和失败原因。</p>
       </div>
-      <Badge variant="outline" class="rounded-md border-[rgba(255,255,255,0.08)] bg-transparent text-[#c0c0d0]">{{ records.length }} 条</Badge>
+      <Badge variant="outline" class="rounded-sm border border-[var(--border)] bg-[var(--neutral-tint)] text-[#424245]">{{ records.length }} 条</Badge>
     </header>
 
     <div v-if="records.length > 0" class="history-layout">
@@ -21,7 +21,7 @@
           <div class="history-top">
             <Badge
               :variant="resolveBadgeVariant(record.status === 'success' ? 'success' : 'danger')"
-              :class="['rounded-full', resolveBadgeToneClass(record.status === 'success' ? 'success' : 'danger')]"
+              :class="[resolveBadgeToneClass(record.status === 'success' ? 'success' : 'danger')]"
             >
               {{ record.status === 'success' ? '成功' : '失败' }}
             </Badge>
@@ -81,7 +81,7 @@
             <h4>执行记录</h4>
             <Badge
               :variant="resolveBadgeVariant('secondary')"
-              :class="['rounded-full', resolveBadgeToneClass('secondary')]"
+              :class="[resolveBadgeToneClass('secondary')]"
             >
               {{ selectedRecord.logs.length }} 行
             </Badge>
@@ -160,18 +160,18 @@ function formatDuration(durationMs: number) {
 .card-head h3,
 .log-preview-head h4 {
   margin: 0;
-  color: #e0e0e0;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  color: #201d1d;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .card-head p {
   margin: 8px 0 0;
-  color: #8b8b9a;
-  font-size: 12px;
-  line-height: 1.7;
+  color: #646262;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .history-layout {
@@ -191,37 +191,35 @@ function formatDuration(durationMs: number) {
   display: grid;
   gap: 8px;
   padding: 14px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
   border-left: 2px solid transparent;
-  border-radius: 0 8px 8px 0;
-  background: #252538;
+  border-radius: 0 4px 4px 0;
+  background: #f8f7f7;
   text-align: left;
   cursor: pointer;
   transition: border-color 180ms ease, background-color 180ms ease, border-left-color 180ms ease;
 }
 
 .history-item[data-active='true'] {
-  border-color: rgba(74, 127, 193, 0.25);
-  border-left-color: #4a7fc1;
-  background: #2a2a3c;
+  border-left-color: #201d1d;
+  background: #fdfcfc;
 }
 
 .history-item:focus-visible {
   outline: none;
-  border-color: rgba(74, 127, 193, 0.3);
-  box-shadow: 0 0 0 1px rgba(74, 127, 193, 0.2);
+  background: #fdfcfc;
 }
 
 .history-item strong,
 .detail-item strong {
-  color: #e0e0e0;
-  font-weight: 500;
+  color: #201d1d;
+  font-weight: 700;
   word-break: break-word;
 }
 
 .history-item small,
 .detail-item span {
-  color: #8b8b9a;
+  color: #646262;
 }
 
 .history-top {
@@ -229,8 +227,8 @@ function formatDuration(durationMs: number) {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  font-size: 11px;
-  color: #8b8b9a;
+  font-size: 14px;
+  color: #646262;
 }
 
 .history-detail {
@@ -255,15 +253,16 @@ function formatDuration(durationMs: number) {
 }
 
 .error-text {
-  color: #e06060;
+  color: #d70015;
 }
 
 .log-preview {
   display: grid;
   gap: 12px;
   padding: 16px;
-  border-radius: 8px;
-  background: #252538;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f8f7f7;
   min-width: 0;
 }
 
@@ -275,7 +274,7 @@ function formatDuration(durationMs: number) {
 }
 
 .log-preview-head h4 {
-  color: #e0e0e0;
+  color: #201d1d;
 }
 
 .log-lines {
@@ -287,18 +286,18 @@ function formatDuration(durationMs: number) {
 
 .log-lines p {
   margin: 0;
-  color: #c0c0d0;
-  font-family: 'SFMono-Regular', 'Menlo', monospace;
-  font-size: 13px;
-  line-height: 1.6;
+  color: #424245;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
   word-break: break-word;
 }
 
 .muted-paragraph {
   margin: 0;
-  color: #8b8b9a;
-  font-size: 12px;
-  line-height: 1.7;
+  color: #646262;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 @media (max-width: 1100px) {

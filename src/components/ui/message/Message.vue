@@ -40,9 +40,9 @@ const toneClass = computed(() => {
   }
 
   if (props.severity === 'secondary') {
-    return 'border-[rgba(255,255,255,0.06)] bg-[#2a2a3c] text-[#8b8b9a]'
+    return 'border border-[var(--border)] bg-[#fdfcfc] text-[#424245]'
   }
 
-  return 'border-[#1d4ed8] bg-[#121f3a] text-[#8ab4e0]'
+  return 'border-[var(--border)] bg-[var(--info-tint)] text-[#007aff]'
 })
 </script>

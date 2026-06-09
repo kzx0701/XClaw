@@ -1,9 +1,11 @@
+mod build_artifact;
 mod deploy;
 mod execution;
 mod external;
 mod openclaw;
 mod openclaw_ai;
 mod project;
+mod project_detection;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {

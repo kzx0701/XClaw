@@ -65,10 +65,10 @@ function handleEscapeKey(event: Event) {
     :default-open="defaultOpen"
     :open="resolvedOpen"
     @update:open="handleOpenChange"
-  >
+    >
     <DialogContent
       :show-close-button="closable"
-      :class="cn('border-[rgba(255,255,255,0.06)] bg-[#2a2a3c] text-[#e0e0e0] shadow-[0_18px_40px_rgba(0,0,0,0.35)]', props.class)"
+      :class="cn('border border-[var(--border)] bg-[#fdfcfc] text-[#201d1d] shadow-none', props.class)"
       :style="style"
       @escape-key-down="handleEscapeKey"
       @interact-outside="handleOutsideInteract"

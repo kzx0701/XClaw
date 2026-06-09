@@ -66,15 +66,15 @@ defineExpose({
     <DropdownMenuContent
       align="start"
       side="bottom"
-      :class="cn('min-w-[180px] border-[rgba(255,255,255,0.06)] bg-[#2a2a3c] text-[#c0c0d0] shadow-[0_18px_40px_rgba(0,0,0,0.35)]', props.class)"
+      :class="cn('min-w-[180px] border border-[var(--border)] bg-[#fdfcfc] text-[#201d1d] shadow-none', props.class)"
     >
       <DropdownMenuItem
         v-for="item in model"
         :key="item.label"
-        class="gap-2 text-sm text-[#c0c0d0] focus:bg-[#32324a] focus:text-[#e0e0e0]"
+        class="gap-2 text-sm text-[#424245] focus:bg-[#f1eeee] focus:text-[#201d1d]"
         @select="handleSelect(item)"
       >
-        <component :is="item.icon" v-if="item.icon" class="h-4 w-4 text-[#8b8b9a]" />
+        <component :is="item.icon" v-if="item.icon" class="h-4 w-4 text-[#424245]" />
         <span>{{ item.label }}</span>
       </DropdownMenuItem>
     </DropdownMenuContent>

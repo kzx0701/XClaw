@@ -1,25 +1,25 @@
 ﻿<template>
   <div class="app-shell-root grid h-screen grid-cols-[220px_minmax(0,1fr)] overflow-hidden text-foreground">
-    <aside class="app-shell-sidebar flex min-h-0 flex-col border-r border-border bg-sidebar">
-      <div class="flex h-20 flex-col justify-center px-5">
-        <div class="flex items-center gap-2.5">
-          <XClawWordmark font-size="1.4rem" @click="openReleasePage" />
-          <span class="rounded-md bg-white/[0.06] px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-muted-foreground">{{ appVersion }}</span>
+    <aside class="app-shell-sidebar flex min-h-0 flex-col bg-sidebar">
+      <div class="app-shell-brand-wrap">
+        <div class="app-shell-brand">
+          <XClawWordmark font-size="1.42rem" @click="openReleasePage" />
+          <span class="app-version-badge">v{{ appVersion }}</span>
         </div>
       </div>
 
-      <nav class="flex flex-col gap-1 px-3 py-4" aria-label="主菜单">
+      <nav class="app-shell-nav" aria-label="主菜单">
         <button
           v-for="item in navItems"
           :key="item.value"
           type="button"
           :data-active="appStore.activePanel === item.value"
-          class="group relative flex h-10 cursor-pointer items-center gap-3 rounded-lg border border-transparent px-3 text-left text-sm font-medium text-sidebar-foreground transition-all duration-150 ease-out hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
+          class="app-shell-nav-item group"
           @click="appStore.setActivePanel(item.value)"
         >
           <component
             :is="item.icon"
-            class="h-4 w-4 text-sidebar-foreground/60 transition-colors duration-150 group-data-[active=true]:text-primary"
+            class="h-4 w-4"
           />
           <span>{{ item.label }}</span>
         </button>
@@ -34,7 +34,7 @@
     </aside>
 
     <main class="app-shell-main min-w-0 bg-background">
-      <div class="h-screen overflow-auto px-8 py-6">
+      <div :class="['h-screen overflow-auto', contentClass || 'px-8 py-6']">
         <slot />
       </div>
     </main>
@@ -43,13 +43,17 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { FolderKanban, FileText, Server } from "lucide-vue-next";
+import { FolderKanban, FileClock, RadioTower, Server } from "lucide-vue-next";
 import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 
 import StatusPill from "@/components/StatusPill.vue";
 import XClawWordmark from "@/components/XClawWordmark.vue";
 import { useAppStore } from "@/stores/app";
+
+defineProps<{
+  contentClass?: string
+}>()
 
 const appStore = useAppStore();
 const appVersion = ref("1.0.0");
@@ -67,9 +71,14 @@ const navItems = [
     icon: Server,
   },
   {
-    value: "logs",
+    value: "deployLogs",
     label: "日志",
-    icon: FileText,
+    icon: FileClock,
+  },
+  {
+    value: "logs",
+    label: "网关",
+    icon: RadioTower,
   },
 ] as const;
 
@@ -104,15 +113,95 @@ onMounted(async () => {
 
 <style scoped>
 .app-shell-root {
-  background: #1e1e2e;
+  background: var(--background);
 }
 
 .app-shell-sidebar {
-  background: #181825;
+  background: var(--sidebar);
+  border-right: 1px solid var(--sidebar-border);
 }
 
 .app-shell-main {
-  background: #1e1e2e;
+  background: var(--background);
+}
+
+.app-shell-brand-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 76px;
+  padding: 0 12px;
+}
+
+.app-shell-brand {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 9px;
+  min-width: 0;
+  color: #201d1d;
+}
+
+.app-version-badge {
+  display: inline-flex;
+  align-items: baseline;
+  flex: 0 0 auto;
+  height: auto;
+  padding: 2px 5px 1px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f8f7f7;
+  color: #646262;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.app-shell-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+}
+
+.app-shell-nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: #424245;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-align: left;
+}
+
+.app-shell-nav-item svg {
+  color: #646262;
+  transition: color 140ms ease;
+}
+
+.app-shell-nav-item:hover {
+  border-color: var(--border);
+  background: #f8f7f7;
+  color: #201d1d;
+}
+
+.app-shell-nav-item[data-active="true"] {
+  border-color: #201d1d;
+  background: #201d1d;
+  color: #fdfcfc;
+}
+
+.app-shell-nav-item[data-active="true"] svg {
+  color: #fdfcfc;
 }
 
 .gateway-status-compact {
@@ -125,21 +214,9 @@ onMounted(async () => {
 }
 
 .gateway-status-label {
-  color: #8b8b9a;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-}
-
-nav button[data-active="true"]::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 2px;
-  height: 16px;
-  border-radius: 0 2px 2px 0;
-  background: #4a7fc1;
-  transform: translateY(-50%);
+  color: #646262;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
 }
 </style>

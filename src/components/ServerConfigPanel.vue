@@ -1,8 +1,8 @@
 <template>
   <div class="server-page">
     <article class="server-list-page">
-      <section class="server-toolbar-panel">
-        <div class="server-search-row">
+      <WorkspaceToolbarPanel>
+        <template #search>
           <div class="server-search-field">
             <Search class="server-search-icon h-4 w-4" />
             <InputText
@@ -12,15 +12,15 @@
               @update:model-value="searchKeyword = String($event ?? '')"
             />
           </div>
-        </div>
+        </template>
 
-        <div class="server-actions-row">
+        <template #actions>
           <Button class="server-add-button" variant="secondary" @click="$emit('create-server')">
             <Plus class="h-4 w-4" />
             <span>新增服务器</span>
           </Button>
-        </div>
-      </section>
+        </template>
+      </WorkspaceToolbarPanel>
 
       <section v-if="servers.length > 0" class="server-library-section">
         <header class="server-section-header">
@@ -121,13 +121,12 @@
 
     <Drawer :open="isCreating" direction="right" dismissible modal @update:open="handleDrawerOpenChange">
       <DrawerContent
-        class="create-drawer server-create-drawer border-[rgba(255,255,255,0.06)] bg-[#1e1e2e] text-[#e0e0e0] shadow-[0_20px_50px_rgba(2,6,23,0.5)]"
+        class="create-drawer server-create-drawer border border-[var(--border)] bg-[#fdfcfc] text-[#201d1d] shadow-none"
       >
         <DrawerHeader class="server-create-header">
           <div class="server-create-head-copy">
             <p class="drawer-eyebrow">{{ editorMode === "edit" ? "编辑服务器" : "新增服务器" }}</p>
             <DrawerTitle>{{ editorMode === "edit" ? "编辑服务器配置" : "填写服务器配置" }}</DrawerTitle>
-            <DrawerDescription>保存后，这台服务器就可以在项目环境里直接选择。</DrawerDescription>
           </div>
         </DrawerHeader>
 
@@ -276,10 +275,11 @@ import { Eye, EyeOff, KeyRound, Plus, Save, Search, Server, ShieldCheck, Trash2,
 import serverBackground from "@/assets/images/server-bg.png";
 import ResourceCard from "@/components/ResourceCard.vue";
 import { Button } from "@/components/ui/button";
-import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Field, FieldContent, FieldLabel } from "@/components/ui/field";
 import { Input as InputText } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import WorkspaceToolbarPanel from "@/components/workspace-header/WorkspaceToolbarPanel.vue";
 
 import type { AuthType, ServerFormValue, ServerRecord } from "@/types/task";
 
@@ -358,21 +358,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 .server-list-page {
   grid-column: 1 / -1;
   display: grid;
-  gap: 16px;
-}
-
-.server-toolbar-panel {
-  display: grid;
-  gap: 14px;
-  margin-inline: -32px;
-  padding: 14px 32px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  background: #2a2a3c;
-}
-
-.server-search-row {
-  display: flex;
-  align-items: center;
+  gap: 18px;
 }
 
 .server-search-field {
@@ -384,7 +370,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   position: absolute;
   top: 50%;
   left: 14px;
-  color: #8b8b9a;
+  color: #646262;
   transform: translateY(-50%);
   pointer-events: none;
 }
@@ -393,32 +379,24 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   padding-left: 38px;
 }
 
-.server-actions-row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
 .server-add-button {
   height: 34px;
   padding-inline: 12px;
-  border-radius: 8px;
-  border-color: rgba(255, 255, 255, 0.08);
-  background: #4a4d63;
-  color: #eef0f6;
-  box-shadow: none;
-  font-size: 13px;
-  font-weight: 600;
+  border: 1px solid #201d1d;
+  border-radius: 4px;
+  background: #201d1d;
+  color: #fdfcfc;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .server-add-button:hover {
-  background: #585b72;
-  border-color: rgba(255, 255, 255, 0.12);
+  background: #0f0000;
 }
 
 .server-library-section {
   display: grid;
-  gap: 12px;
+  gap: 14px;
 }
 
 .server-section-header {
@@ -429,15 +407,15 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .server-section-header h2 {
   margin: 0;
-  color: #e0e0e0;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.3;
+  color: #201d1d;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 .server-card-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 420px));
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 376px));
   gap: 16px;
   align-items: start;
   justify-content: start;
@@ -447,9 +425,9 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   display: grid;
   gap: 6px;
   padding: 18px 16px;
-  border: 1px dashed rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  background: rgba(42, 42, 60, 0.4);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f8f7f7;
 }
 
 .server-search-empty p,
@@ -458,13 +436,13 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .server-search-empty p {
-  color: #e0e0e0;
+  color: #201d1d;
   font-size: 14px;
   font-weight: 500;
 }
 
 .server-search-empty small {
-  color: #8b8b9a;
+  color: #646262;
   line-height: 1.6;
 }
 
@@ -475,24 +453,22 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   justify-self: start;
   min-height: 22px;
   padding: 0 9px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 6px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  line-height: 1;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: var(--tag-font-size);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: var(--tag-line-height);
 }
 
 .server-auth-badge[data-auth-type="password"] {
-  border-color: rgba(212, 160, 58, 0.2);
-  background: rgba(212, 160, 58, 0.1);
-  color: #d4c48a;
+  background: var(--warning-tint);
+  color: var(--warning-soft);
 }
 
 .server-auth-badge[data-auth-type="privateKey"] {
-  border-color: rgba(92, 184, 92, 0.2);
-  background: rgba(92, 184, 92, 0.1);
-  color: #8ad48a;
+  background: var(--success-tint);
+  color: var(--success-soft);
 }
 
 .delete-server-button {
@@ -504,25 +480,23 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   height: 30px;
   padding: 0;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: 4px;
   background: transparent;
-  color: #e88a8a;
+  color: #d70015;
   cursor: pointer;
   transition:
     background-color 150ms ease,
-    border-color 150ms ease,
-    color 150ms ease,
-    transform 100ms ease;
+    color 150ms ease;
 }
 
 .delete-server-button:hover {
-  background: rgba(229, 92, 92, 0.1);
-  border-color: rgba(229, 92, 92, 0.15);
-  color: #f0a0a0;
+  border-color: rgba(255, 59, 48, 0.22);
+  background: var(--danger-tint);
+  color: #a50011;
 }
 
 .delete-server-button:active {
-  transform: scale(0.97);
+  transform: none;
 }
 
 .server-empty-shell {
@@ -537,21 +511,13 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   grid-template-columns: minmax(0, 1fr);
   min-height: 400px;
   padding: 34px 34px 32px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  background: #2a2a3c;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  background: #fdfcfc;
 }
 
 .server-empty-hero::after {
-  content: "";
-  position: absolute;
-  right: -140px;
-  bottom: -160px;
-  width: 340px;
-  height: 340px;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(74, 127, 193, 0.08), transparent 70%);
-  pointer-events: none;
+  content: none;
 }
 
 .server-empty-copy {
@@ -571,34 +537,34 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .server-empty-eyebrow {
-  color: #7aa3d9;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  color: #201d1d;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 .server-empty-divider {
   width: 44px;
   height: 1px;
-  background: linear-gradient(90deg, rgba(74, 127, 193, 0.5), rgba(74, 127, 193, 0));
+  background: rgba(15, 0, 0, 0.12);
 }
 
 .server-empty-copy h2 {
   margin: 0;
   max-width: 560px;
-  color: #e0e0e0;
-  font-size: 26px;
+  color: #201d1d;
+  font-size: 28px;
   font-weight: 600;
-  line-height: 1.15;
+  line-height: 1.5;
   text-wrap: balance;
 }
 
 .server-empty-copy p {
   margin: 0;
   max-width: 560px;
-  color: #8b8b9a;
-  font-size: 14px;
-  line-height: 1.8;
+  color: #424245;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 .server-empty-highlights {
@@ -614,13 +580,13 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   align-items: center;
   min-height: 26px;
   padding: 0 10px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.03);
-  color: #8b8b9a;
-  font-size: 11px;
-  letter-spacing: 0.01em;
-  line-height: 1;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f8f7f7;
+  color: #424245;
+  font-size: 14px;
+  letter-spacing: 0;
+  line-height: 1.5;
 }
 
 .server-empty-actions {
@@ -634,7 +600,6 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   min-width: 272px;
   min-height: 40px;
   padding-inline: 20px;
-  border-radius: 8px;
 }
 
 .server-empty-actions :deep(.app-primary-button span) {
@@ -648,9 +613,10 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .server-empty-tip small {
-  color: #6b6b7a;
-  font-size: 11px;
-  line-height: 1.6;
+  color: #646262;
+  font-size: 14px;
+  line-height: 2;
+  letter-spacing: 0;
 }
 
 .server-empty-visual {
@@ -668,7 +634,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   max-width: none;
   transform: translateY(-48%);
   opacity: 0.8;
-  filter: drop-shadow(0 28px 60px rgba(0, 0, 0, 0.3));
+  filter: none;
   user-select: none;
 }
 
@@ -682,53 +648,47 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   display: grid;
   gap: 10px;
   padding: 20px 18px 18px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  background: #2a2a3c;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fdfcfc;
   cursor: pointer;
-  transition:
-    border-color 160ms ease,
-    background-color 160ms ease,
-    transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 160ms ease;
 }
 
 .server-empty-step::before {
   content: "";
-  width: 28px;
-  height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #4a7fc1, rgba(74, 127, 193, 0));
+  width: 24px;
+  height: 1px;
+  background: var(--border);
 }
 
 .server-empty-step span {
-  color: #4a7fc1;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  color: #646262;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
 }
 
 .server-empty-step strong {
-  color: #e0e0e0;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 1.3;
+  color: #201d1d;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 .server-empty-step p {
   margin: 0;
-  color: #8b8b9a;
-  font-size: 13px;
-  line-height: 1.7;
+  color: #424245;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .server-empty-step:hover {
-  border-color: rgba(255, 255, 255, 0.1);
-  background: #32324a;
-  transform: translateY(-1px);
+  background: #f8f7f7;
 }
 
 .server-empty-step:active {
-  transform: scale(0.985);
+  transform: none;
 }
 
 .password-field {
@@ -742,19 +702,19 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   height: 28px;
   width: 28px;
   transform: translateY(-50%);
-  color: #8b8b9a;
+  color: #646262;
 }
 
 .password-toggle:hover {
-  color: #c8c8d8;
+  color: #201d1d;
 }
 
 .drawer-eyebrow {
   margin: 0 0 10px;
-  color: #6b6b7a;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  color: #646262;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
 }
 
 .drawer-actions {
@@ -777,31 +737,21 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .server-create-header {
   padding: 22px 24px 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  background: #252538;
+  border-bottom: 1px solid var(--border);
+  background: #f8f7f7;
 }
 
 .server-create-head-copy {
   display: grid;
-  gap: 8px;
-}
-
-.server-create-header :deep(h2),
-.server-create-header :deep(p) {
-  margin: 0;
+  gap: 6px;
 }
 
 .server-create-header :deep(h2) {
-  color: #e0e0e0;
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.server-create-header :deep(p:last-child) {
-  color: #8b8b9a;
-  font-size: 13px;
-  line-height: 1.7;
+  margin: 0;
+  color: #201d1d;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 .server-create-scroll {
@@ -818,9 +768,9 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   display: grid;
   gap: 14px;
   padding: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  background: #2a2a3c;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fdfcfc;
 }
 
 .server-create-section-head {
@@ -830,17 +780,17 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .server-create-section-head h4 {
   margin: 0;
-  color: #e0e0e0;
+  color: #201d1d;
   font-size: 14px;
-  font-weight: 500;
-  line-height: 1.3;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 .server-create-section-head p {
   margin: 0;
-  color: #8b8b9a;
-  font-size: 12px;
-  line-height: 1.7;
+  color: #646262;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .create-form-row {
@@ -860,8 +810,8 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .server-create-field-label {
-  color: #c8c8d8;
-  font-size: 12px;
+  color: #424245;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -879,8 +829,8 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   align-items: center;
   justify-content: stretch;
   padding: 16px 24px 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  background: #252538;
+  border-top: 1px solid var(--border);
+  background: #f8f7f7;
 }
 
 .server-create-actions :deep(button) {
@@ -893,11 +843,6 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 @media (max-width: 960px) {
-  .server-toolbar-panel {
-    margin-inline: -24px;
-    padding-inline: 24px;
-  }
-
   .server-empty-guide,
   .server-card-list {
     grid-template-columns: 1fr;
@@ -933,11 +878,6 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 @media (max-width: 640px) {
-  .server-toolbar-panel {
-    margin-inline: -18px;
-    padding-inline: 18px;
-  }
-
   .server-empty-shell {
     gap: 16px;
   }

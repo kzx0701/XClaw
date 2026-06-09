@@ -41,32 +41,24 @@ defineEmits<{
 .resource-card {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  min-height: 120px;
-  padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  background: #2a2a3c;
-  color: #e0e0e0;
+  gap: 12px;
+  min-height: 112px;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fdfcfc;
+  color: #201d1d;
   cursor: pointer;
-  transition:
-    border-color 160ms ease,
-    background-color 160ms ease,
-    transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 160ms ease;
+  transition: background-color 160ms ease;
 }
 
 .resource-card:hover {
-  border-color: rgba(255, 255, 255, 0.1);
-  background: #32324a;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: #f8f7f7;
 }
 
 .resource-card:focus-visible {
   outline: none;
-  border-color: rgba(74, 127, 193, 0.3);
-  box-shadow: 0 0 0 1px rgba(74, 127, 193, 0.15);
+  background: #f8f7f7;
 }
 
 .resource-card-top {
@@ -90,9 +82,10 @@ defineEmits<{
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: 8px;
-  background: rgba(74, 127, 193, 0.12);
-  color: #7aa3d9;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f1eeee;
+  color: #201d1d;
   flex: 0 0 auto;
 }
 
@@ -108,15 +101,15 @@ defineEmits<{
 }
 
 .resource-card-body strong {
-  color: #e0e0e0;
+  color: #201d1d;
   font-size: 14px;
-  font-weight: 500;
-  line-height: 1.3;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 .resource-card-body p {
-  color: #8b8b9a;
-  font-size: 12px;
+  color: #646262;
+  font-size: 14px;
   line-height: 1.5;
   white-space: nowrap;
   overflow: hidden;
@@ -124,13 +117,13 @@ defineEmits<{
 }
 
 .resource-card-enter-icon {
-  color: #6b6b7a;
+  color: #9a9898;
   flex: 0 0 auto;
   transition: color 160ms ease;
 }
 
 .resource-card:hover .resource-card-enter-icon {
-  color: #8b8b9a;
+  color: #201d1d;
 }
 
 .resource-card-foot {
@@ -140,7 +133,8 @@ defineEmits<{
   gap: 12px;
   min-height: 30px;
   padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--border);
+  background: transparent;
 }
 
 .resource-card-actions {

@@ -23,3 +23,10 @@ export async function appendTaskHistory(record: TaskHistoryRecord) {
   await saveTaskHistory(nextRecords)
   return nextRecords
 }
+
+export async function deleteTaskHistoryRecord(recordId: string) {
+  const records = await loadTaskHistory()
+  const nextRecords = records.filter((record) => record.id !== recordId)
+  await saveTaskHistory(sortRecords(nextRecords))
+  return sortRecords(nextRecords)
+}

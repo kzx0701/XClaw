@@ -2,7 +2,10 @@ use serde::{Deserialize, Serialize};
 use std::env;
 use std::path::Path;
 use std::process::Command;
+use std::time::SystemTime;
 use tauri::async_runtime;
+
+use crate::build_artifact::{resolve_artifact_dir, ArtifactResolution};
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -20,6 +23,10 @@ pub struct LocalBuildResult {
     build_command: String,
     output_dir: String,
     output_path: String,
+    artifact_verified: bool,
+    artifact_resolved_by: String,
+    artifact_candidates: Vec<String>,
+    artifact_message: String,
     precheck_command: String,
     precheck_output: String,
     precheck_ran: bool,
@@ -46,6 +53,7 @@ fn execute_local_build(request: LocalBuildRequest) -> Result<LocalBuildResult, S
         return Err("项目路径不是目录，无法执行打包".into());
     }
 
+    let build_started_at = SystemTime::now();
     let precheck_command = request.precheck_command.trim().to_string();
     let build_command = request.build_command.trim().to_string();
     let output_dir = request.output_dir.trim().to_string();
@@ -68,6 +76,10 @@ fn execute_local_build(request: LocalBuildRequest) -> Result<LocalBuildResult, S
                 build_command,
                 output_dir: output_dir.clone(),
                 output_path: project_path.join(&output_dir).to_string_lossy().to_string(),
+                artifact_verified: false,
+                artifact_resolved_by: "precheck-failed".into(),
+                artifact_candidates: Vec::new(),
+                artifact_message: "前置校验失败，未执行打包产物解析".into(),
                 precheck_command,
                 precheck_output,
                 precheck_ran,
@@ -80,12 +92,20 @@ fn execute_local_build(request: LocalBuildRequest) -> Result<LocalBuildResult, S
 
     let build = run_shell_command(project_path, &build_command)?;
     let build_output = combine_command_output(&build.stdout, &build.stderr);
-    let output_path = project_path.join(&output_dir);
+    let artifact = if build.status == 0 {
+        resolve_artifact_dir(project_path, &output_dir, build_started_at)
+    } else {
+        unresolved_artifact(project_path, &output_dir, "打包失败，未执行产物目录解析")
+    };
 
     Ok(LocalBuildResult {
         build_command,
-        output_dir,
-        output_path: output_path.to_string_lossy().to_string(),
+        output_dir: artifact.output_dir,
+        output_path: artifact.output_path,
+        artifact_verified: artifact.verified,
+        artifact_resolved_by: artifact.resolved_by,
+        artifact_candidates: artifact.candidates,
+        artifact_message: artifact.message,
         precheck_command,
         precheck_output,
         precheck_ran,
@@ -93,6 +113,17 @@ fn execute_local_build(request: LocalBuildRequest) -> Result<LocalBuildResult, S
         build_output,
         success: build.status == 0,
     })
+}
+
+fn unresolved_artifact(project_path: &Path, output_dir: &str, message: &str) -> ArtifactResolution {
+    ArtifactResolution {
+        output_dir: output_dir.to_string(),
+        output_path: project_path.join(output_dir).to_string_lossy().to_string(),
+        verified: false,
+        resolved_by: "configured".into(),
+        candidates: Vec::new(),
+        message: message.into(),
+    }
 }
 
 struct CommandOutput {

@@ -1,7 +1,8 @@
 <template>
-  <button type="button" class="xclaw-wordmark" :style="wordmarkStyle" :data-text="text" :aria-label="text" @click="$emit('click')">
-    <span class="xclaw-wordmark-actual">&nbsp;{{ text }}&nbsp;</span>
-    <span aria-hidden="true" class="xclaw-wordmark-hover">&nbsp;{{ text }}&nbsp;</span>
+  <button type="button" class="xclaw-wordmark" :style="wordmarkStyle" :aria-label="text" @click="$emit('click')">
+    <span class="xclaw-wordmark-copy">
+      <span class="xclaw-wordmark-x">X</span><span>Claw</span>
+    </span>
   </button>
 </template>
 
@@ -15,9 +16,9 @@ const props = withDefaults(
     text?: string;
   }>(),
   {
-    accentColor: "#60a5fa",
+    accentColor: "#0057c2",
     fontSize: "1.5rem",
-    text: "XCLAW",
+    text: "XClaw",
   },
 );
 
@@ -33,47 +34,46 @@ const wordmarkStyle = computed(() => ({
 
 <style scoped>
 .xclaw-wordmark {
-  --border-right: 3px;
   margin: 0;
-  padding: 0;
+  display: inline-flex;
+  align-items: baseline;
+  min-width: 0;
   height: auto;
-  border: none;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
   background: transparent;
+  color: #201d1d;
   cursor: pointer;
-  letter-spacing: 0.1em;
-  text-decoration: none;
-  font-size: var(--fs-size);
   font-family: var(--font-sans);
+  line-height: 1;
+  text-align: left;
+  transition: opacity 140ms ease;
+}
+
+.xclaw-wordmark:hover {
+  opacity: 0.82;
+}
+
+.xclaw-wordmark:focus-visible {
+  outline: 1px solid var(--border);
+  outline-offset: 4px;
+}
+
+.xclaw-wordmark-copy {
+  display: inline-flex;
+  align-items: baseline;
+  min-width: 0;
+  color: #201d1d;
+  font-size: var(--fs-size);
   font-weight: 700;
   line-height: 1;
-  position: relative;
-  text-transform: uppercase;
-  color: rgba(241, 245, 249, 0.9);
-  text-shadow: 0 0 12px rgba(148, 163, 184, 0.08);
-}
-
-.xclaw-wordmark-actual,
-.xclaw-wordmark-hover {
-  display: block;
-}
-
-.xclaw-wordmark-hover {
-  position: absolute;
-  inset: 0;
-  box-sizing: border-box;
-  width: 0%;
-  color: var(--animation-color);
-  border-right: var(--border-right) solid var(--animation-color);
-  overflow: hidden;
-  transition:
-    width 0.45s ease,
-    filter 0.45s ease;
+  letter-spacing: -0.045em;
   white-space: nowrap;
-  -webkit-text-stroke: 1px var(--animation-color);
 }
 
-.xclaw-wordmark:hover .xclaw-wordmark-hover {
-  width: 100%;
-  filter: drop-shadow(0 0 18px color-mix(in srgb, var(--animation-color) 68%, transparent));
+.xclaw-wordmark-x {
+  color: var(--animation-color);
+  letter-spacing: -0.08em;
 }
 </style>

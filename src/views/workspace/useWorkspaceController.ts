@@ -19,7 +19,7 @@ import { deleteProject, getProjects, markProjectAsUsed, updateProjectConfig, ups
 import { scanProject, scanProjectAiContext } from "@/services/project/scan"
 import { deleteServer, getServers, upsertServer } from "@/services/server/repository"
 import { loadGatewayConfig, saveGatewayConfig } from "@/services/storage/gateway"
-import { appendTaskHistory, getTaskHistory } from "@/services/task-history/repository"
+import { appendTaskHistory, deleteTaskHistoryRecord, getTaskHistory } from "@/services/task-history/repository"
 import { useConfirm } from "@/services/ui/confirm"
 import { showToast } from "@/services/ui/toast"
 import { GatewayClient } from "@/services/websocket/client"
@@ -67,6 +67,7 @@ export function useWorkspaceController() {
   const isCheckingEnvironment = ref(false);
   const servers = ref<ServerRecord[]>([]);
   const taskHistoryRecords = ref<TaskHistoryRecord[]>([]);
+  const deploymentHistoryRecords = ref<TaskHistoryRecord[]>([]);
   const selectedTaskHistoryId = ref<string | null>(null);
   const isCreatingServer = ref(false);
   const selectedServerId = ref<string | null>(null);
@@ -101,6 +102,14 @@ export function useWorkspaceController() {
   let manualDisconnectRequested = false;
   let shouldReconnectGateway = false;
   type GatewayConnectTrigger = "manual" | "startup" | "reconnect";
+
+  function deferAfterPanelTransition() {
+    return new Promise<void>((resolve) => {
+      window.setTimeout(() => {
+        requestAnimationFrame(() => resolve());
+      }, 280);
+    });
+  }
 
 
   function createLog(level: GatewayLogEntry["level"], message: string) {
@@ -659,6 +668,23 @@ export function useWorkspaceController() {
     selectedTaskHistoryId.value = taskHistoryRecords.value[0]?.id ?? null;
   }
 
+  async function refreshDeploymentHistory() {
+    deploymentHistoryRecords.value = await getTaskHistory();
+  }
+
+  async function handleDeleteDeploymentHistoryRecord(recordId: string) {
+    await deleteTaskHistoryRecord(recordId);
+    await refreshDeploymentHistory();
+
+    if (selectedProjectId.value) {
+      await refreshTaskHistory(selectedProjectId.value);
+    } else {
+      await refreshTaskHistory();
+    }
+
+    showToast("部署日志已删除", "success");
+  }
+
   async function refreshProjectEnvironmentMap() {
     projectEnvironmentsMap.value = await getEnvironmentsByProjectIds(projects.value.map((project) => project.id));
   }
@@ -753,7 +779,13 @@ export function useWorkspaceController() {
     executionDraft.value = createExecutionDraft(selected, environmentDraft.value?.name ?? "dev");
     projectPathInput.value = selected.localPath;
     appStore.setSelectedProjectName(selected.name);
-    appStore.setBannerMessage(`宸插垏鎹㈠埌 ${selected.name}`);
+    appStore.setBannerMessage(`已切换到 ${selected.name}`);
+
+    await deferAfterPanelTransition();
+
+    if (selectedProjectId.value !== projectId) {
+      return;
+    }
 
     projects.value = await markProjectAsUsed(projectId);
     latestScannedProject.value = projects.value.find((project) => project.id === projectId) ?? selected;
@@ -980,6 +1012,13 @@ export function useWorkspaceController() {
         buildOutputPath = buildResult.outputPath;
         pushQuickDeployLog(`本地打包完成：${buildResult.outputPath}`);
         pushGatewayLog("success", `一键部署打包完成：${buildResult.outputPath}`);
+        if (buildResult.artifactMessage.trim()) {
+          pushQuickDeployLog(buildResult.artifactMessage);
+          pushGatewayLog(buildResult.artifactVerified ? "info" : "warn", buildResult.artifactMessage);
+        }
+        if (buildResult.artifactCandidates.length > 0) {
+          pushGatewayLog("info", `候选产物目录：${buildResult.artifactCandidates.join("、")}`);
+        }
 
         if (buildResult.buildOutput.trim()) {
           pushQuickDeployLog(buildResult.buildOutput.trim());
@@ -1064,6 +1103,7 @@ export function useWorkspaceController() {
       };
 
       await appendTaskHistory(historyRecord);
+      await refreshDeploymentHistory();
 
       if (selectedProjectId.value === option.project.id) {
         await refreshTaskHistory(option.project.id);
@@ -1112,19 +1152,26 @@ export function useWorkspaceController() {
 
   function handleBackToProjectList() {
     selectedProjectId.value = null;
-    latestScannedProject.value = null;
-    projectEnvironments.value = [];
-    projectDraft.value = null;
-    projectAiRecommendation.value = null;
-    environmentDraft.value = null;
-    selectedEnvironmentName.value = null;
-    isEnvironmentEditorVisible.value = false;
-    executionDraft.value = null;
-    taskHistoryRecords.value = [];
-    selectedTaskHistoryId.value = null;
-    projectPathInput.value = "";
     appStore.setSelectedProjectName("项目");
     appStore.setBannerMessage("已返回项目列表");
+
+    void deferAfterPanelTransition().then(() => {
+      if (selectedProjectId.value) {
+        return;
+      }
+
+      latestScannedProject.value = null;
+      projectEnvironments.value = [];
+      projectDraft.value = null;
+      projectAiRecommendation.value = null;
+      environmentDraft.value = null;
+      selectedEnvironmentName.value = null;
+      isEnvironmentEditorVisible.value = false;
+      executionDraft.value = null;
+      taskHistoryRecords.value = [];
+      selectedTaskHistoryId.value = null;
+      projectPathInput.value = "";
+    });
   }
 
   async function handleSaveProjectConfig() {
@@ -1600,6 +1647,12 @@ export function useWorkspaceController() {
 
         buildOutputPath = result.outputPath;
         pushGatewayLog("success", `本地打包完成：${result.outputPath}`);
+        if (result.artifactMessage.trim()) {
+          pushGatewayLog(result.artifactVerified ? "info" : "warn", result.artifactMessage);
+        }
+        if (result.artifactCandidates.length > 0) {
+          pushGatewayLog("info", `候选产物目录：${result.artifactCandidates.join("、")}`);
+        }
         if (result.buildOutput.trim()) {
           pushGatewayLog("info", result.buildOutput.trim());
         }
@@ -1710,6 +1763,7 @@ export function useWorkspaceController() {
       };
 
       await appendTaskHistory(historyRecord);
+      await refreshDeploymentHistory();
       await refreshTaskHistory(latestScannedProject.value.id);
     }
   }
@@ -1996,6 +2050,7 @@ export function useWorkspaceController() {
   onMounted(() => {
     void refreshProjects();
     void refreshServers();
+    void refreshDeploymentHistory();
     pushGatewayLog("info", "网关日志面板已就绪");
 
     void loadGatewayConfig()
@@ -2049,6 +2104,7 @@ export function useWorkspaceController() {
     isCheckingEnvironment,
     servers,
     taskHistoryRecords,
+    deploymentHistoryRecords,
     selectedTaskHistoryId,
     isCreatingServer,
     selectedServerId,
@@ -2113,6 +2169,7 @@ export function useWorkspaceController() {
     handleCloseCreateServer,
     handleCreateServer,
     handleConfirmDeleteServerById,
+    handleDeleteDeploymentHistoryRecord,
     handleSaveServer,
     handleSelectServer,
     connectGateway,
