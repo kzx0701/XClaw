@@ -12,7 +12,10 @@
         <AlertDialogTitle class="text-center text-[16px] font-bold tracking-normal text-[#201d1d]">
           {{ activeConfirm.header }}
         </AlertDialogTitle>
-        <AlertDialogDescription class="max-w-[280px] text-center text-[14px] leading-6 text-[#646262]">
+        <AlertDialogDescription
+          v-if="activeConfirm.message"
+          class="max-w-[280px] text-center text-[14px] leading-6 text-[#646262]"
+        >
           {{ activeConfirm.message }}
         </AlertDialogDescription>
       </AlertDialogHeader>

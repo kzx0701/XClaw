@@ -5,18 +5,18 @@ import { runLocalBuild } from "@/services/execution/build"
 import { runServerConnectionCheck } from "@/services/execution/connection-check"
 import { runLocalDeploy } from "@/services/execution/deploy-local"
 import { loadLocalOpenClawGatewayConfig } from "@/services/openclaw/config"
-import { requestProjectAiRecommendation } from "@/services/openclaw/project-ai"
 import {
   PRESET_ENVIRONMENTS,
   createEnvironmentRecordDraft,
   deleteEnvironment,
+  deleteEnvironmentsByServerId,
   getEnvironmentsByProjectIds,
   getProjectEnvironments,
   upsertEnvironment,
 } from "@/services/project/environment-repository"
 import { pickProjectDirectory } from "@/services/project/pick"
 import { deleteProject, getProjects, markProjectAsUsed, updateProjectConfig, upsertProject } from "@/services/project/repository"
-import { scanProject, scanProjectAiContext } from "@/services/project/scan"
+import { scanProject } from "@/services/project/scan"
 import { deleteServer, getServers, upsertServer } from "@/services/server/repository"
 import { loadGatewayConfig, saveGatewayConfig } from "@/services/storage/gateway"
 import { appendTaskHistory, deleteTaskHistoryRecord, getTaskHistory } from "@/services/task-history/repository"
@@ -33,7 +33,6 @@ import type {
   ExecutionDraft,
   ExecutionStatus,
   ExecutionSummaryItem,
-  ProjectAiRecommendation,
   ProjectRecord,
   ServerFormValue,
   ServerRecord,
@@ -56,8 +55,6 @@ export function useWorkspaceController() {
   const latestScannedProject = ref<ProjectRecord | null>(null);
   const selectedProjectId = ref<string | null>(null);
   const projectDraft = ref<ProjectRecord | null>(null);
-  const projectAiRecommendation = ref<ProjectAiRecommendation | null>(null);
-  const isAiAnalyzingProject = ref(false);
   const projectEnvironments = ref<DeployEnvironmentRecord[]>([]);
   const projectEnvironmentsMap = ref<Map<string, DeployEnvironmentRecord[]>>(new Map());
   const environmentDraft = ref<EnvironmentFormValue | null>(null);
@@ -85,7 +82,6 @@ export function useWorkspaceController() {
   const gatewayProbeStatus = ref<"idle" | "success" | "warn" | "error">("idle");
   const isImportingLocalConfig = ref(false);
   const isProbingGateway = ref(false);
-  const openResponsesEnabled = ref(false);
   const reconnectCountdown = ref<number | null>(null);
   const isSavingGatewayConfig = ref(false);
   const projectPendingDeleteId = ref<string | null>(null);
@@ -300,6 +296,10 @@ export function useWorkspaceController() {
   }
 
   function formatEnvironmentLabel(name: string) {
+    if (name === "dev") {
+      return "开发环境";
+    }
+
     if (name === "test") {
       return "测试环境";
     }
@@ -308,7 +308,7 @@ export function useWorkspaceController() {
       return "生产环境";
     }
 
-    return "自定义环境";
+    return name;
   }
 
   function formatUploadStrategyLabel(strategy: UploadStrategy) {
@@ -612,7 +612,6 @@ export function useWorkspaceController() {
       selectedProjectId.value = selected?.id ?? null;
       latestScannedProject.value = selected;
       projectDraft.value = selected ? { ...selected } : null;
-      projectAiRecommendation.value = null;
       executionDraft.value = selected ? createExecutionDraft(selected) : null;
       appStore.setSelectedProjectName(selected?.name ?? "项目");
       appStore.setBannerMessage(`已载入 ${projects.value.length} 条项目记录`);
@@ -633,7 +632,6 @@ export function useWorkspaceController() {
       selectedProjectId.value = null;
       latestScannedProject.value = null;
       projectDraft.value = null;
-      projectAiRecommendation.value = null;
       projectEnvironments.value = [];
       environmentDraft.value = null;
       selectedEnvironmentName.value = null;
@@ -775,7 +773,6 @@ export function useWorkspaceController() {
     selectedProjectId.value = projectId;
     latestScannedProject.value = selected;
     projectDraft.value = { ...selected };
-    projectAiRecommendation.value = null;
     executionDraft.value = createExecutionDraft(selected, environmentDraft.value?.name ?? "dev");
     projectPathInput.value = selected.localPath;
     appStore.setSelectedProjectName(selected.name);
@@ -790,7 +787,6 @@ export function useWorkspaceController() {
     projects.value = await markProjectAsUsed(projectId);
     latestScannedProject.value = projects.value.find((project) => project.id === projectId) ?? selected;
     projectDraft.value = latestScannedProject.value ? { ...latestScannedProject.value } : null;
-    projectAiRecommendation.value = null;
     executionDraft.value = latestScannedProject.value
       ? createExecutionDraft(latestScannedProject.value, environmentDraft.value?.name ?? "dev")
       : null;
@@ -1163,7 +1159,6 @@ export function useWorkspaceController() {
       latestScannedProject.value = null;
       projectEnvironments.value = [];
       projectDraft.value = null;
-      projectAiRecommendation.value = null;
       environmentDraft.value = null;
       selectedEnvironmentName.value = null;
       isEnvironmentEditorVisible.value = false;
@@ -1194,80 +1189,6 @@ export function useWorkspaceController() {
 
     appStore.setBannerMessage(`已保存项目配置：${projectDraft.value?.name ?? ""}`);
     showToast("项目配置已保存", "success");
-  }
-
-  async function handleRunProjectAiAnalysis() {
-    if (!latestScannedProject.value) {
-      showToast("请先导入并选中项目", "warning");
-      return;
-    }
-
-    if (!gatewayUrl.value.trim() || !gatewayToken.value.trim()) {
-      showToast("请先填写并保存 OpenClaw 网关地址和 Token，再执行 AI 判断", "warning");
-      return;
-    }
-
-    if (gatewayConfigSource.value === "local-openclaw" && !openResponsesEnabled.value) {
-      showToast("当前 OpenClaw 未启用 OpenResponses 能力，AI 判断暂不可用，需要先在 OpenClaw 配置中开启该 HTTP 端点。", "warning");
-      return;
-    }
-
-    isAiAnalyzingProject.value = true;
-    projectAiRecommendation.value = null;
-    pushGatewayLog("info", `开始对项目 ${latestScannedProject.value.name} 执行 AI 判断`);
-
-    try {
-      const context = await scanProjectAiContext(latestScannedProject.value.localPath);
-      const recommendation = await requestProjectAiRecommendation({
-        context,
-        token: gatewayToken.value.trim(),
-        url: gatewayUrl.value.trim(),
-      });
-
-      projectAiRecommendation.value = recommendation;
-      pushGatewayLog("success", "AI 已返回项目构建建议");
-      pushGatewayLog(
-        "info",
-        `AI 建议：命令 ${recommendation.recommendedBuildCommand || "未给出"}，目录 ${recommendation.recommendedOutputDir || "未给出"}`,
-      );
-      appStore.setBannerMessage("AI 已返回项目构建建议");
-      showToast("AI 判断完成", "success");
-    } catch (error) {
-      const rawMessage = getErrorMessage(error, "AI 判断失败，请确认 OpenClaw 网关已启用 /v1/responses，并且当前 Token 有调用权限。");
-      const message = rawMessage.includes("HTTP 404")
-        ? "当前 OpenClaw Gateway 未暴露 /v1/responses 接口，所以 AI 判断不可用。请先在 OpenClaw 配置中启用 OpenResponses HTTP 端点，再重试。"
-        : rawMessage;
-      pushGatewayLog("error", message);
-      appStore.setBannerMessage(message);
-      showToast(message, "error");
-    } finally {
-      isAiAnalyzingProject.value = false;
-    }
-  }
-
-  function handleApplyProjectAiRecommendation() {
-    if (!projectDraft.value || !projectAiRecommendation.value) {
-      return;
-    }
-
-    const nextProjectDraft: ProjectRecord = {
-      ...projectDraft.value,
-      defaultBuildCommand: projectAiRecommendation.value.recommendedBuildCommand || projectDraft.value.defaultBuildCommand,
-      defaultOutputDir: projectAiRecommendation.value.recommendedOutputDir || projectDraft.value.defaultOutputDir,
-    };
-
-    projectDraft.value = nextProjectDraft;
-
-    if (executionDraft.value) {
-      executionDraft.value = {
-        ...executionDraft.value,
-        overrideBuildCommand: nextProjectDraft.defaultBuildCommand,
-        overrideOutputDir: nextProjectDraft.defaultOutputDir,
-      };
-    }
-
-    appStore.setBannerMessage("已应用 AI 推荐值，请按需保存项目配置");
-    showToast("已应用 AI 推荐值", "success");
   }
 
   async function handleSaveEnvironment() {
@@ -1382,8 +1303,25 @@ export function useWorkspaceController() {
       return;
     }
 
+    const affectedProjects = projects.value
+      .map((project) => {
+        const matchedEnvironments = (projectEnvironmentsMap.value.get(project.id) ?? [])
+          .filter((environment) => environment.serverId === serverId)
+          .map((environment) => formatEnvironmentLabel(environment.name));
+
+        if (matchedEnvironments.length === 0) {
+          return null;
+        }
+
+        return `${project.name}（${matchedEnvironments.join("、")}）`;
+      })
+      .filter((item): item is string => Boolean(item));
+
     confirm.require({
-      message: `删除后将移除服务器 “${targetServer.name}” 的保存记录。这个操作不会删除真实服务器。`,
+      message:
+        affectedProjects.length > 0
+          ? `已绑定 ${affectedProjects.join("、")}，删除时会一并删除对应环境。`
+          : "将删除当前服务器配置。",
       header: "确认删除服务器",
       icon: TriangleAlert,
       rejectLabel: "取消",
@@ -1468,15 +1406,48 @@ export function useWorkspaceController() {
       return;
     }
 
-    const currentServer = servers.value.find((server) => server.id === selectedServerId.value) ?? null;
-    servers.value = await deleteServer(selectedServerId.value);
+    const serverId = selectedServerId.value;
+    const currentServer = servers.value.find((server) => server.id === serverId) ?? null;
+    const { affectedEnvironments } = await deleteEnvironmentsByServerId(serverId);
+    servers.value = await deleteServer(serverId);
+
+    if (affectedEnvironments.length > 0) {
+      const affectedProjectIds = new Set(affectedEnvironments.map((environment) => environment.projectId));
+      for (const project of projects.value.filter((item) => affectedProjectIds.has(item.id))) {
+        const nextDefaultDeployServerIdByEnv = { ...(project.defaultDeployServerIdByEnv ?? {}) };
+        let didChange = false;
+
+        affectedEnvironments.forEach((environment) => {
+          if (environment.projectId !== project.id) {
+            return;
+          }
+
+          if (nextDefaultDeployServerIdByEnv[environment.environmentName]) {
+            delete nextDefaultDeployServerIdByEnv[environment.environmentName];
+            didChange = true;
+          }
+        });
+
+        if (!didChange) {
+          continue;
+        }
+
+        projects.value = await updateProjectConfig({
+          ...project,
+          defaultDeployServerIdByEnv: nextDefaultDeployServerIdByEnv,
+        });
+      }
+    }
+
     isCreatingServer.value = false;
     selectedServerId.value = null;
     serverDraft.value = createEmptyServerDraft();
 
     if (selectedProjectId.value) {
-      await refreshProjectEnvironments(selectedProjectId.value);
+      await loadEnvironmentDraft(selectedProjectId.value);
     }
+
+    await refreshProjectEnvironmentMap();
 
     appStore.setBannerMessage(`已删除服务器：${currentServer?.name ?? ""}`);
     showToast(`服务器 ${currentServer?.name ?? ""} 已删除`, "success");
@@ -1911,12 +1882,8 @@ export function useWorkspaceController() {
       gatewayConfigSource.value = "local-openclaw";
       gatewayUrl.value = config.url;
       gatewayToken.value = config.token;
-      openResponsesEnabled.value = config.openResponsesEnabled;
       await persistGatewayConfigSilently();
       pushGatewayLog("success", `已导入本机 OpenClaw 配置：${config.sourcePath}`);
-      if (!config.openResponsesEnabled) {
-        pushGatewayLog("warn", "当前 OpenClaw 配置未启用 OpenResponses，AI 判断按钮会返回 404。");
-      }
       appStore.setBannerMessage("已导入本机 OpenClaw 网关配置");
       showToast("已导入本机 OpenClaw 配置", "success");
     } catch (error) {
@@ -2059,7 +2026,6 @@ export function useWorkspaceController() {
         gatewayConfigSource.value = config.source;
         gatewayToken.value = config.token;
         gatewayUrl.value = config.url;
-        openResponsesEnabled.value = false;
         pushGatewayLog("info", "已加载应用本地网关连接配置");
 
         if (config.url.trim() && config.token.trim()) {
@@ -2095,8 +2061,6 @@ export function useWorkspaceController() {
     latestScannedProject,
     selectedProjectId,
     projectDraft,
-    projectAiRecommendation,
-    isAiAnalyzingProject,
     environmentDraft,
     selectedEnvironmentName,
     isEnvironmentEditorVisible,
@@ -2154,8 +2118,6 @@ export function useWorkspaceController() {
     openProjectDeleteDialog,
     handleBackToProjectList,
     handleRunExecution,
-    handleApplyProjectAiRecommendation,
-    handleRunProjectAiAnalysis,
     handleSaveProjectConfig,
     handleCheckEnvironment,
     handleCloseEnvironmentEditor,

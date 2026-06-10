@@ -4,17 +4,25 @@
       <WorkspaceDetailHeader
         v-if="projectId"
         :title="project?.name || '项目'"
+        :show-save="true"
+        :status-label="projectSummaryStatusLabel"
+        :status-ready="isProjectOverviewReady"
         back-label="返回项目列表"
         delete-label="删除项目"
         @back="$emit('back-to-project-list')"
         @delete="projectId && $emit('delete-project', projectId)"
+        @save="$emit('save-project-config')"
       />
 
       <Alert v-if="importError" :variant="resolveAlertVariant('error')" :class="resolveAlertToneClass('error')">
         {{ importError }}
       </Alert>
 
-      <ProjectOverviewCard :project="project" />
+      <ProjectOverviewCard
+        :model-value="projectDraft"
+        :project="project"
+        @update:model-value="$emit('update:project-draft', $event)"
+      />
 
       <div v-if="isContentReady" class="project-detail-stack">
         <EnvironmentConfigPanel
@@ -36,17 +44,6 @@
           @save-environment="$emit('save-environment')"
           @select-environment="$emit('select-environment', $event)"
           @update:editor-draft="$emit('update:environment-draft', $event)"
-        />
-
-        <ProjectConfigPanel
-          :model-value="projectDraft"
-          :ai-recommendation="projectAiRecommendation"
-          :is-ai-analyzing="isAiAnalyzingProject"
-          :project="project"
-          @apply-ai-recommendation="$emit('apply-project-ai-recommendation')"
-          @run-ai-analysis="$emit('run-project-ai-analysis')"
-          @save-project="$emit('save-project-config')"
-          @update:model-value="$emit('update:project-draft', $event)"
         />
 
         <ExecutionPanel
@@ -72,12 +69,11 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, ref, watch } from "vue"
+import { computed, onBeforeUnmount, ref, watch } from "vue"
 
 import Alert from "@/components/ui/alert/Alert.vue"
 import EnvironmentConfigPanel from "@/components/EnvironmentConfigPanel.vue"
 import ExecutionPanel from "@/components/ExecutionPanel.vue"
-import ProjectConfigPanel from "@/components/ProjectConfigPanel.vue"
 import ProjectOverviewCard from "@/components/ProjectOverviewCard.vue"
 import WorkspaceDetailHeader from "@/components/workspace-header/WorkspaceDetailHeader.vue"
 import { resolveAlertToneClass, resolveAlertVariant } from "@/lib/ui-status"
@@ -86,7 +82,6 @@ import type {
   ExecutionDraft,
   ExecutionStatus,
   ExecutionSummaryItem,
-  ProjectAiRecommendation,
   ProjectRecord,
   ServerRecord,
 } from "@/types/task"
@@ -94,7 +89,6 @@ import type {
 import type { WorkspaceEnvironmentCard } from "./types"
 
 defineEmits<{
-  "apply-project-ai-recommendation": []
   "back-to-project-list": []
   "check-environment": []
   "close-environment-editor": []
@@ -104,7 +98,6 @@ defineEmits<{
   "create-environment": []
   "reset-environment-draft": []
   "run-execution": []
-  "run-project-ai-analysis": []
   "save-environment": []
   "save-project-config": []
   "select-environment": [name: string]
@@ -124,12 +117,10 @@ const props = defineProps<{
   executionStatusMessage: string
   executionSummary: ExecutionSummaryItem[]
   importError: string
-  isAiAnalyzingProject: boolean
   isCheckingEnvironment: boolean
   isEnvironmentEditorVisible: boolean
   isPresetEnvironment: boolean
   project: ProjectRecord | null
-  projectAiRecommendation: ProjectAiRecommendation | null
   projectDraft: ProjectRecord | null
   projectId: string | null
   servers: ServerRecord[]
@@ -137,6 +128,18 @@ const props = defineProps<{
 
 const isContentReady = ref(false)
 let contentReadyTimer: number | null = null
+
+const isProjectOverviewReady = computed(() =>
+  Boolean(props.project?.defaultBuildCommand?.trim() && props.project?.defaultOutputDir?.trim()),
+)
+
+const projectSummaryStatusLabel = computed(() => {
+  if (!props.project) {
+    return ""
+  }
+
+  return isProjectOverviewReady.value ? "完整" : "待补全"
+})
 
 function scheduleContentReady() {
   isContentReady.value = false

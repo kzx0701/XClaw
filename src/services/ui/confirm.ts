@@ -10,7 +10,7 @@ export type ConfirmRequest = {
   detailValue?: string
   header?: string
   icon?: Component | null
-  message: string
+  message?: string
   rejectLabel?: string
 }
 

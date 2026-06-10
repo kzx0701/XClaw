@@ -133,123 +133,127 @@
         <div class="server-create-scroll">
           <section class="server-create-section">
             <div class="server-create-section-head">
+              <span class="server-create-section-index">01</span>
               <h4>基础信息</h4>
-              <p>先填写名称、主机与端口，建立一条可复用的服务器记录。</p>
             </div>
 
-            <div class="create-form-grid">
-              <Field class="server-create-field">
-                <FieldLabel class="server-create-field-label">服务器名称</FieldLabel>
-                <FieldContent class="server-create-field-content">
-                  <InputText
-                    :model-value="modelValue.name"
-                    class="w-full"
-                    placeholder="例如：生产服务器"
-                    @update:model-value="updateText('name', $event)"
-                  />
-                </FieldContent>
-              </Field>
-
-              <div class="create-form-row">
+            <div class="server-create-section-card">
+              <div class="create-form-grid">
                 <Field class="server-create-field">
-                  <FieldLabel class="server-create-field-label">认证方式</FieldLabel>
+                  <FieldLabel class="server-create-field-label">服务器名称</FieldLabel>
                   <FieldContent class="server-create-field-content">
-                    <Select :model-value="modelValue.authType" @update:model-value="updateText('authType', $event)">
-                      <SelectTrigger class="w-full">
-                        <SelectValue placeholder="请选择认证方式" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem v-for="option in authTypeOptions" :key="option.value" :value="option.value">
-                          {{ option.label }}
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <InputText
+                      :model-value="modelValue.name"
+                      class="w-full"
+                      placeholder="例如：生产服务器"
+                      @update:model-value="updateText('name', $event)"
+                    />
                   </FieldContent>
                 </Field>
 
-                <Field class="server-create-field server-create-field-compact">
-                  <FieldLabel class="server-create-field-label">SSH 端口</FieldLabel>
+                <div class="create-form-row">
+                  <Field class="server-create-field">
+                    <FieldLabel class="server-create-field-label">认证方式</FieldLabel>
+                    <FieldContent class="server-create-field-content">
+                      <Select :model-value="modelValue.authType" @update:model-value="updateText('authType', $event)">
+                        <SelectTrigger class="w-full">
+                          <SelectValue placeholder="请选择认证方式" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem v-for="option in authTypeOptions" :key="option.value" :value="option.value">
+                            {{ option.label }}
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FieldContent>
+                  </Field>
+
+                  <Field class="server-create-field server-create-field-compact">
+                    <FieldLabel class="server-create-field-label">SSH 端口</FieldLabel>
+                    <FieldContent class="server-create-field-content">
+                      <InputText
+                        :model-value="String(modelValue.port || 22)"
+                        class="w-full"
+                        inputmode="numeric"
+                        @update:model-value="updatePort($event)"
+                      />
+                    </FieldContent>
+                  </Field>
+                </div>
+
+                <Field class="server-create-field">
+                  <FieldLabel class="server-create-field-label">SSH 主机</FieldLabel>
                   <FieldContent class="server-create-field-content">
                     <InputText
-                      :model-value="String(modelValue.port || 22)"
+                      :model-value="modelValue.host"
                       class="w-full"
-                      inputmode="numeric"
-                      @update:model-value="updatePort($event)"
+                      placeholder="例如：192.168.1.20"
+                      @update:model-value="updateText('host', $event)"
                     />
                   </FieldContent>
                 </Field>
               </div>
-
-              <Field class="server-create-field">
-                <FieldLabel class="server-create-field-label">SSH 主机</FieldLabel>
-                <FieldContent class="server-create-field-content">
-                  <InputText
-                    :model-value="modelValue.host"
-                    class="w-full"
-                    placeholder="例如：192.168.1.20"
-                    @update:model-value="updateText('host', $event)"
-                  />
-                </FieldContent>
-              </Field>
             </div>
           </section>
 
           <section class="server-create-section">
             <div class="server-create-section-head">
+              <span class="server-create-section-index">02</span>
               <h4>登录凭据</h4>
-              <p>根据认证方式填写用户名与密码，或配置服务器私钥路径。</p>
             </div>
 
-            <div class="create-form-grid">
-              <Field class="server-create-field">
-                <FieldLabel class="server-create-field-label">用户名</FieldLabel>
-                <FieldContent class="server-create-field-content">
-                  <InputText
-                    :model-value="modelValue.username"
-                    class="w-full"
-                    placeholder="例如：root"
-                    @update:model-value="updateText('username', $event)"
-                  />
-                </FieldContent>
-              </Field>
-
-              <Field v-if="modelValue.authType === 'password'" class="server-create-field">
-                <FieldLabel class="server-create-field-label">密码</FieldLabel>
-                <FieldContent class="server-create-field-content">
-                  <div class="password-field">
+            <div class="server-create-section-card">
+              <div class="create-form-grid">
+                <Field class="server-create-field">
+                  <FieldLabel class="server-create-field-label">用户名</FieldLabel>
+                  <FieldContent class="server-create-field-content">
                     <InputText
-                      :model-value="modelValue.password"
-                      :type="showPassword ? 'text' : 'password'"
-                      class="w-full pr-11"
-                      placeholder="输入服务器密码"
-                      @update:model-value="updateText('password', $event)"
+                      :model-value="modelValue.username"
+                      class="w-full"
+                      placeholder="例如：root"
+                      @update:model-value="updateText('username', $event)"
                     />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      class="password-toggle"
-                      :aria-label="showPassword ? '隐藏密码' : '显示密码'"
-                      @click="showPassword = !showPassword"
-                    >
-                      <EyeOff v-if="showPassword" class="h-4 w-4" />
-                      <Eye v-else class="h-4 w-4" />
-                    </Button>
-                  </div>
-                </FieldContent>
-              </Field>
+                  </FieldContent>
+                </Field>
 
-              <Field v-else class="server-create-field">
-                <FieldLabel class="server-create-field-label">私钥路径</FieldLabel>
-                <FieldContent class="server-create-field-content">
-                  <InputText
-                    :model-value="modelValue.privateKeyPath"
-                    class="w-full"
-                    placeholder="例如：~/.ssh/id_rsa"
-                    @update:model-value="updateText('privateKeyPath', $event)"
-                  />
-                </FieldContent>
-              </Field>
+                <Field v-if="modelValue.authType === 'password'" class="server-create-field">
+                  <FieldLabel class="server-create-field-label">密码</FieldLabel>
+                  <FieldContent class="server-create-field-content">
+                    <div class="password-field">
+                      <InputText
+                        :model-value="modelValue.password"
+                        :type="showPassword ? 'text' : 'password'"
+                        class="w-full pr-11"
+                        placeholder="输入服务器密码"
+                        @update:model-value="updateText('password', $event)"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        class="password-toggle"
+                        :aria-label="showPassword ? '隐藏密码' : '显示密码'"
+                        @click="showPassword = !showPassword"
+                      >
+                        <EyeOff v-if="showPassword" class="h-4 w-4" />
+                        <Eye v-else class="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </FieldContent>
+                </Field>
+
+                <Field v-else class="server-create-field">
+                  <FieldLabel class="server-create-field-label">私钥路径</FieldLabel>
+                  <FieldContent class="server-create-field-content">
+                    <InputText
+                      :model-value="modelValue.privateKeyPath"
+                      class="w-full"
+                      placeholder="例如：~/.ssh/id_rsa"
+                      @update:model-value="updateText('privateKeyPath', $event)"
+                    />
+                  </FieldContent>
+                </Field>
+              </div>
             </div>
           </section>
         </div>
@@ -766,31 +770,48 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .server-create-section {
   display: grid;
-  gap: 14px;
-  padding: 18px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: #fdfcfc;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 .server-create-section-head {
-  display: grid;
-  gap: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 6px;
 }
 
 .server-create-section-head h4 {
   margin: 0;
   color: #201d1d;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
 }
 
-.server-create-section-head p {
-  margin: 0;
+.server-create-section-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f8f7f7;
   color: #646262;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.server-create-section-card {
+  display: grid;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fdfcfc;
 }
 
 .create-form-row {
@@ -917,6 +938,10 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
   .server-create-scroll {
     padding: 16px 18px 18px;
+  }
+
+  .server-create-section-head {
+    padding-inline: 0;
   }
 
   .server-create-actions {

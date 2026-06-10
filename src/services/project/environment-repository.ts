@@ -3,6 +3,11 @@ import type { DeployEnvironmentRecord, EnvironmentFormValue } from '@/types/task
 
 const ENVIRONMENT_ORDER = ['test', 'prod']
 
+export type ServerEnvironmentImpact = {
+  environmentName: string
+  projectId: string
+}
+
 function generateId() {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
     return crypto.randomUUID()
@@ -33,6 +38,21 @@ export async function deleteEnvironment(projectId: string, environmentName: stri
   )
   await saveEnvironments(nextEnvironments)
   return sortEnvironments(nextEnvironments.filter((environment) => environment.projectId === projectId))
+}
+
+export async function deleteEnvironmentsByServerId(serverId: string) {
+  const environments = await loadEnvironments()
+  const affectedEnvironments = environments.filter((environment) => environment.serverId === serverId)
+  const nextEnvironments = environments.filter((environment) => environment.serverId !== serverId)
+
+  await saveEnvironments(nextEnvironments)
+
+  return {
+    affectedEnvironments: affectedEnvironments.map((environment) => ({
+      environmentName: environment.name,
+      projectId: environment.projectId,
+    }) satisfies ServerEnvironmentImpact),
+  }
 }
 
 export function createEnvironmentRecordDraft(name: string): EnvironmentFormValue {

@@ -3,7 +3,6 @@
     <header class="card-head">
       <div>
         <h3>立即执行</h3>
-        <p>临时执行一次打包或部署。常规使用可以先完成上面的环境和构建配置。</p>
       </div>
       <Button class="app-primary-button" :disabled="!canRun || status === 'running'" @click="$emit('run')">
         <Play class="h-4 w-4" />
@@ -12,12 +11,6 @@
     </header>
 
     <div v-if="modelValue && project" class="execution-grid">
-      <Alert :variant="resolveAlertVariant('secondary')" :class="[resolveAlertToneClass('secondary'), 'full-span helper-message']">
-        <AlertDescription class="helper-message-copy">
-          当前会优先使用项目默认配置，你可以在这里按本次任务临时修改，不会自动覆盖项目默认值。
-        </AlertDescription>
-      </Alert>
-
       <label class="field">
         <span>本次任务</span>
         <Select :model-value="modelValue.mode" @update:model-value="updateField('mode', $event)">
@@ -73,22 +66,11 @@
           </div>
         </label>
       </div>
-
-      <Alert
-        v-if="modelValue.mode === 'deploy'"
-        :variant="resolveAlertVariant('secondary')"
-        :class="[resolveAlertToneClass('secondary'), 'mode-note']"
-      >
-        <AlertDescription class="helper-message-copy">
-          当前模式会直接使用当前环境的服务器和部署目录执行发布，不会先重新打包。
-        </AlertDescription>
-      </Alert>
     </div>
 
     <section v-if="summary.length > 0" class="summary-section">
       <header class="summary-head">
         <h4>本次任务摘要</h4>
-        <small>执行前再确认一次关键参数</small>
       </header>
       <div class="summary-board">
         <div v-for="item in summary" :key="item.label" class="summary-item">
@@ -205,35 +187,10 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
   letter-spacing: 0;
 }
 
-.card-head p {
-  margin: 6px 0 0;
-  color: #646262;
-  font-size: 14px;
-  line-height: 1.5;
-  letter-spacing: 0;
-}
-
 .execution-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px 18px;
-}
-
-.full-span {
-  grid-column: 1 / -1;
-}
-
-.helper-message {
-  margin: 0;
-  padding: 12px 14px;
-}
-
-.helper-message-copy {
-  display: block;
-  color: #424245;
-  line-height: 1.5;
-  white-space: normal;
-  word-break: break-word;
 }
 
 .field,
@@ -262,10 +219,6 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
   font-size: 14px;
 }
 
-.mode-note {
-  grid-column: 1 / -1;
-}
-
 .summary-section {
   display: grid;
   gap: 12px;
@@ -278,8 +231,7 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
   gap: 12px;
 }
 
-.summary-head h4,
-.summary-head small {
+.summary-head h4 {
   margin: 0;
 }
 
@@ -288,11 +240,6 @@ function updateBoolean(field: keyof ExecutionDraft, value: boolean | undefined) 
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
-}
-
-.summary-head small {
-  color: #646262;
-  font-size: 14px;
 }
 
 .summary-board {

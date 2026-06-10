@@ -1,125 +1,308 @@
 <template>
   <article class="panel-card overview-card">
-    <header class="overview-head">
-      <div class="overview-title-group">
-        <span class="overview-eyebrow">项目概览</span>
-        <h3>{{ project?.name || '未选择项目' }}</h3>
-      </div>
+    <template v-if="modelValue && project">
+      <header class="overview-head">
+        <div class="overview-head-main">
+          <h3>项目概览</h3>
+          <button
+            type="button"
+            class="overview-advanced-toggle"
+            :aria-expanded="showAdvanced"
+            :aria-label="showAdvanced ? '收起高级配置' : '展开高级配置'"
+            @click="showAdvanced = !showAdvanced"
+          >
+            <span>高级配置</span>
+            <ChevronDown class="h-4 w-4" :class="{ 'rotate-180': showAdvanced }" />
+          </button>
+        </div>
 
-      <div v-if="project" class="overview-meta">
-        <span>{{ project.projectType || '未知类型' }}</span>
-        <span>{{ project.packageManager || '未知包管理器' }}</span>
-        <span>{{ scriptCount }} 个脚本</span>
-      </div>
+        <div class="overview-meta" aria-label="项目标识">
+          <span>{{ project.projectType || "未知类型" }}</span>
+          <span>{{ project.packageManager || "未知包管理器" }}</span>
+          <span>{{ scriptCount }} 个脚本</span>
+        </div>
+      </header>
 
-      <span class="overview-status" :data-ready="isReady">
-        <CircleCheck v-if="isReady" class="h-3.5 w-3.5" aria-hidden="true" />
-        <CircleAlert v-else class="h-3.5 w-3.5" aria-hidden="true" />
-        {{ isReady ? '配置完整' : '待完善' }}
-      </span>
-    </header>
+      <section class="overview-summary" aria-label="项目摘要">
+        <div class="summary-column">
+          <div class="summary-row">
+            <span class="summary-label">默认打包命令</span>
+            <div class="summary-field">
+              <template v-if="editingField === 'defaultBuildCommand'">
+                <div class="summary-editor">
+                  <InputText
+                    :model-value="localDraft.defaultBuildCommand"
+                    class="summary-input"
+                    @update:model-value="updateTextField('defaultBuildCommand', $event)"
+                  />
+                  <div class="summary-editor-actions">
+                    <button type="button" class="summary-action summary-action-confirm" title="保存" aria-label="保存默认打包命令" @click="commitField">
+                      <Check class="h-4 w-4" />
+                    </button>
+                    <button type="button" class="summary-action" title="取消" aria-label="取消编辑默认打包命令" @click="cancelEditing">
+                      <X class="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </template>
+              <template v-else>
+                <strong class="summary-value">{{ displayBuildCommand }}</strong>
+                <button
+                  type="button"
+                  class="summary-action summary-edit-button"
+                  title="编辑默认打包命令"
+                  aria-label="编辑默认打包命令"
+                  @click="startEditing('defaultBuildCommand')"
+                >
+                  <Pencil class="h-4 w-4" />
+                </button>
+              </template>
+            </div>
+          </div>
 
-    <div v-if="project" class="overview-body">
-      <section class="primary-strip" aria-label="构建主链路">
-        <div class="primary-item command-item">
-          <span class="item-icon" aria-hidden="true">
-            <SquareTerminal class="h-4 w-4" />
-          </span>
-          <div class="item-copy">
-            <small>默认打包命令</small>
-            <strong>{{ project.defaultBuildCommand || project.detectedBuildCommand || '未配置' }}</strong>
+          <div class="summary-row">
+            <span class="summary-label">默认产物目录</span>
+            <div class="summary-field">
+              <template v-if="editingField === 'defaultOutputDir'">
+                <div class="summary-editor">
+                  <InputText
+                    :model-value="localDraft.defaultOutputDir"
+                    class="summary-input"
+                    @update:model-value="updateTextField('defaultOutputDir', $event)"
+                  />
+                  <div class="summary-editor-actions">
+                    <button type="button" class="summary-action summary-action-confirm" title="保存" aria-label="保存默认产物目录" @click="commitField">
+                      <Check class="h-4 w-4" />
+                    </button>
+                    <button type="button" class="summary-action" title="取消" aria-label="取消编辑默认产物目录" @click="cancelEditing">
+                      <X class="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </template>
+              <template v-else>
+                <strong class="summary-value">{{ displayOutputDir }}</strong>
+                <button
+                  type="button"
+                  class="summary-action summary-edit-button"
+                  title="编辑默认产物目录"
+                  aria-label="编辑默认产物目录"
+                  @click="startEditing('defaultOutputDir')"
+                >
+                  <Pencil class="h-4 w-4" />
+                </button>
+              </template>
+            </div>
+          </div>
+
+          <div class="summary-row summary-row-path">
+            <span class="summary-label">本地路径</span>
+            <strong class="summary-value summary-path">{{ project.localPath }}</strong>
           </div>
         </div>
 
-        <div class="primary-item output-item">
-          <span class="item-icon" aria-hidden="true">
-            <Archive class="h-4 w-4" />
-          </span>
-          <div class="item-copy">
-            <small>默认产物目录</small>
-            <strong>{{ project.defaultOutputDir || project.detectedOutputDir || '未配置' }}</strong>
+        <div class="summary-column summary-column-compact">
+          <div class="summary-row">
+            <span class="summary-label">执行前检查</span>
+            <div class="summary-field">
+              <strong class="summary-value">{{ localDraft.defaultPrecheckEnabled ? "已启用" : "未启用" }}</strong>
+              <button
+                type="button"
+                class="summary-action summary-edit-button"
+                :title="localDraft.defaultPrecheckEnabled ? '关闭执行前检查' : '启用执行前检查'"
+                :aria-label="localDraft.defaultPrecheckEnabled ? '关闭执行前检查' : '启用执行前检查'"
+                @click="togglePrecheck"
+              >
+                <Pencil class="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section v-if="showAdvanced" class="overview-advanced" aria-label="项目高级配置">
+        <div class="summary-column summary-column-advanced">
+          <div class="summary-row">
+            <span class="summary-label">检查命令</span>
+            <div class="summary-field">
+              <template v-if="editingField === 'defaultPrecheckCommand'">
+                <div class="summary-editor">
+                  <InputText
+                    :model-value="localDraft.defaultPrecheckCommand"
+                    class="summary-input"
+                    @update:model-value="updateTextField('defaultPrecheckCommand', $event)"
+                  />
+                  <div class="summary-editor-actions">
+                    <button type="button" class="summary-action summary-action-confirm" title="保存" aria-label="保存检查命令" @click="commitField">
+                      <Check class="h-4 w-4" />
+                    </button>
+                    <button type="button" class="summary-action" title="取消" aria-label="取消编辑检查命令" @click="cancelEditing">
+                      <X class="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </template>
+              <template v-else>
+                <strong class="summary-value">{{ displayPrecheckCommand }}</strong>
+                <button
+                  type="button"
+                  class="summary-action summary-edit-button"
+                  title="编辑检查命令"
+                  aria-label="编辑检查命令"
+                  @click="startEditing('defaultPrecheckCommand')"
+                >
+                  <Pencil class="h-4 w-4" />
+                </button>
+              </template>
+            </div>
           </div>
         </div>
       </section>
+    </template>
 
-      <section class="secondary-grid" aria-label="项目辅助信息">
-        <div class="secondary-item">
-          <small>识别命令</small>
-          <strong>{{ project.detectedBuildCommand || '未识别' }}</strong>
-        </div>
-        <div class="secondary-item">
-          <small>识别目录</small>
-          <strong>{{ project.detectedOutputDir || '未识别' }}</strong>
-        </div>
-        <div class="secondary-item check-item" :data-enabled="project.defaultPrecheckEnabled">
-          <small>执行前检查</small>
-          <strong>{{ project.defaultPrecheckEnabled ? '已启用' : '未启用' }}</strong>
-        </div>
-      </section>
-
-      <section class="path-row" aria-label="本地路径">
-        <MapPin class="h-3.5 w-3.5" aria-hidden="true" />
-        <small>本地路径</small>
-        <p>{{ project.localPath }}</p>
-      </section>
-    </div>
-
-    <p v-else class="muted-paragraph">导入项目后，这里会展示识别出的项目基础信息。</p>
+    <section v-else class="overview-empty" aria-label="空项目概览">
+      <div class="overview-empty-icon" aria-hidden="true">
+        <Compass class="h-5 w-5" />
+      </div>
+      <div class="overview-empty-copy">
+        <h3>项目概览</h3>
+      </div>
+    </section>
   </article>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { Archive, CircleAlert, CircleCheck, MapPin, SquareTerminal } from 'lucide-vue-next'
+import { computed, ref, watch } from "vue"
+import { Check, ChevronDown, Compass, Pencil, X } from "lucide-vue-next"
+import { Input as InputText } from "@/components/ui/input"
+import type { ProjectRecord } from "@/types/task"
 
-import type { ProjectRecord } from '@/types/task'
+type EditableField = "defaultBuildCommand" | "defaultOutputDir" | "defaultPrecheckCommand"
 
 const props = defineProps<{
+  modelValue: ProjectRecord | null
   project: ProjectRecord | null
 }>()
 
-const isReady = computed(() => Boolean(props.project?.defaultBuildCommand?.trim() && props.project?.defaultOutputDir?.trim()))
+const emit = defineEmits<{
+  "update:modelValue": [value: ProjectRecord | null]
+}>()
+
+const editingField = ref<EditableField | null>(null)
+const showAdvanced = ref(false)
+const localDraft = ref<ProjectRecord>({
+  id: "",
+  name: "",
+  localPath: "",
+  projectType: "unknown",
+  packageManager: "unknown",
+  packageJsonPath: "",
+  scripts: {},
+  defaultBuildCommand: "",
+  defaultOutputDir: "",
+  defaultPrecheckEnabled: false,
+  defaultPrecheckCommand: "",
+  createdAt: "",
+  updatedAt: "",
+})
+
+watch(
+  () => props.modelValue,
+  (value) => {
+    if (!value) {
+      editingField.value = null
+      return
+    }
+
+    localDraft.value = { ...value }
+  },
+  { immediate: true, deep: true },
+)
+
 const scriptCount = computed(() => Object.keys(props.project?.scripts ?? {}).length)
+
+const displayBuildCommand = computed(() => localDraft.value.defaultBuildCommand?.trim() || props.project?.detectedBuildCommand?.trim() || "未配置")
+const displayOutputDir = computed(() => localDraft.value.defaultOutputDir?.trim() || props.project?.detectedOutputDir?.trim() || "未配置")
+const displayPrecheckCommand = computed(() => localDraft.value.defaultPrecheckCommand?.trim() || "未配置")
+
+function startEditing(field: EditableField) {
+  editingField.value = field
+
+  if (field === "defaultPrecheckCommand") {
+    showAdvanced.value = true
+  }
+}
+
+function cancelEditing() {
+  editingField.value = null
+
+  if (props.modelValue) {
+    localDraft.value = { ...props.modelValue }
+  }
+}
+
+function commitField() {
+  editingField.value = null
+  emit("update:modelValue", { ...localDraft.value })
+}
+
+function updateTextField(field: EditableField, value: string | undefined) {
+  localDraft.value = {
+    ...localDraft.value,
+    [field]: value ?? "",
+  }
+}
+
+function togglePrecheck() {
+  localDraft.value = {
+    ...localDraft.value,
+    defaultPrecheckEnabled: !localDraft.value.defaultPrecheckEnabled,
+  }
+
+  emit("update:modelValue", { ...localDraft.value })
+}
 </script>
 
 <style scoped>
 .overview-card {
   grid-column: 1 / -1;
   width: 100%;
-  gap: 24px;
-  padding: 28px;
+  gap: 16px;
+  padding: 24px;
 }
 
 .overview-head {
-  display: grid;
-  grid-template-columns: minmax(260px, auto) minmax(0, 1fr) auto;
-  gap: 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.overview-head-main {
+  display: flex;
   align-items: center;
+  gap: 12px;
 }
 
-.overview-title-group {
-  display: grid;
-  gap: 3px;
-  min-width: 0;
+.overview-head h3,
+.summary-value,
+.overview-empty-copy h3 {
+  margin: 0;
 }
 
-.overview-eyebrow {
-  color: #201d1d;
-  font-size: 14px;
-  font-weight: 700;
+.summary-label {
+  color: #646262;
+  font-size: 13px;
+  font-weight: 400;
   line-height: 1.5;
   letter-spacing: 0;
 }
 
-.overview-title-group h3,
-.path-row p {
-  margin: 0;
-}
-
-.overview-title-group h3 {
+.overview-head h3 {
   color: #201d1d;
   font-family: var(--font-heading);
-  font-size: 22px;
+  font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
   letter-spacing: 0;
@@ -128,83 +311,198 @@ const scriptCount = computed(() => Object.keys(props.project?.scripts ?? {}).len
 .overview-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  min-width: 0;
-}
-
-.overview-meta span,
-.overview-status {
-  display: inline-flex;
-  align-items: center;
-  min-height: 23px;
-  padding: 0 8px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 400;
-  white-space: nowrap;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 .overview-meta span {
-  background: var(--neutral-tint);
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f8f7f7;
   color: #424245;
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: nowrap;
 }
 
-.overview-status {
+.overview-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(240px, 0.7fr);
+  gap: 16px;
+  min-width: 0;
+}
+
+.summary-column {
+  display: grid;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  background: #fdfcfc;
+}
+
+.summary-column-compact {
+  background: #f8f7f7;
+}
+
+.summary-column-advanced {
+  background: #f8f7f7;
+}
+
+.summary-row {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  height: 60px;
+  min-width: 0;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.summary-row:last-child {
+  border-bottom: 0;
+}
+
+.summary-row-path {
+  height: auto;
+  min-height: 60px;
+}
+
+.summary-field {
+  display: contents;
+}
+
+.summary-value {
+  color: #201d1d;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.summary-path {
+  grid-column: 2 / -1;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.summary-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  grid-column: 2 / -1;
+  min-height: 28px;
+  min-width: 0;
+}
+
+.summary-editor-actions {
+  display: inline-flex;
+  align-items: center;
   gap: 6px;
-  background: var(--warning-tint);
-  color: var(--warning-soft);
+  flex: 0 0 auto;
 }
 
-.overview-status[data-ready='true'] {
+.summary-input {
+  width: 100%;
+  height: 32px;
+  min-height: 32px;
+  padding-block: 0;
+  font-size: 14px;
+}
+
+.summary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #f8f7f7;
+  color: #646262;
+  cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease,
+    border-color 140ms ease;
+  flex: 0 0 auto;
+}
+
+.summary-action:hover {
+  background: #f1eeee;
+  color: #201d1d;
+}
+
+.summary-edit-button {
+  border-color: transparent;
+  background: transparent;
+}
+
+.summary-edit-button:hover {
+  border-color: transparent;
+  background: transparent;
+  color: #007aff;
+}
+
+.summary-action-confirm {
+  border-color: rgba(72, 199, 142, 0.3);
   background: var(--success-tint);
   color: var(--success-soft);
 }
 
-.overview-body {
+.overview-advanced {
   display: grid;
-  gap: 12px;
 }
 
-.primary-strip {
-  display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(260px, 0.88fr);
-  min-height: 84px;
-  overflow: hidden;
-  border: 1px solid var(--border);
+.overview-advanced-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0 8px;
+  border: 1px solid transparent;
   border-radius: 4px;
-  background: #f8f7f7;
+  background: transparent;
+  color: #646262;
+  cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease,
+    border-color 140ms ease;
 }
 
-.primary-item {
+.overview-advanced-toggle:hover {
+  border-color: var(--border);
+  background: #f8f7f7;
+  color: #201d1d;
+}
+
+.overview-advanced-toggle svg {
+  transition: transform 140ms ease;
+}
+
+.overview-empty {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: 10px;
-  align-items: center;
-  min-width: 0;
-  padding: 17px;
-}
-
-.command-item {
+  gap: 12px;
+  align-items: start;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
   background: #fdfcfc;
 }
 
-.output-item {
-  position: relative;
-  background: #f8f7f7;
-}
-
-.output-item::before {
-  content: none;
-  position: absolute;
-  left: 0;
-  top: 12px;
-  bottom: 12px;
-  width: 1px;
-  background: rgba(15, 0, 0, 0.12);
-}
-
-.item-icon {
+.overview-empty-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -214,121 +512,60 @@ const scriptCount = computed(() => Object.keys(props.project?.scripts ?? {}).len
   border-radius: 4px;
   background: #f1eeee;
   color: #201d1d;
-  flex: 0 0 auto;
 }
 
-.output-item .item-icon {
-  background: #f1eeee;
-  color: #646262;
-}
-
-.item-copy,
-.secondary-item {
+.overview-empty-copy {
   display: grid;
-  gap: 4px;
-  min-width: 0;
+  gap: 6px;
 }
 
-.item-copy small,
-.secondary-item small,
-.path-row small {
-  color: #646262;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  letter-spacing: 0;
-}
-
-.item-copy strong {
+.overview-empty-copy h3 {
   color: #201d1d;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
-  line-height: 1.5;
-  letter-spacing: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.4;
 }
 
-.output-item .item-copy strong {
-  color: #201d1d;
-  font-size: 16px;
-}
-
-.secondary-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.secondary-item {
-  min-height: 58px;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: #f8f7f7;
-}
-
-.secondary-item strong {
-  color: #201d1d;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.check-item[data-enabled='true'] strong {
-  color: var(--success-soft);
-}
-
-.path-row {
-  display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr);
-  gap: 7px;
-  align-items: center;
-  min-height: 31px;
-  padding: 0 12px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: #f8f7f7;
-  color: #646262;
-}
-
-.path-row p {
-  color: #424245;
-  font-size: 14px;
-  line-height: 1.5;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.muted-paragraph {
-  margin: 0;
-  color: #646262;
-}
-
-@media (max-width: 1100px) {
+@media (max-width: 860px) {
   .overview-head,
-  .primary-strip,
-  .secondary-grid {
+  .overview-summary {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .overview-head-main {
+    flex-wrap: wrap;
+  }
+
+  .overview-meta {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .overview-card {
+    padding: 18px;
+  }
+
+  .summary-row {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 0;
+    gap: 4px;
+  }
+
+  .summary-value {
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .summary-editor {
+    grid-column: auto;
     grid-template-columns: 1fr;
   }
 
-  .output-item::before {
-    display: none;
-  }
-}
-
-@media (max-width: 640px) {
-  .path-row {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  .path-row small {
-    display: none;
+  .summary-path {
+    grid-column: auto;
   }
 }
 </style>
