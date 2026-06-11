@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="app-shell-root grid h-screen grid-cols-[220px_minmax(0,1fr)] overflow-hidden text-foreground">
     <aside class="app-shell-sidebar flex min-h-0 flex-col bg-sidebar">
       <div class="app-shell-brand-wrap">
@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { FileClock, FolderKanban, Server, Settings2 } from "lucide-vue-next";
+import { Clock, FolderKanban, Server, Settings2 } from "lucide-vue-next";
 import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 
@@ -77,7 +77,7 @@ const navItems = [
   {
     value: "deployLogs",
     label: "日志",
-    icon: FileClock,
+    icon: Clock,
   },
 ] as const;
 

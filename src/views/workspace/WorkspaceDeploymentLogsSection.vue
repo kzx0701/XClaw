@@ -164,7 +164,7 @@ function formatEnvironment(environmentName: string) {
 }
 
 .deployment-log-table {
-  --deployment-log-grid: repeat(7, minmax(0, 1fr));
+  --deployment-log-grid: minmax(140px, 1.2fr) minmax(120px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) minmax(180px, 1.2fr) minmax(80px, 0.6fr) minmax(60px, 0.4fr);
 
   display: grid;
   min-width: 0;
@@ -222,6 +222,7 @@ function formatEnvironment(environmentName: string) {
   padding: 0 18px;
   text-align: center;
   white-space: nowrap;
+  justify-self: center;
 }
 
 .deployment-log-cell strong,
@@ -360,11 +361,16 @@ function formatEnvironment(environmentName: string) {
   .deployment-log-result {
     padding-inline: 10px;
   }
+
+  .deployment-log-table {
+    --deployment-log-grid: minmax(120px, 1fr) minmax(100px, 0.8fr) minmax(80px, 0.6fr) minmax(80px, 0.6fr) minmax(150px, 1fr) minmax(70px, 0.5fr) minmax(50px, 0.3fr);
+  }
 }
 
 @media (max-width: 860px) {
   .deployment-log-table {
     overflow-x: auto;
+    --deployment-log-grid: minmax(140px, 1.2fr) minmax(120px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) minmax(180px, 1.2fr) minmax(80px, 0.6fr) minmax(60px, 0.4fr);
   }
 
   .deployment-log-head,
