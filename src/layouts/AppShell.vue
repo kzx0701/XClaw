@@ -8,7 +8,8 @@
         </div>
       </div>
 
-      <nav class="app-shell-nav" aria-label="主菜单">
+      <!-- 主菜单 -->
+      <nav v-if="appStore.activePanel !== 'settings'" class="app-shell-nav" aria-label="主菜单">
         <button
           v-for="item in navItems"
           :key="item.value"
@@ -17,18 +18,40 @@
           class="app-shell-nav-item group"
           @click="appStore.setActivePanel(item.value)"
         >
-          <component
-            :is="item.icon"
-            class="h-4 w-4"
-          />
+          <component :is="item.icon" class="h-4 w-4" />
           <span>{{ item.label }}</span>
         </button>
       </nav>
 
-      <div class="mt-auto px-3 pb-4">
+      <!-- 设置菜单 -->
+      <nav v-else class="app-shell-nav" aria-label="设置菜单">
         <button
           type="button"
-          :data-active="appStore.activePanel === 'settings'"
+          class="app-shell-nav-item app-shell-settings-back"
+          @click="appStore.setActivePanel('config')"
+        >
+          <ArrowLeft class="h-4 w-4" />
+          <span>返回工作区</span>
+        </button>
+
+        <div class="app-shell-nav-divider" />
+
+        <button
+          v-for="item in settingsItems"
+          :key="item.value"
+          type="button"
+          :data-active="appStore.activeSettingsTab === item.value"
+          class="app-shell-nav-item group"
+          @click="appStore.setActiveSettingsTab(item.value)"
+        >
+          <component :is="item.icon" class="h-4 w-4" />
+          <span>{{ item.label }}</span>
+        </button>
+      </nav>
+
+      <div v-if="appStore.activePanel !== 'settings'" class="mt-auto px-3 pb-4">
+        <button
+          type="button"
           class="app-shell-footer-entry group"
           @click="appStore.setActivePanel('settings')"
         >
@@ -48,7 +71,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { Clock, FolderKanban, Server, Settings2 } from "lucide-vue-next";
+import { ArrowLeft, Clock, Database, FolderKanban, Info, Server, Settings2 } from "lucide-vue-next";
 import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 
@@ -64,21 +87,16 @@ const appVersion = ref("1.0.0");
 const releaseUrl = "https://github.com/kzx0701/XClaw/releases";
 
 const navItems = [
-  {
-    value: "config",
-    label: "项目",
-    icon: FolderKanban,
-  },
-  {
-    value: "servers",
-    label: "服务器",
-    icon: Server,
-  },
-  {
-    value: "deployLogs",
-    label: "日志",
-    icon: Clock,
-  },
+  { value: "config", label: "项目", icon: FolderKanban },
+  { value: "servers", label: "服务器", icon: Server },
+  { value: "deployLogs", label: "日志", icon: Clock },
+] as const;
+
+const settingsItems = [
+  { value: "general", label: "常规", icon: Settings2 },
+  { value: "timeout", label: "超时配置", icon: Clock },
+  { value: "data", label: "数据管理", icon: Database },
+  { value: "about", label: "关于", icon: Info },
 ] as const;
 
 async function openReleasePage() {
@@ -152,6 +170,20 @@ onMounted(async () => {
   padding: 10px 12px;
 }
 
+.app-shell-nav-divider {
+  height: 1px;
+  margin: 8px 0;
+  background: var(--border);
+}
+
+.app-shell-settings-back {
+  color: #646262 !important;
+}
+
+.app-shell-settings-back:hover {
+  color: #201d1d !important;
+}
+
 .app-shell-nav-item {
   position: relative;
   display: flex;
@@ -207,10 +239,7 @@ onMounted(async () => {
   letter-spacing: 0;
   color: #424245;
   text-align: left;
-  transition:
-    background 140ms ease,
-    border-color 140ms ease,
-    color 140ms ease;
+  transition: all 140ms ease;
 }
 
 .app-shell-footer-entry svg {
@@ -223,13 +252,7 @@ onMounted(async () => {
   color: #201d1d;
 }
 
-.app-shell-footer-entry:hover svg,
-.app-shell-footer-entry[data-active="true"] svg {
-  color: #201d1d;
-}
-
-.app-shell-footer-entry[data-active="true"] {
-  background: transparent;
+.app-shell-footer-entry:hover svg {
   color: #201d1d;
 }
 </style>
