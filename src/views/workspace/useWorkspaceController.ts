@@ -1,42 +1,45 @@
-import { watch, onMounted, ref } from "vue"
+import { watch, onMounted, ref } from "vue";
+import { TriangleAlert } from "lucide-vue-next";
 
-import { getTaskHistory, deleteTaskHistoryRecord } from "@/services/task-history/repository"
-import { showToast } from "@/services/ui/toast"
-import { runServerConnectionCheck } from "@/services/execution/connection-check"
-import { useAppStore } from "@/stores/app"
-import type { ExecutionDraft, ExecutionStatus, TaskHistoryRecord, TaskHistoryStatus } from "@/types/task"
-import { useProjectManager } from "./useWorkspace/useProjectManager"
-import { useEnvironmentManager } from "./useWorkspace/useEnvironmentManager"
-import { useServerManager } from "./useWorkspace/useServerManager"
-import { useExecutionEngine } from "./useWorkspace/useExecutionEngine"
-import { useQuickDeploy } from "./useWorkspace/useQuickDeploy"
-import { useLogs } from "./useWorkspace/useLogs"
-import { useDeployLogFilter } from "./useWorkspace/useDeployLogFilter"
+import { getTaskHistory, deleteTaskHistoryRecord } from "@/services/task-history/repository";
+import { showToast } from "@/services/ui/toast";
+import { runServerConnectionCheck } from "@/services/execution/connection-check";
+import { useConfirm } from "@/services/ui/confirm";
+import { useAppStore } from "@/stores/app";
+import type { ExecutionDraft, ExecutionStatus, TaskHistoryRecord, TaskHistoryStatus } from "@/types/task";
+import { useProjectManager } from "./useWorkspace/useProjectManager";
+import { useEnvironmentManager } from "./useWorkspace/useEnvironmentManager";
+import { useServerManager } from "./useWorkspace/useServerManager";
+import { useExecutionEngine } from "./useWorkspace/useExecutionEngine";
+import { useQuickDeploy } from "./useWorkspace/useQuickDeploy";
+import { useLogs } from "./useWorkspace/useLogs";
+import { useDeployLogFilter } from "./useWorkspace/useDeployLogFilter";
 
 export function useWorkspaceController() {
-  const appStore = useAppStore()
+  const appStore = useAppStore();
+  const confirm = useConfirm();
 
-  appStore.setConnectionStatus("disconnected")
+  appStore.setConnectionStatus("disconnected");
 
-  const projectPathInput = ref("")
-  const selectedProjectId = ref<string | null>(null)
-  const latestScannedProject = ref<any>(null)
-  const projectDraft = ref<any>(null)
-  const executionDraft = ref<ExecutionDraft | null>(null)
-  const executionStatus = ref<ExecutionStatus>("idle")
-  const executionStatusMessage = ref("")
-  const taskHistoryRecords = ref<TaskHistoryRecord[]>([])
-  const deploymentHistoryRecords = ref<TaskHistoryRecord[]>([])
-  const selectedTaskHistoryId = ref<string | null>(null)
+  const projectPathInput = ref("");
+  const selectedProjectId = ref<string | null>(null);
+  const latestScannedProject = ref<any>(null);
+  const projectDraft = ref<any>(null);
+  const executionDraft = ref<ExecutionDraft | null>(null);
+  const executionStatus = ref<ExecutionStatus>("idle");
+  const executionStatusMessage = ref("");
+  const taskHistoryRecords = ref<TaskHistoryRecord[]>([]);
+  const deploymentHistoryRecords = ref<TaskHistoryRecord[]>([]);
+  const selectedTaskHistoryId = ref<string | null>(null);
 
-  const logs = useLogs()
+  const logs = useLogs();
 
   const environmentManager = useEnvironmentManager({
     selectedProjectId,
     latestScannedProject,
     executionDraft,
     servers: ref([]),
-  })
+  });
 
   const serverManager = useServerManager({
     selectedProjectId,
@@ -46,9 +49,9 @@ export function useWorkspaceController() {
     loadEnvironmentDraft: async () => {},
     refreshProjectEnvironmentMap: async () => {},
     pushServerLog: logs.pushLog,
-  })
+  });
 
-  environmentManager.servers = serverManager.servers
+  environmentManager.servers = serverManager.servers;
 
   const projectManager = useProjectManager({
     selectedProjectId,
@@ -62,36 +65,49 @@ export function useWorkspaceController() {
     taskHistoryRecords,
     selectedTaskHistoryId,
     projectEnvironments: environmentManager.projectEnvironments,
-  })
+  });
 
-  serverManager.projects = projectManager.projects
+  serverManager.projects = projectManager.projects;
   serverManager.loadEnvironmentDraft = async (projectId: string) => {
-    await environmentManager.loadEnvironmentDraft(projectId, projectManager.projects.value)
-  }
+    await environmentManager.loadEnvironmentDraft(projectId, projectManager.projects.value);
+  };
   serverManager.refreshProjectEnvironmentMap = async () => {
-    await environmentManager.refreshProjectEnvironmentMapWithData(projectManager.projects.value.map((p: any) => p.id))
-  }
+    await environmentManager.refreshProjectEnvironmentMapWithData(projectManager.projects.value.map((p: any) => p.id));
+  };
 
   async function refreshTaskHistory(projectId?: string | null) {
-    taskHistoryRecords.value = await getTaskHistory(projectId)
-    selectedTaskHistoryId.value = taskHistoryRecords.value[0]?.id ?? null
+    taskHistoryRecords.value = await getTaskHistory(projectId);
+    selectedTaskHistoryId.value = taskHistoryRecords.value[0]?.id ?? null;
   }
 
   async function refreshDeploymentHistory() {
-    deploymentHistoryRecords.value = await getTaskHistory()
+    deploymentHistoryRecords.value = await getTaskHistory();
   }
 
   async function handleDeleteDeploymentHistoryRecord(recordId: string) {
-    await deleteTaskHistoryRecord(recordId)
-    await refreshDeploymentHistory()
+    const record = deploymentHistoryRecords.value.find((r) => r.id === recordId);
+    const recordName = record ? `${record.projectName} - ${record.environmentName}` : "该记录";
 
-    if (selectedProjectId.value) {
-      await refreshTaskHistory(selectedProjectId.value)
-    } else {
-      await refreshTaskHistory()
-    }
+    confirm.require({
+      message: `确认删除该部署日志？此操作不可撤销。`,
+      header: "确认删除",
+      icon: TriangleAlert,
+      rejectLabel: "取消",
+      acceptLabel: "删除",
+      acceptClass: "p-button-danger",
+      accept: async () => {
+        await deleteTaskHistoryRecord(recordId);
+        await refreshDeploymentHistory();
 
-    showToast("部署日志已删除", "success")
+        if (selectedProjectId.value) {
+          await refreshTaskHistory(selectedProjectId.value);
+        } else {
+          await refreshTaskHistory();
+        }
+
+        showToast("部署日志已删除", "success");
+      },
+    });
   }
 
   const execution = useExecutionEngine({
@@ -105,7 +121,7 @@ export function useWorkspaceController() {
     pushExecutionLog: logs.pushLog,
     refreshDeploymentHistory,
     refreshTaskHistory,
-  })
+  });
 
   const quickDeploy = useQuickDeploy({
     selectedProjectId,
@@ -116,52 +132,52 @@ export function useWorkspaceController() {
     pushExecutionLog: logs.pushLog,
     refreshDeploymentHistory,
     refreshTaskHistory,
-  })
+  });
 
-  const deployLogFilter = useDeployLogFilter(deploymentHistoryRecords)
+  const deployLogFilter = useDeployLogFilter(deploymentHistoryRecords);
 
   function updateFilterProject(projectId: string | null) {
-    deployLogFilter.filter.value.projectId = projectId
+    deployLogFilter.filter.value.projectId = projectId;
   }
 
   function updateFilterEnvironment(environmentName: string | null) {
-    deployLogFilter.filter.value.environmentName = environmentName
+    deployLogFilter.filter.value.environmentName = environmentName;
   }
 
   function updateFilterStatus(status: TaskHistoryStatus | null) {
-    deployLogFilter.filter.value.status = status
+    deployLogFilter.filter.value.status = status;
   }
 
   async function handleSelectProject(projectId: string) {
-    await projectManager.handleSelectProject(projectId)
+    await projectManager.handleSelectProject(projectId);
 
     if (selectedProjectId.value === projectId && projectManager.projects.value.length > 0) {
-      await environmentManager.loadEnvironmentDraft(projectId, projectManager.projects.value)
-      await refreshTaskHistory(projectId)
+      await environmentManager.loadEnvironmentDraft(projectId, projectManager.projects.value);
+      await refreshTaskHistory(projectId);
     }
   }
 
   onMounted(async () => {
-    await projectManager.refreshProjects()
-    await serverManager.refreshServers()
-    await refreshDeploymentHistory()
+    await projectManager.refreshProjects();
+    await serverManager.refreshServers();
+    await refreshDeploymentHistory();
 
     if (selectedProjectId.value) {
-      await environmentManager.loadEnvironmentDraft(selectedProjectId.value, projectManager.projects.value)
-      await refreshTaskHistory(selectedProjectId.value)
+      await environmentManager.loadEnvironmentDraft(selectedProjectId.value, projectManager.projects.value);
+      await refreshTaskHistory(selectedProjectId.value);
     }
-  })
+  });
 
   watch(
     () => executionDraft.value?.environmentName,
     (environmentName, previousName) => {
       if (!environmentName || environmentName === previousName || !selectedProjectId.value) {
-        return
+        return;
       }
 
-      void environmentManager.syncEnvironmentByName(environmentName, projectManager.projects.value)
+      void environmentManager.syncEnvironmentByName(environmentName, projectManager.projects.value);
     },
-  )
+  );
 
   return {
     appStore,
@@ -226,28 +242,28 @@ export function useWorkspaceController() {
     handleSaveProjectConfig: projectManager.handleSaveProjectConfig,
     handleCheckEnvironment: async () => {
       if (!environmentManager.environmentDraft.value) {
-        showToast("请先选择一个项目环境", "warning")
-        return
+        showToast("请先选择一个项目环境", "warning");
+        return;
       }
       if (!environmentManager.environmentDraft.value.serverId) {
-        showToast("请先为当前环境绑定服务器", "warning")
-        return
+        showToast("请先为当前环境绑定服务器", "warning");
+        return;
       }
       if (!environmentManager.environmentDraft.value.remotePath.trim()) {
-        showToast("请先填写远端部署目录", "warning")
-        return
+        showToast("请先填写远端部署目录", "warning");
+        return;
       }
 
-      const server = serverManager.servers.value.find((item) => item.id === environmentManager.environmentDraft.value?.serverId) ?? null
+      const server = serverManager.servers.value.find((item) => item.id === environmentManager.environmentDraft.value?.serverId) ?? null;
 
       if (!server) {
-        showToast("当前环境绑定的服务器不存在，请重新选择", "error")
-        return
+        showToast("当前环境绑定的服务器不存在，请重新选择", "error");
+        return;
       }
 
-      const envLabel = environmentManager.formatEnvironmentLabel(environmentManager.environmentDraft.value.name)
-      logs.pushLog("info", `开始检测环境 ${envLabel} 的远端目录权限`)
-      environmentManager.isCheckingEnvironment.value = true
+      const envLabel = environmentManager.formatEnvironmentLabel(environmentManager.environmentDraft.value.name);
+      logs.pushLog("info", `开始检测环境 ${envLabel} 的远端目录权限`);
+      environmentManager.isCheckingEnvironment.value = true;
 
       try {
         const result = await runServerConnectionCheck({
@@ -258,19 +274,19 @@ export function useWorkspaceController() {
           privateKeyPath: server.privateKeyPath,
           remotePath: environmentManager.environmentDraft.value.remotePath,
           username: server.username,
-        })
+        });
 
-        result.steps.forEach((step) => logs.pushLog("info", step))
-        logs.pushLog("success", `环境 ${envLabel} 连接与目录检测通过`)
-        appStore.setBannerMessage(`${envLabel} 检测通过`)
-        showToast(`${envLabel} 检测通过`, "success")
+        result.steps.forEach((step) => logs.pushLog("info", step));
+        logs.pushLog("success", `环境 ${envLabel} 连接与目录检测通过`);
+        appStore.setBannerMessage(`${envLabel} 检测通过`);
+        showToast(`${envLabel} 检测通过`, "success");
       } catch (error) {
-        const message = error instanceof Error ? error.message : "环境连接检测失败"
-        logs.pushLog("error", message)
-        appStore.setBannerMessage(message)
-        showToast(message, "error")
+        const message = error instanceof Error ? error.message : "环境连接检测失败";
+        logs.pushLog("error", message);
+        appStore.setBannerMessage(message);
+        showToast(message, "error");
       } finally {
-        environmentManager.isCheckingEnvironment.value = false
+        environmentManager.isCheckingEnvironment.value = false;
       }
     },
     handleCloseEnvironmentEditor: environmentManager.handleCloseEnvironmentEditor,
@@ -278,7 +294,8 @@ export function useWorkspaceController() {
     handleConfirmDeleteEnvironment: environmentManager.handleConfirmDeleteEnvironment,
     handleConfirmDeleteEnvironmentByName: environmentManager.handleConfirmDeleteEnvironmentByName,
     handleResetEnvironmentDraft: environmentManager.handleResetEnvironmentDraft,
-    handleSaveEnvironment: () => environmentManager.handleSaveEnvironment(projectManager.projects.value, projectManager.handleSaveProjectConfig as any),
+    handleSaveEnvironment: () =>
+      environmentManager.handleSaveEnvironment(projectManager.projects.value, projectManager.handleSaveProjectConfig as any),
     handleSelectEnvironment: environmentManager.handleSelectEnvironment,
     handleCheckServer: serverManager.handleCheckServer,
     handleCloseCreateServer: serverManager.handleCloseCreateServer,
@@ -289,5 +306,5 @@ export function useWorkspaceController() {
     handleSelectServer: serverManager.handleSelectServer,
     startQuickDeploy: quickDeploy.startQuickDeploy,
     handleCloseQuickDeployDialog: quickDeploy.handleCloseQuickDeployDialog,
-  }
+  };
 }
