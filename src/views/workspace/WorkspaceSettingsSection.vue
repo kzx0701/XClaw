@@ -14,17 +14,17 @@
           </div>
           <div class="settings-card-control">
             <div class="settings-select-group">
-              <button
-                v-for="theme in themeOptions"
-                :key="theme.value"
-                type="button"
-                class="settings-select-btn"
-                :data-active="settings.theme === theme.value"
-                @click="settings.theme = theme.value"
-              >
-                <component :is="theme.icon" class="h-4 w-4" />
-                <span>{{ theme.label }}</span>
-              </button>
+                <button
+                  v-for="t in themeOptions"
+                  :key="t.value"
+                  type="button"
+                  class="settings-select-btn"
+                  :data-active="theme === t.value"
+                  @click="theme = t.value"
+                >
+                  <component :is="t.icon" class="h-4 w-4" />
+                  <span>{{ t.label }}</span>
+                </button>
             </div>
           </div>
         </div>
@@ -189,9 +189,11 @@ import { invoke } from "@tauri-apps/api/core";
 import { showToast } from "@/services/ui/toast";
 import { useConfirm } from "@/services/ui/confirm";
 import { useAppStore } from "@/stores/app";
+import { useTheme } from "@/composables/useTheme";
 
 const confirm = useConfirm();
 const appStore = useAppStore();
+const { theme } = useTheme();
 const appVersion = ref("1.0.0");
 
 const activeTab = computed(() => appStore.activeSettingsTab);
@@ -212,7 +214,6 @@ const themeOptions = [
 ];
 
 const settings = reactive({
-  theme: "system" as "system" | "dark" | "light",
   buildTimeout: 600,
   deployTimeout: 300,
   sshTimeout: 20,

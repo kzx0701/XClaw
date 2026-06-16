@@ -5,7 +5,7 @@ type ActivePanel = 'config' | 'servers' | 'deployLogs' | 'settings'
 
 export const useAppStore = defineStore('app', () => {
   const activePanel = ref<ActivePanel>('config')
-  const activeSettingsTab = ref('timeout')
+  const activeSettingsTab = ref('general')
   const selectedProjectName = ref('未选择项目')
   const bannerMessage = ref('等待导入项目')
 

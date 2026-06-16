@@ -55,6 +55,10 @@ const wordmarkStyle = computed(() => ({
   opacity: 0.82;
 }
 
+.dark .xclaw-wordmark {
+  color: #e8e8e8;
+}
+
 .xclaw-wordmark:focus-visible {
   outline: 1px solid var(--border);
   outline-offset: 4px;
@@ -70,6 +74,10 @@ const wordmarkStyle = computed(() => ({
   line-height: 1;
   letter-spacing: -0.045em;
   white-space: nowrap;
+}
+
+.dark .xclaw-wordmark-copy {
+  color: #e8e8e8;
 }
 
 .xclaw-wordmark-x {

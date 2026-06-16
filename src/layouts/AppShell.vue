@@ -53,7 +53,7 @@
         <button
           type="button"
           class="app-shell-footer-entry group"
-          @click="appStore.setActivePanel('settings')"
+          @click="appStore.setActivePanel('settings'); appStore.setActiveSettingsTab('general')"
         >
           <Settings2 class="h-4 w-4" />
           <span>设置</span>

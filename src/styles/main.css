@@ -283,39 +283,87 @@
 }
 
 .dark {
-  --background: #fdfcfc;
-  --foreground: #201d1d;
-  --card: #fdfcfc;
-  --card-foreground: #201d1d;
-  --popover: #f8f7f7;
-  --popover-foreground: #201d1d;
-  --primary: #201d1d;
-  --primary-foreground: #fdfcfc;
-  --secondary: #f8f7f7;
-  --secondary-foreground: #201d1d;
-  --muted: #f1eeee;
-  --muted-foreground: #646262;
-  --accent: #f1eeee;
-  --accent-foreground: #201d1d;
-  --destructive: #ff3b30;
-  --border: rgba(15, 0, 0, 0.12);
-  --input: #f8f7f7;
-  --ring: rgba(15, 0, 0, 0.22);
-  --info: #007aff;
-  --info-foreground: #fdfcfc;
-  --chart-1: #201d1d;
+  /* === Background Layers === */
+  --background: #1a1a1e;
+  --foreground: #e8e8e8;
+  --card: #222226;
+  --card-foreground: #e8e8e8;
+  --popover: #2a2a2e;
+  --popover-foreground: #e8e8e8;
+
+  /* === Primary: Ink === */
+  --primary: #e8e8e8;
+  --primary-foreground: #1a1a1e;
+
+  /* === Secondary: Dark surface === */
+  --secondary: #2a2a2e;
+  --secondary-foreground: #e8e8e8;
+
+  /* === Muted: For disabled/inactive === */
+  --muted: #2a2a2e;
+  --muted-foreground: #8a8a8e;
+
+  /* === Accent === */
+  --accent: #2a2a2e;
+  --accent-foreground: #e8e8e8;
+
+  /* === Destructive === */
+  --destructive: #ff453a;
+  --destructive-foreground: #ffffff;
+
+  /* === Semantic Colors === */
+  --info: #0a84ff;
+  --info-foreground: #ffffff;
+  --success: #30d158;
+  --warning: #ff9f0a;
+  --danger: #ff453a;
+
+  /* === Semantic Tints === */
+  --info-tint: rgba(10, 132, 255, 0.15);
+  --success-tint: rgba(48, 209, 88, 0.15);
+  --warning-tint: rgba(255, 159, 10, 0.15);
+  --danger-tint: rgba(255, 69, 58, 0.15);
+  --neutral-tint: #2a2a2e;
+  --info-soft: #0a84ff;
+  --success-soft: #30d158;
+  --warning-soft: #ff9f0a;
+  --danger-soft: #ff453a;
+
+  /* === Borders === */
+  --border: rgba(255, 255, 255, 0.08);
+  --input: #2a2a2e;
+  --ring: rgba(255, 255, 255, 0.15);
+
+  /* === Shadows === */
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow-md: none;
+
+  /* === Sidebar === */
+  --sidebar: #1a1a1e;
+  --sidebar-foreground: #a0a0a4;
+  --sidebar-primary: #e8e8e8;
+  --sidebar-primary-foreground: #1a1a1e;
+  --sidebar-accent: #2a2a2e;
+  --sidebar-accent-foreground: #e8e8e8;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: rgba(255, 255, 255, 0.15);
+
+  /* === Charts === */
+  --chart-1: #e8e8e8;
   --chart-2: #30d158;
   --chart-3: #ff9f0a;
-  --chart-4: #007aff;
-  --chart-5: #646262;
-  --sidebar: #fdfcfc;
-  --sidebar-foreground: #424245;
-  --sidebar-primary: #201d1d;
-  --sidebar-primary-foreground: #fdfcfc;
-  --sidebar-accent: #f1eeee;
-  --sidebar-accent-foreground: #201d1d;
-  --sidebar-border: rgba(15, 0, 0, 0.12);
-  --sidebar-ring: rgba(15, 0, 0, 0.22);
+  --chart-4: #0a84ff;
+  --chart-5: #8a8a8e;
+
+  /* === Custom Colors for Dark Mode === */
+  --text-primary: #f0f0f0;
+  --text-secondary: #b0b0b4;
+  --text-muted: #808084;
+  --surface: #222226;
+  --surface-hover: #2a2a2e;
+  --surface-active: #333338;
+  --card-border: rgba(255, 255, 255, 0.06);
 }
 
 @layer base {
@@ -326,3 +374,42 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* === Dark Mode Overrides for Hardcoded Colors === */
+.dark .app-shell-brand { color: var(--text-primary); }
+.dark .app-version-badge { background: var(--surface); color: var(--text-secondary); border-color: var(--card-border); }
+.dark .app-shell-nav-item { color: var(--text-secondary); }
+.dark .app-shell-nav-item svg { color: var(--text-muted); }
+.dark .app-shell-nav-item:hover { background: var(--surface-hover); color: var(--text-primary); border-color: var(--card-border); }
+.dark .app-shell-nav-item[data-active="true"] { background: var(--surface-active); color: var(--text-primary); border-color: rgba(255,255,255,0.12); }
+.dark .app-shell-nav-item[data-active="true"] svg { color: var(--text-primary); }
+.dark .app-shell-settings-back { color: var(--text-secondary) !important; }
+.dark .app-shell-settings-back:hover { color: var(--text-primary) !important; }
+.dark .app-shell-settings-title { color: var(--text-primary); }
+.dark .app-shell-nav-divider { background: var(--card-border); }
+.dark .app-shell-footer-entry { color: var(--text-secondary); }
+.dark .app-shell-footer-entry svg { color: var(--text-muted); }
+.dark .app-shell-footer-entry:hover { background: var(--surface-hover); color: var(--text-primary); }
+.dark .app-shell-footer-entry:hover svg { color: var(--text-primary); }
+
+.dark .settings-header h1 { color: var(--text-primary); }
+.dark .settings-section-header h2 { color: var(--text-primary); }
+.dark .settings-section-header p { color: var(--text-secondary); }
+.dark .settings-card { background: var(--surface); border-color: var(--card-border); }
+.dark .settings-card-header { background: var(--surface-hover); color: var(--text-secondary); border-color: var(--card-border); }
+.dark .settings-card-item { border-color: var(--card-border); }
+.dark .settings-card-label { color: var(--text-primary); }
+.dark .settings-card-desc { color: var(--text-secondary); }
+.dark .settings-card-danger { border-color: rgba(255, 69, 58, 0.15); }
+.dark .settings-input { background: var(--surface-hover); border-color: var(--card-border); color: var(--text-primary); }
+.dark .settings-input:focus { border-color: rgba(255,255,255,0.2); }
+.dark .settings-unit { color: var(--text-muted); }
+.dark .settings-badge { background: var(--surface-hover); color: var(--text-secondary); border-color: var(--card-border); }
+.dark .settings-action-btn { background: var(--surface); border-color: var(--card-border); color: var(--text-primary); }
+.dark .settings-action-btn:hover { background: var(--surface-hover); border-color: rgba(255,255,255,0.12); }
+.dark .settings-action-danger { color: var(--danger-soft); border-color: rgba(255, 69, 58, 0.2); }
+.dark .settings-action-danger:hover { background: var(--danger-tint); border-color: rgba(255, 69, 58, 0.3); }
+.dark .settings-select-group { background: var(--surface-hover); border-color: var(--card-border); }
+.dark .settings-select-btn { color: var(--text-muted); }
+.dark .settings-select-btn:hover { color: var(--text-primary); }
+.dark .settings-select-btn[data-active="true"] { background: var(--surface-active); color: var(--text-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
