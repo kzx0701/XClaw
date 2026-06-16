@@ -142,17 +142,13 @@ const projectSummaryStatusLabel = computed(() => {
 })
 
 function scheduleContentReady() {
-  isContentReady.value = false
-
   if (contentReadyTimer !== null) {
     window.clearTimeout(contentReadyTimer)
   }
 
-  contentReadyTimer = window.setTimeout(() => {
-    requestAnimationFrame(() => {
-      isContentReady.value = true
-    })
-  }, 220)
+  requestAnimationFrame(() => {
+    isContentReady.value = true
+  })
 }
 
 watch(() => props.projectId, scheduleContentReady, { immediate: true })

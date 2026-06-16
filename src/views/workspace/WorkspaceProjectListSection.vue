@@ -70,55 +70,10 @@
         </section>
       </section>
 
-      <section v-else class="project-empty-shell">
-        <div class="project-empty-hero">
-          <div class="project-empty-copy">
-            <div class="project-empty-copy-head">
-              <span class="project-empty-eyebrow">项目工作台</span>
-              <span class="project-empty-divider" aria-hidden="true" />
-            </div>
-            <h2>从项目开始，搭好部署工作台</h2>
-            <p>导入一个本地前端项目后，这里会保留项目记录，并串联环境配置、服务器连接和部署执行流程。</p>
-
-            <div class="project-empty-highlights" aria-hidden="true">
-              <span>自动识别构建配置</span>
-              <span>统一管理部署记录</span>
-              <span>面向测试与生产环境</span>
-            </div>
-
-            <div class="project-empty-actions">
-              <Button class="app-primary-button" :loading="isImporting" @click="$emit('pick-directory')">
-                <Plus class="h-4 w-4" />
-                <span>{{ isImporting ? "导入中..." : "导入第一个项目" }}</span>
-              </Button>
-              <div class="project-empty-tip">
-                <small>支持含 `package.json` 的 Vue / React 前端项目</small>
-              </div>
-            </div>
-          </div>
-
-          <div class="project-empty-visual" aria-hidden="true">
-            <img class="project-empty-visual-image" :src="projectFolderBackground" alt="" />
-          </div>
-        </div>
-
-        <div class="project-empty-guide">
-          <article class="project-empty-step">
-            <span>01</span>
-            <strong>导入项目</strong>
-            <p>选择本地项目目录，自动识别构建命令和产物目录。</p>
-          </article>
-          <article class="project-empty-step">
-            <span>02</span>
-            <strong>配置环境</strong>
-            <p>绑定服务器、远端目录和上传策略，准备测试或生产环境。</p>
-          </article>
-          <article class="project-empty-step">
-            <span>03</span>
-            <strong>执行部署</strong>
-            <p>在一个工作台里完成打包、部署、验证与结果回看。</p>
-          </article>
-        </div>
+      <section v-else class="project-empty-state">
+        <FolderOpen class="project-empty-icon" :size="48" />
+        <p class="project-empty-title">暂无项目</p>
+        <p class="project-empty-desc">点击上方「导入项目」开始使用</p>
       </section>
     </article>
   </section>
@@ -126,7 +81,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue"
-import { Plus, Search, Send, Trash2 } from "lucide-vue-next"
+import { FolderOpen, Plus, Search, Send, Trash2 } from "lucide-vue-next"
 
 import Alert from "@/components/ui/alert/Alert.vue"
 import Button from "@/components/ui/button/Button.vue"
@@ -205,6 +160,14 @@ const filteredProjects = computed(() => {
   color: #fdfcfc;
   font-size: 14px;
   font-weight: 500;
+}
+
+.workspace-list-add-button:hover {
+  background: #0f0000;
+}
+
+.workspace-list-add-button:hover {
+  background: #0f0000;
 }
 
 .workspace-list-add-button:hover {
@@ -352,264 +315,44 @@ const filteredProjects = computed(() => {
   line-height: 1.6;
 }
 
-.project-empty-shell {
-  display: grid;
-  gap: 22px;
-  grid-column: 1 / -1;
-}
-
-.project-empty-hero {
-  position: relative;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0;
-  align-items: stretch;
-  min-height: 420px;
-  padding: 34px 34px 32px;
-  border: 1px solid var(--border);
-  border-radius: 0;
-  background: #fdfcfc;
-}
-
-.project-empty-hero::after {
-  content: none;
-}
-
-.project-empty-copy {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  align-content: flex-start;
-  gap: 26px;
-  min-width: 0;
-  max-width: 640px;
-  padding-top: 10px;
-}
-
-.project-empty-copy-head {
-  display: grid;
-  gap: 12px;
-}
-
-.project-empty-eyebrow {
-  color: #201d1d;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0;
-}
-
-.project-empty-divider {
-  width: 44px;
-  height: 1px;
-  background: rgba(15, 0, 0, 0.12);
-}
-
-.project-empty-copy h2 {
-  margin: 0;
-  max-width: 560px;
-  color: #201d1d;
-  font-size: 28px;
-  line-height: 1.5;
-  font-weight: 700;
-  text-wrap: balance;
-}
-
-.project-empty-copy p {
-  margin: 0;
-  max-width: 560px;
-  color: #424245;
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-.project-empty-highlights {
+.project-empty-state {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px 10px;
-  max-width: 540px;
-  margin-top: -2px;
-}
-
-.project-empty-highlights span {
-  display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  min-height: 26px;
-  padding: 0 10px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: #f8f7f7;
-  color: #424245;
-  font-size: 14px;
-  letter-spacing: 0;
-  line-height: 1.5;
+  justify-content: center;
+  gap: 8px;
+  min-height: 400px;
+  padding: 40px;
 }
 
-.project-empty-actions {
-  display: grid;
-  gap: 14px;
-  width: fit-content;
-  padding-top: 18px;
+.project-empty-icon {
+  color: #c8c8ca;
 }
 
-.project-empty-actions :deep(.app-primary-button) {
-  min-width: 272px;
-  min-height: 40px;
-  padding-inline: 20px;
-}
-
-.project-empty-actions :deep(.app-primary-button span) {
-  font-weight: 500;
-}
-
-.project-empty-tip {
-  display: grid;
-  gap: 3px;
-  padding-left: 4px;
-}
-
-.project-empty-tip small {
-  color: #646262;
-  font-size: 14px;
-  line-height: 2;
-  letter-spacing: 0;
-}
-
-.project-empty-visual {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.project-empty-visual-image {
-  position: absolute;
-  right: -20px;
-  top: 50%;
-  width: min(500px, 56vw);
-  max-width: none;
-  transform: translateY(-48%);
-  opacity: 0.8;
-  filter: none;
-  user-select: none;
-}
-
-.project-empty-guide {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.project-empty-step {
-  display: grid;
-  gap: 10px;
-  padding: 20px 18px 18px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: #fdfcfc;
-  cursor: pointer;
-  transition: background-color 160ms ease;
-}
-
-.project-empty-step::before {
-  content: "";
-  width: 24px;
-  height: 1px;
-  background: var(--border);
-}
-
-.project-empty-step span {
-  color: #646262;
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0;
-}
-
-.project-empty-step strong {
+.project-empty-title {
+  margin: 0;
   color: #201d1d;
   font-size: 16px;
-  font-weight: 700;
-  line-height: 1.5;
+  font-weight: 600;
 }
 
-.project-empty-step p {
+.dark .project-empty-title {
+  color: var(--text-primary);
+}
+
+.project-empty-desc {
   margin: 0;
-  color: #424245;
+  color: #646262;
   font-size: 14px;
-  line-height: 1.5;
 }
 
-.project-empty-step:hover {
-  background: #f8f7f7;
-}
-
-.project-empty-step:active {
-  transform: none;
+.dark .project-empty-desc {
+  color: var(--text-secondary);
 }
 
 @media (max-width: 960px) {
-  .project-card-list,
-  .project-empty-guide {
+  .project-card-list {
     grid-template-columns: 1fr;
-  }
-
-  .project-empty-hero {
-    padding: 20px;
-    min-height: 360px;
-  }
-
-  .project-empty-copy h2 {
-    font-size: 26px;
-  }
-
-  .project-empty-copy {
-    gap: 22px;
-    max-width: 100%;
-  }
-
-  .project-empty-visual-image {
-    right: -150px;
-    width: min(620px, 78vw);
-    opacity: 0.18;
-  }
-}
-
-@media (max-width: 640px) {
-  .project-empty-shell {
-    gap: 16px;
-  }
-
-  .project-empty-hero {
-    padding: 18px;
-    min-height: 320px;
-  }
-
-  .project-empty-copy h2 {
-    font-size: 22px;
-  }
-
-  .project-empty-highlights {
-    gap: 8px;
-  }
-
-  .project-empty-actions :deep(.app-primary-button) {
-    min-width: 240px;
-  }
-
-  .project-empty-copy {
-    gap: 18px;
-    max-width: 100%;
-  }
-
-  .project-empty-copy p,
-  .project-empty-highlights {
-    max-width: 100%;
-  }
-
-  .project-empty-visual-image {
-    right: -160px;
-    width: 520px;
-    opacity: 0.14;
   }
 }
 </style>

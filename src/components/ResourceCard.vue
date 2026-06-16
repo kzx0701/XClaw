@@ -52,8 +52,17 @@ defineEmits<{
   transition: background-color 160ms ease;
 }
 
+.dark .resource-card {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
 .resource-card:hover {
   background: #f8f7f7;
+}
+
+.dark .resource-card:hover {
+  background: var(--surface-hover);
 }
 
 .resource-card:focus-visible {
@@ -89,6 +98,11 @@ defineEmits<{
   flex: 0 0 auto;
 }
 
+.dark .resource-card-icon {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
 .resource-card-body {
   display: grid;
   gap: 6px;
@@ -107,6 +121,10 @@ defineEmits<{
   line-height: 1.5;
 }
 
+.dark .resource-card-body strong {
+  color: var(--text-primary);
+}
+
 .resource-card-body p {
   color: #646262;
   font-size: 14px;
@@ -116,14 +134,26 @@ defineEmits<{
   text-overflow: ellipsis;
 }
 
+.dark .resource-card-body p {
+  color: var(--text-secondary);
+}
+
 .resource-card-enter-icon {
   color: #9a9898;
   flex: 0 0 auto;
   transition: color 160ms ease;
 }
 
+.dark .resource-card-enter-icon {
+  color: var(--text-muted);
+}
+
 .resource-card:hover .resource-card-enter-icon {
   color: #201d1d;
+}
+
+.dark .resource-card:hover .resource-card-enter-icon {
+  color: var(--text-primary);
 }
 
 .resource-card-foot {

@@ -413,3 +413,108 @@
 .dark .settings-select-btn { color: var(--text-muted); }
 .dark .settings-select-btn:hover { color: var(--text-primary); }
 .dark .settings-select-btn[data-active="true"] { background: var(--surface-active); color: var(--text-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+.dark input[data-slot="input"] { background: var(--surface) !important; border-color: var(--card-border) !important; color: var(--text-primary) !important; }
+.dark input[data-slot="input"]::placeholder { color: var(--text-secondary) !important; }
+.dark input[data-slot="input"]:focus { border-color: rgba(255,255,255,0.2) !important; background: var(--surface-hover) !important; }
+.dark [data-slot="button"] { background: #e8e8e8 !important; border-color: #e8e8e8 !important; color: #1a1a1e !important; }
+.dark [data-slot="button"]:hover { background: #d0d0d4 !important; }
+.dark [data-slot="alert-dialog-content"] { background: var(--surface) !important; color: var(--text-primary) !important; }
+.dark [data-slot="alert-dialog-title"] { color: var(--text-primary) !important; }
+.dark [data-slot="alert-dialog-description"] { color: var(--text-secondary) !important; }
+.dark [data-slot="alert-dialog-cancel"] { background: var(--surface-hover) !important; border-color: var(--card-border) !important; color: var(--text-primary) !important; }
+.dark [data-slot="alert-dialog-cancel"]:hover { background: var(--surface-active) !important; }
+.dark [data-slot="drawer-content"] { background: var(--surface) !important; color: var(--text-primary) !important; }
+.dark [data-slot="drawer-title"] { color: var(--text-primary) !important; }
+.dark [data-slot="drawer-description"] { color: var(--text-secondary) !important; }
+.dark .drawer-eyebrow { color: var(--text-secondary) !important; }
+.dark .create-form-label { color: var(--text-primary) !important; }
+.dark .create-form-sublabel { color: var(--text-muted) !important; }
+.dark .create-form-input { background: var(--surface-hover) !important; border-color: var(--card-border) !important; color: var(--text-primary) !important; }
+.dark .create-form-input::placeholder { color: var(--text-muted) !important; }
+.dark .create-form-input:focus { border-color: rgba(255,255,255,0.2) !important; }
+.dark .create-form-select { background: var(--surface-hover) !important; border-color: var(--card-border) !important; color: var(--text-primary) !important; }
+.dark .server-create-section-head { color: var(--text-muted) !important; }
+.dark [data-slot="select-trigger"] { background: var(--surface-hover) !important; border-color: var(--card-border) !important; color: var(--text-primary) !important; }
+.dark [data-slot="select-trigger"]:hover { border-color: rgba(255,255,255,0.15) !important; }
+.dark [data-slot="select-value"] { color: var(--text-primary) !important; }
+.dark [data-slot="select-content"] { background: var(--surface) !important; border-color: var(--card-border) !important; }
+.dark [data-slot="select-item"] { color: var(--text-primary) !important; }
+.dark [data-slot="select-item"]:hover { background: var(--surface-hover) !important; }
+.dark [data-slot="select-item"][data-highlighted] { background: var(--surface-hover) !important; color: var(--text-primary) !important; }
+.dark [data-slot="select-separator"] { background: var(--card-border) !important; }
+.dark [data-slot="card"] { background: var(--surface) !important; border-color: var(--card-border) !important; }
+
+/* === Panel Card Dark Mode === */
+.dark .panel-card { background: var(--surface) !important; border-color: var(--card-border) !important; }
+.dark .card-head { border-color: var(--card-border) !important; }
+.dark .card-head h3 { color: var(--text-primary) !important; }
+.dark .config-card .card-head h3 { color: var(--text-primary) !important; }
+.dark .panel-grid > section > h3,
+.dark .panel-grid > section > h2 { color: var(--text-primary) !important; font-size: 16px; font-weight: 700; }
+.dark .panel-grid > section > p { color: var(--text-secondary) !important; }
+.dark [data-slot="card"] { background: var(--surface) !important; border-color: var(--card-border) !important; }
+.dark .project-overview-card { background: var(--surface) !important; border-color: var(--card-border) !important; }
+.dark .project-overview-card-header { color: var(--text-primary) !important; }
+.dark .project-overview-card-meta span { color: var(--text-secondary) !important; background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
+.dark .project-overview-field-label { color: var(--text-muted) !important; }
+.dark .project-overview-field-value { color: var(--text-primary) !important; }
+.dark .project-overview-field-edit { color: var(--text-muted) !important; }
+.dark .project-overview-field-edit:hover { color: var(--text-primary) !important; background: var(--surface-hover) !important; }
+.dark .project-overview-card-advanced-toggle { color: var(--text-secondary) !important; }
+.dark .project-overview-card-advanced-toggle:hover { color: var(--text-primary) !important; }
+.dark .environment-config-panel { background: var(--surface) !important; border-color: var(--card-border) !important; }
+.dark .environment-config-header { color: var(--text-primary) !important; }
+.dark .environment-card { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
+.dark .environment-card-name { color: var(--text-primary) !important; }
+.dark .environment-card-desc { color: var(--text-secondary) !important; }
+.dark .environment-card-status { color: var(--text-muted) !important; }
+.dark .execution-panel { background: var(--surface) !important; border-color: var(--card-border) !important; }
+.dark .execution-panel-header { color: var(--text-primary) !important; }
+.dark .execution-panel-label { color: var(--text-muted) !important; }
+.dark .execution-panel-value { color: var(--text-primary) !important; }
+.dark .workspace-detail-header { border-color: var(--card-border) !important; }
+.dark .workspace-detail-header-title-row h2 { color: var(--text-primary) !important; }
+.dark .workspace-detail-header-status { color: var(--text-secondary) !important; }
+.dark .workspace-detail-header-button { color: var(--text-secondary) !important; background: transparent !important; border-color: transparent !important; }
+.dark .workspace-detail-header-button:hover { color: var(--text-primary) !important; background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
+.dark .workspace-detail-header-button-save { color: var(--info-soft) !important; background: transparent !important; border-color: transparent !important; }
+.dark .workspace-detail-header-button-save:hover { color: #0a84ff !important; background: var(--info-tint) !important; border-color: var(--card-border) !important; }
+.dark .workspace-detail-header-button-danger { color: var(--danger-soft) !important; background: transparent !important; border-color: transparent !important; }
+.dark .workspace-detail-header-button-danger:hover { background: var(--danger-tint) !important; color: var(--danger-soft) !important; border-color: rgba(255,69,58,0.3) !important; }
+.dark .workspace-detail-header-status { background: var(--success-tint) !important; color: var(--success-soft) !important; border-color: rgba(48,209,88,0.3) !important; }
+.dark .summary-column { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
+.dark .summary-column-compact { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
+.dark .summary-column-advanced { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
+.dark .summary-row { border-color: var(--card-border) !important; }
+.dark .summary-row:last-child { border-bottom: none !important; }
+.dark .summary-field { background: transparent !important; border-color: transparent !important; }
+.dark .summary-label { color: var(--text-secondary) !important; }
+.dark .summary-value { color: var(--text-primary) !important; }
+.dark .overview-head h3 { color: var(--text-primary) !important; }
+.dark .overview-meta span { color: var(--text-secondary) !important; background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
+.dark .overview-advanced-toggle { color: var(--text-secondary) !important; }
+.dark .overview-advanced-toggle:hover { color: var(--text-primary) !important; }
+.dark .summary-section { color: var(--text-primary) !important; }
+.dark .summary-head h4 { color: var(--text-primary) !important; }
+.dark .summary-board { background: transparent !important; }
+.dark .summary-item { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
+.dark .summary-item span { color: var(--text-secondary) !important; }
+.dark .summary-item strong { color: var(--text-primary) !important; }
+.dark .environment-card-body strong { color: var(--text-primary) !important; }
+.dark .environment-card-body p { color: var(--text-secondary) !important; }
+.dark .environment-status-text { color: var(--text-muted) !important; }
+.dark .environment-card-foot span { color: var(--text-secondary) !important; }
+/* === Environment Drawer Dark Mode === */
+.dark .environment-drawer { background: var(--surface) !important; color: var(--text-primary) !important; }
+.dark .drawer-head { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
+.dark .drawer-head h2 { color: var(--text-primary) !important; }
+.dark .drawer-head p { color: var(--text-secondary) !important; }
+.dark .drawer-section-head h4 { color: var(--text-primary) !important; }
+.dark .drawer-section-card { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
+.dark .drawer-section-index { background: var(--surface) !important; border-color: var(--card-border) !important; color: var(--text-secondary) !important; }
+.dark .field span { color: var(--text-primary) !important; }
+.dark .field-inline-action span { color: var(--text-primary) !important; }
+.dark .switch-row small { color: var(--text-secondary) !important; }
+.dark .drawer-actions { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
+.dark .environment-check-button { background: var(--surface-hover) !important; border-color: var(--card-border) !important; color: var(--text-primary) !important; }
+.dark .environment-check-button:hover { background: var(--surface-active) !important; border-color: rgba(255,255,255,0.15) !important; }

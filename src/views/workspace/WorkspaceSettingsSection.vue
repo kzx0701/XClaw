@@ -461,13 +461,27 @@ async function handleOpenGitHub() {
   transition: all 100ms ease;
 }
 
+.dark .settings-select-btn {
+  color: var(--text-secondary);
+}
+
 .settings-select-btn:hover {
   color: #201d1d;
+}
+
+.dark .settings-select-btn:hover {
+  color: var(--text-primary);
 }
 
 .settings-select-btn[data-active="true"] {
   background: #fdfcfc;
   color: #201d1d;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.dark .settings-select-btn[data-active="true"] {
+  background: var(--surface-active);
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 </style>

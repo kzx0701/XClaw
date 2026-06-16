@@ -20,6 +20,10 @@
   background: #fdfcfc;
 }
 
+.dark .workspace-toolbar-panel {
+  background: var(--background);
+}
+
 .workspace-toolbar-search,
 .workspace-toolbar-actions {
   display: flex;

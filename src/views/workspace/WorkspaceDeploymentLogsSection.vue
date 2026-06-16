@@ -445,11 +445,35 @@ function formatMode(mode: ExecutionMode) {
 }
 
 .deployment-log-action-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-width: 0;
   padding: 0 18px;
   text-align: center;
   white-space: nowrap;
   justify-self: center;
+}
+
+.deployment-log-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: #d70015;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.deployment-log-delete:hover {
+  border-color: rgba(255, 59, 48, 0.22);
+  background: var(--danger-tint);
+  color: #a50011;
 }
 
 .deployment-log-mode,
@@ -534,99 +558,26 @@ function formatMode(mode: ExecutionMode) {
   color: #fdfcfc;
 }
 
-.environment-chip,
-.mode-chip,
-.result-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  justify-self: start;
-  width: fit-content;
-  min-height: 24px;
-  padding: 0 9px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  font-size: var(--tag-font-size);
-  line-height: var(--tag-line-height);
-}
-
-.environment-chip {
-  background: var(--info-tint);
-  color: #007aff !important;
-  font-weight: 600;
-}
-
-.mode-chip {
-  background: var(--neutral-tint);
-  color: #424245 !important;
-  font-weight: 600;
-}
-
-.result-badge {
-  font-weight: 600;
-}
-
-.result-badge[data-status="success"] {
-  background: var(--success-tint);
-  color: var(--success-soft) !important;
-}
-
-.result-badge[data-status="error"] {
-  background: var(--danger-tint);
-  color: var(--danger-soft) !important;
-}
-
-.deployment-log-delete {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  justify-self: center;
-  width: 30px;
-  height: 30px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  background: transparent;
-  color: #d70015;
-  cursor: pointer;
-  transition:
-    background-color 140ms ease,
-    color 140ms ease;
-}
-
-.deployment-log-delete:hover {
-  border-color: rgba(255, 59, 48, 0.22);
-  background: var(--danger-tint);
-  color: #a50011;
-}
-
-.deployment-log-delete:active {
-  transform: none;
-}
-
-.deployment-log-empty {
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-  padding: 72px 24px;
-  color: #646262;
-  text-align: center;
-}
-
-.deployment-log-empty p,
-.deployment-log-empty small {
-  margin: 0;
-}
-
-.deployment-log-empty p {
-  color: #201d1d;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.deployment-log-empty small {
-  max-width: 360px;
-  line-height: 1.7;
-}
+/* Dark Mode Overrides */
+.dark .deployment-log-body { background: var(--surface); border-color: var(--card-border); }
+.dark .deployment-log-head { color: var(--text-muted); }
+.dark .deployment-log-row { background: var(--surface); border-color: var(--card-border); }
+.dark .deployment-log-row:hover { background: var(--surface-hover); }
+.dark .deployment-log-cell strong { color: var(--text-primary); }
+.dark .deployment-log-cell span { color: var(--text-secondary); }
+.dark .deployment-log-header-filter { color: var(--text-muted); }
+.dark .deployment-log-header-filter:hover { background: var(--surface-hover); color: var(--text-primary); }
+.dark .deployment-log-header-filter[data-active="true"] { background: var(--text-primary); border-color: var(--text-primary); color: var(--surface); }
+.dark .deployment-log-popover { background: var(--surface); border-color: var(--card-border); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.dark .deployment-log-popover-header { color: var(--text-muted); }
+.dark .deployment-log-popover-item { color: var(--text-primary); }
+.dark .deployment-log-popover-item:hover { background: var(--surface-hover); }
+.dark .deployment-log-popover-item[data-active="true"] { background: var(--text-primary); color: var(--surface); }
+.dark .deployment-log-delete { color: var(--danger-soft); }
+.dark .deployment-log-delete:hover { background: var(--danger-tint); border-color: rgba(255,69,58,0.3); }
+.dark .deployment-log-empty p { color: var(--text-primary); }
+.dark .deployment-log-empty small { color: var(--text-secondary); }
+.dark .deployment-log-empty svg { color: var(--text-muted); }
 
 @media (max-width: 1180px) {
   .deployment-log-cell {

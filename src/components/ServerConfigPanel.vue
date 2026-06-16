@@ -67,55 +67,10 @@
         </div>
       </section>
 
-      <section v-else class="server-empty-shell">
-        <div class="server-empty-hero">
-          <div class="server-empty-copy">
-            <div class="server-empty-copy-head">
-              <span class="server-empty-eyebrow">服务器工作台</span>
-              <span class="server-empty-divider" aria-hidden="true" />
-            </div>
-            <h2>接入服务器，部署链路才算完整</h2>
-            <p>新增服务器后，就可以在项目环境里直接绑定目标机器，继续完成连接检测、目录配置和部署执行。</p>
-
-            <div class="server-empty-highlights" aria-hidden="true">
-              <span>统一管理服务器信息</span>
-              <span>支持密码与私钥认证</span>
-              <span>直接复用到项目环境</span>
-            </div>
-
-            <div class="server-empty-actions">
-              <Button class="app-primary-button" @click="$emit('create-server')">
-                <Plus class="h-4 w-4" />
-                <span>新增第一台服务器</span>
-              </Button>
-              <div class="server-empty-tip">
-                <small>支持常见 Linux 服务器</small>
-              </div>
-            </div>
-          </div>
-
-          <div class="server-empty-visual" aria-hidden="true">
-            <img class="server-empty-visual-image" :src="serverBackground" alt="" />
-          </div>
-        </div>
-
-        <div class="server-empty-guide">
-          <article class="server-empty-step">
-            <span>01</span>
-            <strong>新增服务器</strong>
-            <p>填写主机、端口、用户名和认证方式，建立可复用的服务器记录。</p>
-          </article>
-          <article class="server-empty-step">
-            <span>02</span>
-            <strong>检测连接</strong>
-            <p>在保存前先完成连接测试，确认凭据和目标机器可正常访问。</p>
-          </article>
-          <article class="server-empty-step">
-            <span>03</span>
-            <strong>绑定环境</strong>
-            <p>回到项目环境中直接选用这台服务器，继续配置远端目录与部署策略。</p>
-          </article>
-        </div>
+      <section v-else class="server-empty-state">
+        <Server class="server-empty-icon" :size="48" />
+        <p class="server-empty-title">暂无服务器</p>
+        <p class="server-empty-desc">点击上方「新增服务器」开始使用</p>
       </section>
     </article>
 
@@ -503,196 +458,31 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   transform: none;
 }
 
-.server-empty-shell {
-  display: grid;
-  gap: 22px;
-}
-
-.server-empty-hero {
-  position: relative;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  min-height: 400px;
-  padding: 34px 34px 32px;
-  border: 1px solid var(--border);
-  border-radius: 0;
-  background: #fdfcfc;
-}
-
-.server-empty-hero::after {
-  content: none;
-}
-
-.server-empty-copy {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  align-content: flex-start;
-  gap: 26px;
-  min-width: 0;
-  max-width: 640px;
-  padding-top: 10px;
-}
-
-.server-empty-copy-head {
-  display: grid;
-  gap: 12px;
-}
-
-.server-empty-eyebrow {
-  color: #201d1d;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0;
-}
-
-.server-empty-divider {
-  width: 44px;
-  height: 1px;
-  background: rgba(15, 0, 0, 0.12);
-}
-
-.server-empty-copy h2 {
-  margin: 0;
-  max-width: 560px;
-  color: #201d1d;
-  font-size: 28px;
-  font-weight: 600;
-  line-height: 1.5;
-  text-wrap: balance;
-}
-
-.server-empty-copy p {
-  margin: 0;
-  max-width: 560px;
-  color: #424245;
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-.server-empty-highlights {
+.server-empty-state {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px 10px;
-  max-width: 540px;
-  margin-top: -2px;
-}
-
-.server-empty-highlights span {
-  display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  min-height: 26px;
-  padding: 0 10px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: #f8f7f7;
-  color: #424245;
-  font-size: 14px;
-  letter-spacing: 0;
-  line-height: 1.5;
+  justify-content: center;
+  gap: 8px;
+  min-height: 400px;
+  padding: 40px;
 }
 
-.server-empty-actions {
-  display: grid;
-  gap: 14px;
-  width: fit-content;
-  padding-top: 18px;
+.server-empty-icon {
+  color: #c8c8ca;
 }
 
-.server-empty-actions :deep(.app-primary-button) {
-  min-width: 272px;
-  min-height: 40px;
-  padding-inline: 20px;
-}
-
-.server-empty-actions :deep(.app-primary-button span) {
-  font-weight: 500;
-}
-
-.server-empty-tip {
-  display: grid;
-  gap: 3px;
-  padding-left: 4px;
-}
-
-.server-empty-tip small {
-  color: #646262;
-  font-size: 14px;
-  line-height: 2;
-  letter-spacing: 0;
-}
-
-.server-empty-visual {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.server-empty-visual-image {
-  position: absolute;
-  right: -20px;
-  top: 50%;
-  width: min(500px, 56vw);
-  max-width: none;
-  transform: translateY(-48%);
-  opacity: 0.8;
-  filter: none;
-  user-select: none;
-}
-
-.server-empty-guide {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.server-empty-step {
-  display: grid;
-  gap: 10px;
-  padding: 20px 18px 18px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: #fdfcfc;
-  cursor: pointer;
-  transition: background-color 160ms ease;
-}
-
-.server-empty-step::before {
-  content: "";
-  width: 24px;
-  height: 1px;
-  background: var(--border);
-}
-
-.server-empty-step span {
-  color: #646262;
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0;
-}
-
-.server-empty-step strong {
+.server-empty-title {
+  margin: 0;
   color: #201d1d;
   font-size: 16px;
-  font-weight: 700;
-  line-height: 1.5;
+  font-weight: 600;
 }
 
-.server-empty-step p {
+.server-empty-desc {
   margin: 0;
-  color: #424245;
+  color: #646262;
   font-size: 14px;
-  line-height: 1.5;
-}
-
-.server-empty-step:hover {
-  background: #f8f7f7;
-}
-
-.server-empty-step:active {
-  transform: none;
 }
 
 .password-field {
@@ -709,8 +499,16 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   color: #646262;
 }
 
+.dark .password-toggle {
+  color: var(--text-muted);
+}
+
 .password-toggle:hover {
   color: #201d1d;
+}
+
+.dark .password-toggle:hover {
+  color: var(--text-primary);
 }
 
 .drawer-eyebrow {
@@ -863,30 +661,20 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   justify-content: center;
 }
 
+/* Dark Mode Overrides for Drawer */
+.dark .server-create-drawer { background: var(--surface) !important; color: var(--text-primary) !important; }
+.dark .server-create-header { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
+.dark .server-create-header :deep(h2) { color: var(--text-primary) !important; }
+.dark .server-create-head-copy p { color: var(--text-secondary) !important; }
+.dark .server-create-section-head h4 { color: var(--text-primary) !important; }
+.dark .server-create-section-index { background: var(--surface-hover); border-color: var(--card-border); color: var(--text-secondary); }
+.dark .server-create-section-card { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
+.dark .server-create-field-label { color: var(--text-primary) !important; }
+.dark .server-create-actions { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
+
 @media (max-width: 960px) {
-  .server-empty-guide,
   .server-card-list {
     grid-template-columns: 1fr;
-  }
-
-  .server-empty-hero {
-    padding: 20px;
-    min-height: 360px;
-  }
-
-  .server-empty-copy {
-    gap: 22px;
-    max-width: 100%;
-  }
-
-  .server-empty-copy h2 {
-    font-size: 26px;
-  }
-
-  .server-empty-visual-image {
-    right: -150px;
-    width: min(600px, 78vw);
-    opacity: 0.16;
   }
 
   .create-form-row {
@@ -899,39 +687,6 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 @media (max-width: 640px) {
-  .server-empty-shell {
-    gap: 16px;
-  }
-
-  .server-empty-hero {
-    padding: 18px;
-    min-height: 320px;
-  }
-
-  .server-empty-copy {
-    gap: 18px;
-    max-width: 100%;
-  }
-
-  .server-empty-copy h2 {
-    font-size: 22px;
-  }
-
-  .server-empty-copy p,
-  .server-empty-highlights {
-    max-width: 100%;
-  }
-
-  .server-empty-actions :deep(.app-primary-button) {
-    min-width: 240px;
-  }
-
-  .server-empty-visual-image {
-    right: -160px;
-    width: 500px;
-    opacity: 0.12;
-  }
-
   .server-create-header {
     padding: 20px 18px 16px;
   }
