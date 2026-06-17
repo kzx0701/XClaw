@@ -29,7 +29,12 @@
               </span>
 
               <div class="environment-card-body">
-                <strong>{{ environment.label }}</strong>
+                <div class="environment-card-header">
+                  <strong>{{ environment.label }}</strong>
+                  <span class="environment-status-text" :data-status="environment.configured ? 'configured' : 'pending'">
+                    {{ environment.configured ? "已配置" : "待配置" }}
+                  </span>
+                </div>
                 <p>{{ environment.serverLabel }}</p>
               </div>
             </div>
@@ -46,9 +51,6 @@
               >
                 <Trash2 class="h-4 w-4" />
               </Button>
-              <span class="environment-status-text" :data-status="environment.configured ? 'configured' : 'pending'">
-                {{ environment.configured ? "已配置" : "待配置" }}
-              </span>
             </div>
           </div>
 
@@ -419,6 +421,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 .environment-card-main {
   gap: 12px;
   min-width: 0;
+  flex: 1;
 }
 
 .environment-card-actions {
@@ -481,6 +484,42 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   display: grid;
   gap: 5px;
   min-width: 0;
+  flex: 1;
+}
+
+.environment-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.environment-card-header strong {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.environment-status-text {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: #646262;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.environment-card-header strong {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .environment-card-body strong {
