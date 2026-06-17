@@ -19,7 +19,6 @@ import type { Ref } from "vue"
 interface UseEnvironmentManagerOptions {
   selectedProjectId: Ref<string | null>
   latestScannedProject: Ref<ProjectRecord | null>
-  executionDraft: Ref<any>
   servers: Ref<any[]>
 }
 
@@ -27,7 +26,7 @@ export function useEnvironmentManager(options: UseEnvironmentManagerOptions) {
   const appStore = useAppStore()
   const confirm = useConfirm()
 
-  const { selectedProjectId, latestScannedProject, executionDraft, servers } = options
+  const { selectedProjectId, latestScannedProject, servers } = options
 
   const projectEnvironments = ref<DeployEnvironmentRecord[]>([])
   const projectEnvironmentsMap = ref<Map<string, DeployEnvironmentRecord[]>>(new Map())
@@ -75,17 +74,18 @@ export function useEnvironmentManager(options: UseEnvironmentManagerOptions) {
   })
 
   const executionEnvironmentOptions = computed(() => {
-    const configuredOptions = projectEnvironments.value.map((environment) => ({
-      label: environment.name,
-      value: environment.name,
-    }))
+    const options = projectEnvironments.value
+      .filter((environment) => environment.enabled)
+      .map((environment) => ({
+        label: formatEnvironmentLabel(environment.name),
+        value: environment.name,
+      }))
 
-    const fallbackOptions = PRESET_ENVIRONMENTS.map((name) => ({
-      label: name,
-      value: name,
-    }))
+    if (options.length === 0) {
+      return [{ label: "当前无配置环境", value: "" }]
+    }
 
-    return configuredOptions.length > 0 ? configuredOptions : fallbackOptions
+    return options
   })
 
   const isPresetEnvironment = computed(() =>
@@ -122,7 +122,7 @@ export function useEnvironmentManager(options: UseEnvironmentManagerOptions) {
   async function loadEnvironmentDraft(projectId: string, projects: ProjectRecord[]) {
     await refreshProjectEnvironments(projectId)
     const currentProject = projects.find((project) => project.id === projectId) ?? latestScannedProject.value
-    const preferredName = executionDraft.value?.environmentName ?? "dev"
+    const preferredName = "dev"
     const selectedEnvironment =
       projectEnvironments.value.find((environment) => environment.name === preferredName) ??
       projectEnvironments.value.find((environment) => environment.name === "test") ??
@@ -138,16 +138,6 @@ export function useEnvironmentManager(options: UseEnvironmentManagerOptions) {
       currentProject?.defaultDeployServerIdByEnv?.[environmentDraft.value.name]
     ) {
       environmentDraft.value.serverId = currentProject.defaultDeployServerIdByEnv[environmentDraft.value.name] ?? ""
-    }
-
-    if (latestScannedProject.value) {
-      executionDraft.value = {
-        environmentName: environmentDraft.value.name,
-        mode: "build",
-        overrideBuildCommand: latestScannedProject.value.defaultBuildCommand,
-        overrideOutputDir: latestScannedProject.value.defaultOutputDir,
-        runPrecheck: latestScannedProject.value.defaultPrecheckEnabled,
-      }
     }
   }
 
@@ -253,13 +243,6 @@ export function useEnvironmentManager(options: UseEnvironmentManagerOptions) {
     showToast(`${environmentLabel} 配置已保存`, "success")
     isEnvironmentEditorVisible.value = false
     await refreshProjectEnvironmentMap()
-
-    if (executionDraft.value) {
-      executionDraft.value = {
-        ...executionDraft.value,
-        environmentName: environmentDraft.value.name,
-      }
-    }
   }
 
   async function handleDeleteEnvironment() {
@@ -274,15 +257,6 @@ export function useEnvironmentManager(options: UseEnvironmentManagerOptions) {
     isEnvironmentEditorVisible.value = false
     selectedEnvironmentName.value = null
     environmentDraft.value = null
-
-    if (executionDraft.value?.environmentName === environmentName) {
-      const fallbackName = projectEnvironments.value[0]?.name ?? PRESET_ENVIRONMENTS[0]
-      executionDraft.value = {
-        ...executionDraft.value,
-        environmentName: fallbackName,
-      }
-      await syncEnvironmentByName(fallbackName, [])
-    }
 
     appStore.setBannerMessage(`已删除环境：${environmentName}`)
     showToast("环境已删除", "success")

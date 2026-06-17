@@ -45,18 +45,6 @@
           @select-environment="$emit('select-environment', $event)"
           @update:editor-draft="$emit('update:environment-draft', $event)"
         />
-
-        <ExecutionPanel
-          :model-value="executionDraft"
-          :can-run="canRunExecution"
-          :environment-options="executionEnvironmentOptions"
-          :project="project"
-          :status="executionStatus"
-          :status-message="executionStatusMessage"
-          :summary="executionSummary"
-          @run="$emit('run-execution')"
-          @update:model-value="$emit('update:execution-draft', $event)"
-        />
       </div>
 
       <div v-else class="project-detail-skeleton" aria-hidden="true">
@@ -73,15 +61,11 @@ import { computed, onBeforeUnmount, ref, watch } from "vue"
 
 import Alert from "@/components/ui/alert/Alert.vue"
 import EnvironmentConfigPanel from "@/components/EnvironmentConfigPanel.vue"
-import ExecutionPanel from "@/components/ExecutionPanel.vue"
 import ProjectOverviewCard from "@/components/ProjectOverviewCard.vue"
 import WorkspaceDetailHeader from "@/components/workspace-header/WorkspaceDetailHeader.vue"
 import { resolveAlertToneClass, resolveAlertVariant } from "@/lib/ui-status"
 import type {
   EnvironmentFormValue,
-  ExecutionDraft,
-  ExecutionStatus,
-  ExecutionSummaryItem,
   ProjectRecord,
   ServerRecord,
 } from "@/types/task"
@@ -97,25 +81,17 @@ defineEmits<{
   "confirm-delete-environment-by-name": [name: string]
   "create-environment": []
   "reset-environment-draft": []
-  "run-execution": []
   "save-environment": []
   "save-project-config": []
   "select-environment": [name: string]
   "update:environment-draft": [value: EnvironmentFormValue | null]
-  "update:execution-draft": [value: ExecutionDraft | null]
   "update:project-draft": [value: ProjectRecord | null]
 }>()
 
 const props = defineProps<{
-  canRunExecution: boolean
   environmentCards: WorkspaceEnvironmentCard[]
   environmentDraft: EnvironmentFormValue | null
   environmentEditorMode: "create" | "edit"
-  executionDraft: ExecutionDraft | null
-  executionEnvironmentOptions: Array<{ label: string; value: string }>
-  executionStatus: ExecutionStatus
-  executionStatusMessage: string
-  executionSummary: ExecutionSummaryItem[]
   importError: string
   isCheckingEnvironment: boolean
   isEnvironmentEditorVisible: boolean

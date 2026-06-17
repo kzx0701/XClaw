@@ -3,14 +3,12 @@ import { TriangleAlert } from "lucide-vue-next";
 
 import { getTaskHistory, deleteTaskHistoryRecord } from "@/services/task-history/repository";
 import { showToast } from "@/services/ui/toast";
-import { runServerConnectionCheck } from "@/services/execution/connection-check";
 import { useConfirm } from "@/services/ui/confirm";
 import { useAppStore } from "@/stores/app";
-import type { ExecutionDraft, ExecutionStatus, TaskHistoryRecord, TaskHistoryStatus } from "@/types/task";
+import type { TaskHistoryRecord, TaskHistoryStatus } from "@/types/task";
 import { useProjectManager } from "./useWorkspace/useProjectManager";
 import { useEnvironmentManager } from "./useWorkspace/useEnvironmentManager";
 import { useServerManager } from "./useWorkspace/useServerManager";
-import { useExecutionEngine } from "./useWorkspace/useExecutionEngine";
 import { useQuickDeploy } from "./useWorkspace/useQuickDeploy";
 import { useLogs } from "./useWorkspace/useLogs";
 import { useDeployLogFilter } from "./useWorkspace/useDeployLogFilter";
@@ -25,20 +23,19 @@ export function useWorkspaceController() {
   const selectedProjectId = ref<string | null>(null);
   const latestScannedProject = ref<any>(null);
   const projectDraft = ref<any>(null);
-  const executionDraft = ref<ExecutionDraft | null>(null);
-  const executionStatus = ref<ExecutionStatus>("idle");
-  const executionStatusMessage = ref("");
   const taskHistoryRecords = ref<TaskHistoryRecord[]>([]);
   const deploymentHistoryRecords = ref<TaskHistoryRecord[]>([]);
   const selectedTaskHistoryId = ref<string | null>(null);
 
   const logs = useLogs();
 
+  // Create a shared servers ref that both managers will use
+  const sharedServers = ref<any[]>([]);
+
   const environmentManager = useEnvironmentManager({
     selectedProjectId,
     latestScannedProject,
-    executionDraft,
-    servers: ref([]),
+    servers: sharedServers,
   });
 
   const serverManager = useServerManager({
@@ -51,14 +48,16 @@ export function useWorkspaceController() {
     pushServerLog: logs.pushLog,
   });
 
-  environmentManager.servers = serverManager.servers;
+  // Keep the shared servers ref in sync with serverManager's servers
+  watch(() => serverManager.servers.value, (newVal) => {
+    sharedServers.value = newVal;
+  }, { immediate: true });
 
   const projectManager = useProjectManager({
     selectedProjectId,
     latestScannedProject,
     projectDraft,
     projectPathInput,
-    executionDraft,
     environmentDraft: environmentManager.environmentDraft,
     selectedEnvironmentName: environmentManager.selectedEnvironmentName,
     isEnvironmentEditorVisible: environmentManager.isEnvironmentEditorVisible,
@@ -110,19 +109,6 @@ export function useWorkspaceController() {
     });
   }
 
-  const execution = useExecutionEngine({
-    latestScannedProject,
-    executionDraft,
-    executionStatus,
-    executionStatusMessage,
-    servers: serverManager.servers,
-    environmentDraft: environmentManager.environmentDraft,
-    executionLogs: logs.logs,
-    pushExecutionLog: logs.pushLog,
-    refreshDeploymentHistory,
-    refreshTaskHistory,
-  });
-
   const quickDeploy = useQuickDeploy({
     selectedProjectId,
     projects: projectManager.projects,
@@ -168,17 +154,6 @@ export function useWorkspaceController() {
     }
   });
 
-  watch(
-    () => executionDraft.value?.environmentName,
-    (environmentName, previousName) => {
-      if (!environmentName || environmentName === previousName || !selectedProjectId.value) {
-        return;
-      }
-
-      void environmentManager.syncEnvironmentByName(environmentName, projectManager.projects.value);
-    },
-  );
-
   return {
     appStore,
     projectPathInput,
@@ -207,9 +182,6 @@ export function useWorkspaceController() {
     isCreatingServer: serverManager.isCreatingServer,
     selectedServerId: serverManager.selectedServerId,
     serverDraft: serverManager.serverDraft,
-    executionDraft,
-    executionStatus,
-    executionStatusMessage,
     quickDeployProjectId: quickDeploy.quickDeployProjectId,
     quickDeployEnvironmentName: quickDeploy.quickDeployEnvironmentName,
     isQuickDeployDialogVisible: quickDeploy.isQuickDeployDialogVisible,
@@ -227,8 +199,6 @@ export function useWorkspaceController() {
     environmentCards: environmentManager.environmentCards,
     executionEnvironmentOptions: environmentManager.executionEnvironmentOptions,
     isPresetEnvironment: environmentManager.isPresetEnvironment,
-    executionSummary: execution.executionSummary,
-    canRunExecution: execution.canRunExecution,
     workspacePanelKey: projectManager.workspacePanelKey,
     copyLogs: logs.copyLogs,
     formatEnvironmentLabel: environmentManager.formatEnvironmentLabel,
@@ -238,7 +208,6 @@ export function useWorkspaceController() {
     openQuickDeployWorkspace: quickDeploy.openQuickDeployWorkspace,
     openProjectDeleteDialog: projectManager.openProjectDeleteDialog,
     handleBackToProjectList: projectManager.handleBackToProjectList,
-    handleRunExecution: execution.handleRunExecution,
     handleSaveProjectConfig: projectManager.handleSaveProjectConfig,
     handleCheckEnvironment: async () => {
       if (!environmentManager.environmentDraft.value) {

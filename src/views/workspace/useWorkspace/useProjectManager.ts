@@ -17,7 +17,6 @@ interface UseProjectManagerOptions {
   latestScannedProject: Ref<ProjectRecord | null>
   projectDraft: Ref<ProjectRecord | null>
   projectPathInput: Ref<string>
-  executionDraft: Ref<any>
   environmentDraft: Ref<any>
   selectedEnvironmentName: Ref<string | null>
   isEnvironmentEditorVisible: Ref<boolean>
@@ -35,7 +34,6 @@ export function useProjectManager(options: UseProjectManagerOptions) {
     latestScannedProject,
     projectDraft,
     projectPathInput,
-    executionDraft,
     environmentDraft,
     selectedEnvironmentName,
     isEnvironmentEditorVisible,
@@ -65,16 +63,6 @@ export function useProjectManager(options: UseProjectManagerOptions) {
     return appStore.activePanel
   })
 
-  function createExecutionDraft(project: ProjectRecord, environmentName = "dev") {
-    return {
-      environmentName,
-      mode: "build",
-      overrideBuildCommand: project.defaultBuildCommand,
-      overrideOutputDir: project.defaultOutputDir,
-      runPrecheck: project.defaultPrecheckEnabled,
-    }
-  }
-
   async function refreshProjects() {
     projects.value = await getProjects()
 
@@ -86,7 +74,6 @@ export function useProjectManager(options: UseProjectManagerOptions) {
       selectedProjectId.value = selected?.id ?? null
       latestScannedProject.value = selected
       projectDraft.value = selected ? { ...selected } : null
-      executionDraft.value = selected ? createExecutionDraft(selected) : null
       appStore.setSelectedProjectName(selected?.name ?? "项目")
       appStore.setBannerMessage(`已载入 ${projects.value.length} 条项目记录`)
       projectPathInput.value = selected?.localPath ?? ""
@@ -98,7 +85,6 @@ export function useProjectManager(options: UseProjectManagerOptions) {
       environmentDraft.value = null
       selectedEnvironmentName.value = null
       isEnvironmentEditorVisible.value = false
-      executionDraft.value = null
       taskHistoryRecords.value = []
       selectedTaskHistoryId.value = null
       projectPathInput.value = ""
@@ -161,7 +147,6 @@ export function useProjectManager(options: UseProjectManagerOptions) {
     selectedProjectId.value = projectId
     latestScannedProject.value = selected
     projectDraft.value = { ...selected }
-    executionDraft.value = createExecutionDraft(selected, environmentDraft.value?.name ?? "dev")
     projectPathInput.value = selected.localPath
     appStore.setSelectedProjectName(selected.name)
     appStore.setBannerMessage(`已切换到 ${selected.name}`)
@@ -175,9 +160,6 @@ export function useProjectManager(options: UseProjectManagerOptions) {
     projects.value = await markProjectAsUsed(projectId)
     latestScannedProject.value = projects.value.find((project) => project.id === projectId) ?? selected
     projectDraft.value = latestScannedProject.value ? { ...latestScannedProject.value } : null
-    executionDraft.value = latestScannedProject.value
-      ? createExecutionDraft(latestScannedProject.value, environmentDraft.value?.name ?? "dev")
-      : null
   }
 
   async function handleDeleteProject(projectId: string) {
@@ -233,7 +215,6 @@ export function useProjectManager(options: UseProjectManagerOptions) {
       environmentDraft.value = null
       selectedEnvironmentName.value = null
       isEnvironmentEditorVisible.value = false
-      executionDraft.value = null
       taskHistoryRecords.value = []
       selectedTaskHistoryId.value = null
       projectPathInput.value = ""
@@ -248,15 +229,6 @@ export function useProjectManager(options: UseProjectManagerOptions) {
     projects.value = await updateProjectConfig(projectDraft.value)
     latestScannedProject.value = projects.value.find((project) => project.id === projectDraft.value?.id) ?? null
     projectDraft.value = latestScannedProject.value ? { ...latestScannedProject.value } : null
-
-    if (latestScannedProject.value && executionDraft.value) {
-      executionDraft.value = {
-        ...executionDraft.value,
-        overrideBuildCommand: latestScannedProject.value.defaultBuildCommand,
-        overrideOutputDir: latestScannedProject.value.defaultOutputDir,
-        runPrecheck: latestScannedProject.value.defaultPrecheckEnabled,
-      }
-    }
 
     appStore.setBannerMessage(`已保存项目配置：${projectDraft.value?.name ?? ""}`)
     showToast("项目配置已保存", "success")
@@ -276,6 +248,5 @@ export function useProjectManager(options: UseProjectManagerOptions) {
     openProjectDeleteDialog,
     handleBackToProjectList,
     handleSaveProjectConfig,
-    createExecutionDraft,
   }
 }

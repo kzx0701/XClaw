@@ -14,15 +14,9 @@
 
       <WorkspaceProjectDetailSection
         v-else-if="workspace.appStore.activePanel === 'config'"
-        :can-run-execution="workspace.canRunExecution"
         :environment-cards="workspace.environmentCards"
         :environment-draft="workspace.environmentDraft"
         :environment-editor-mode="workspace.environmentEditorMode"
-        :execution-draft="workspace.executionDraft"
-        :execution-environment-options="workspace.executionEnvironmentOptions"
-        :execution-summary="workspace.executionSummary"
-        :execution-status="workspace.executionStatus"
-        :execution-status-message="workspace.executionStatusMessage"
         :import-error="workspace.importError"
         :is-checking-environment="workspace.isCheckingEnvironment"
         :is-environment-editor-visible="workspace.isEnvironmentEditorVisible"
@@ -39,12 +33,10 @@
         @delete-project="workspace.openProjectDeleteDialog"
         @create-environment="workspace.handleCreateEnvironment"
         @reset-environment-draft="workspace.handleResetEnvironmentDraft"
-        @run-execution="workspace.handleRunExecution"
         @save-environment="workspace.handleSaveEnvironment"
         @save-project-config="workspace.handleSaveProjectConfig"
         @select-environment="workspace.handleSelectEnvironment"
         @update:environment-draft="workspace.environmentDraft = $event"
-        @update:execution-draft="workspace.executionDraft = $event"
         @update:project-draft="workspace.projectDraft = $event"
       />
 
