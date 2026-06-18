@@ -8,7 +8,7 @@
   >
     <NumberFieldContent>
       <NumberFieldDecrement />
-      <NumberFieldInput class="h-10 rounded-sm border border-[var(--border)] bg-[#f8f7f7] px-8 text-[#201d1d]" />
+      <NumberFieldInput class="h-10 rounded-sm border border-[var(--border)] bg-[var(--surface-hover)] px-8 text-[var(--text-primary)]" />
       <NumberFieldIncrement />
     </NumberFieldContent>
   </NumberField>

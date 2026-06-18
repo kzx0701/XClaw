@@ -104,7 +104,7 @@ defineEmits<{
 
 .workspace-detail-header-copy h2 {
   margin: 0;
-  color: #201d1d;
+  color: var(--text-primary);
   font-family: var(--font-heading);
   font-size: 22px;
   font-weight: 700;
@@ -139,29 +139,29 @@ defineEmits<{
 }
 
 .workspace-detail-header-button {
-  color: #424245;
+  color: var(--text-secondary);
 }
 
 .workspace-detail-header-button-save {
-  color: #007aff;
+  color: var(--info);
 }
 
 .workspace-detail-header-button-danger {
-  color: #d70015;
+  color: var(--danger-soft);
 }
 
 .workspace-detail-header-button:hover {
-  background: #f1eeee;
-  color: #201d1d;
+  background: var(--surface-active);
+  color: var(--text-primary);
 }
 
 .workspace-detail-header-button-save:hover {
   background: var(--info-tint);
-  color: #0058c7;
+  color: var(--info);
 }
 
 .workspace-detail-header-button-danger:hover {
   background: var(--danger-tint);
-  color: #a50011;
+  color: var(--danger-soft);
 }
 </style>

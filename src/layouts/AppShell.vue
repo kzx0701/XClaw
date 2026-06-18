@@ -16,7 +16,7 @@
           type="button"
           :data-active="appStore.activePanel === item.value"
           class="app-shell-nav-item group"
-          @click="appStore.setActivePanel(item.value)"
+          @click="handleNavClick(item.value)"
         >
           <component :is="item.icon" class="h-4 w-4" />
           <span>{{ item.label }}</span>
@@ -28,13 +28,13 @@
         <button
           type="button"
           class="app-shell-nav-item app-shell-settings-back"
-          @click="appStore.setActivePanel('config')"
+          @click="handleNavClick('config')"
         >
           <ArrowLeft class="h-4 w-4" />
           <span>返回工作区</span>
         </button>
 
-        <div class="app-shell-nav-divider" />
+        <Separator class="app-shell-nav-divider" />
 
         <button
           v-for="item in settingsItems"
@@ -76,6 +76,7 @@ import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 
 import XClawWordmark from "@/components/XClawWordmark.vue";
+import { Separator } from "@/components/ui/separator";
 import { useAppStore } from "@/stores/app";
 
 defineProps<{
@@ -105,6 +106,13 @@ async function openReleasePage() {
   } catch {
     window.open(releaseUrl, "_blank", "noopener,noreferrer");
   }
+}
+
+function handleNavClick(panel: string) {
+  if (panel === 'config' && appStore.activePanel === 'config') {
+    window.dispatchEvent(new CustomEvent('xclaw:navigate-project-list'))
+  }
+  appStore.setActivePanel(panel as any)
 }
 
 onMounted(async () => {
@@ -144,7 +152,7 @@ onMounted(async () => {
   justify-content: center;
   gap: 9px;
   min-width: 0;
-  color: #201d1d;
+  color: var(--text-primary);
 }
 
 .app-version-badge {
@@ -155,8 +163,8 @@ onMounted(async () => {
   padding: 2px 5px 1px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #f8f7f7;
-  color: #646262;
+  background: var(--surface-hover);
+  color: var(--text-muted);
   font-size: 11px;
   font-weight: 400;
   line-height: 1;
@@ -171,17 +179,15 @@ onMounted(async () => {
 }
 
 .app-shell-nav-divider {
-  height: 1px;
   margin: 8px 0;
-  background: var(--border);
 }
 
 .app-shell-settings-back {
-  color: #646262 !important;
+  color: var(--text-muted) !important;
 }
 
 .app-shell-settings-back:hover {
-  color: #201d1d !important;
+  color: var(--text-primary) !important;
 }
 
 .app-shell-nav-item {
@@ -194,7 +200,7 @@ onMounted(async () => {
   border: 1px solid transparent;
   border-radius: 4px;
   background: transparent;
-  color: #424245;
+  color: var(--text-secondary);
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
@@ -203,24 +209,24 @@ onMounted(async () => {
 }
 
 .app-shell-nav-item svg {
-  color: #646262;
+  color: var(--text-muted);
   transition: color 140ms ease;
 }
 
 .app-shell-nav-item:hover {
   border-color: var(--border);
-  background: #f8f7f7;
-  color: #201d1d;
+  background: var(--surface-hover);
+  color: var(--text-primary);
 }
 
 .app-shell-nav-item[data-active="true"] {
-  border-color: #201d1d;
-  background: #201d1d;
-  color: #fdfcfc;
+  border-color: var(--text-primary);
+  background: var(--text-primary);
+  color: var(--surface);
 }
 
 .app-shell-nav-item[data-active="true"] svg {
-  color: #fdfcfc;
+  color: var(--surface);
 }
 
 .app-shell-footer-entry {
@@ -232,27 +238,27 @@ onMounted(async () => {
   height: 30px;
   padding: 0 10px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 4px;
   background: transparent;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0;
-  color: #424245;
+  color: var(--text-secondary);
   text-align: left;
   transition: all 140ms ease;
 }
 
 .app-shell-footer-entry svg {
-  color: #646262;
+  color: var(--text-muted);
   transition: color 140ms ease;
 }
 
 .app-shell-footer-entry:hover {
-  background: #f1eeee;
-  color: #201d1d;
+  background: var(--surface-active);
+  color: var(--text-primary);
 }
 
 .app-shell-footer-entry:hover svg {
-  color: #201d1d;
+  color: var(--text-primary);
 }
 </style>

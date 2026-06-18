@@ -98,7 +98,7 @@ defineEmits<{
 
 .quick-deploy-dialog-header strong {
   display: block;
-  color: #201d1d;
+  color: var(--text-primary);
   font-family: var(--font-heading);
   font-size: 16px;
   font-weight: 700;
@@ -108,7 +108,7 @@ defineEmits<{
 
 .quick-deploy-dialog-header p {
   margin: 6px 0 0;
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
   line-height: 1.5;
   letter-spacing: 0;
@@ -128,7 +128,7 @@ defineEmits<{
 }
 
 .quick-deploy-context-bar strong {
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
@@ -143,7 +143,7 @@ defineEmits<{
   border: 1px solid var(--border);
   border-radius: 4px;
   background: var(--info-tint);
-  color: #007aff;
+  color: var(--info);
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
@@ -163,11 +163,11 @@ defineEmits<{
   padding: 12px 14px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #fdfcfc;
+  background: var(--surface);
 }
 
 .quick-deploy-option-card[data-state="running"] {
-  background: #f8f7f7;
+  background: var(--surface-hover);
 }
 
 .quick-deploy-option-card[data-state="success"] {
@@ -192,7 +192,7 @@ defineEmits<{
 }
 
 .quick-deploy-option-copy strong {
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
@@ -200,7 +200,7 @@ defineEmits<{
 }
 
 .quick-deploy-option-copy p {
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
   line-height: 1.5;
   margin: 0;
@@ -221,8 +221,8 @@ defineEmits<{
   height: 30px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #f1eeee;
-  color: #201d1d;
+  background: var(--surface-active);
+  color: var(--text-primary);
   flex: 0 0 auto;
 }
 
@@ -230,16 +230,7 @@ defineEmits<{
   min-width: 68px;
   height: 30px;
   padding-inline: 10px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: #f8f7f7;
-  color: #201d1d;
   font-size: 14px;
-}
-
-.quick-deploy-option-action:hover:not(:disabled) {
-  background: #f1eeee;
-  color: #201d1d;
 }
 
 .quick-deploy-option-action :deep(svg) {

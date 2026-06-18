@@ -6,13 +6,13 @@
 
     <!-- 常规 -->
     <div v-if="activeTab === 'general'" class="settings-content">
-      <div class="settings-card">
-        <div class="settings-card-item">
-          <div class="settings-card-info">
-            <label class="settings-card-label">界面主题</label>
-            <span class="settings-card-desc">切换应用界面使用的主题外观。</span>
+      <div class="settings-section">
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <label class="settings-row-label">界面主题</label>
+            <span class="settings-row-desc">切换应用界面使用的主题外观。</span>
           </div>
-          <div class="settings-card-control">
+          <div class="settings-row-control">
             <div class="settings-select-group">
                 <button
                   v-for="t in themeOptions"
@@ -33,36 +33,42 @@
 
     <!-- 超时配置 -->
     <div v-if="activeTab === 'timeout'" class="settings-content">
-      <div class="settings-card">
-        <div class="settings-card-item">
-          <div class="settings-card-info">
-            <label class="settings-card-label">本地打包超时</label>
-            <span class="settings-card-desc">打包命令执行的最大等待时间，超时后将自动终止进程。</span>
+      <div class="settings-section">
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <label class="settings-row-label">本地打包超时</label>
+            <span class="settings-row-desc">打包命令执行的最大等待时间，超时后将自动终止进程。</span>
           </div>
-          <div class="settings-card-control">
-            <input v-model.number="settings.buildTimeout" type="number" class="settings-input" min="60" max="3600" />
+          <div class="settings-row-control">
+            <NumberField :model-value="settings.buildTimeout" :min="60" :max="3600" @update:model-value="settings.buildTimeout = $event">
+              <NumberFieldInput class="settings-input" />
+            </NumberField>
             <span class="settings-unit">秒</span>
           </div>
         </div>
 
-        <div class="settings-card-item">
-          <div class="settings-card-info">
-            <label class="settings-card-label">部署后命令超时</label>
-            <span class="settings-card-desc">远端部署后执行命令的最大等待时间。</span>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <label class="settings-row-label">部署后命令超时</label>
+            <span class="settings-row-desc">远端部署后执行命令的最大等待时间。</span>
           </div>
-          <div class="settings-card-control">
-            <input v-model.number="settings.deployTimeout" type="number" class="settings-input" min="30" max="1800" />
+          <div class="settings-row-control">
+            <NumberField :model-value="settings.deployTimeout" :min="30" :max="1800" @update:model-value="settings.deployTimeout = $event">
+              <NumberFieldInput class="settings-input" />
+            </NumberField>
             <span class="settings-unit">秒</span>
           </div>
         </div>
 
-        <div class="settings-card-item">
-          <div class="settings-card-info">
-            <label class="settings-card-label">SSH 连接超时</label>
-            <span class="settings-card-desc">SSH 连接建立的最大等待时间。</span>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <label class="settings-row-label">SSH 连接超时</label>
+            <span class="settings-row-desc">SSH 连接建立的最大等待时间。</span>
           </div>
-          <div class="settings-card-control">
-            <input v-model.number="settings.sshTimeout" type="number" class="settings-input" min="5" max="120" />
+          <div class="settings-row-control">
+            <NumberField :model-value="settings.sshTimeout" :min="5" :max="120" @update:model-value="settings.sshTimeout = $event">
+              <NumberFieldInput class="settings-input" />
+            </NumberField>
             <span class="settings-unit">秒</span>
           </div>
         </div>
@@ -71,69 +77,71 @@
 
     <!-- 数据管理 -->
     <div v-if="activeTab === 'data'" class="settings-content">
-      <div class="settings-card">
-        <div class="settings-card-item">
-          <div class="settings-card-info">
-            <label class="settings-card-label">部署历史保留数量</label>
-            <span class="settings-card-desc">保留最近的部署记录条数，超出部分将自动清理。</span>
+      <div class="settings-section">
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <label class="settings-row-label">部署历史保留数量</label>
+            <span class="settings-row-desc">保留最近的部署记录条数，超出部分将自动清理。</span>
           </div>
-          <div class="settings-card-control">
-            <input v-model.number="settings.historyLimit" type="number" class="settings-input" min="10" max="500" />
+          <div class="settings-row-control">
+            <NumberField :model-value="settings.historyLimit" :min="10" :max="500" @update:model-value="settings.historyLimit = $event">
+              <NumberFieldInput class="settings-input" />
+            </NumberField>
             <span class="settings-unit">条</span>
           </div>
         </div>
       </div>
 
-      <div class="settings-card">
-        <div class="settings-card-header">数据操作</div>
-        <div class="settings-card-item">
-          <div class="settings-card-info">
-            <label class="settings-card-label">导出数据</label>
-            <span class="settings-card-desc">将项目、服务器、环境配置导出为 JSON 文件。</span>
+      <div class="settings-section">
+        <div class="settings-section-header">数据操作</div>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <label class="settings-row-label">导出数据</label>
+            <span class="settings-row-desc">将项目、服务器、环境配置导出为 JSON 文件。</span>
           </div>
-          <div class="settings-card-control">
-            <button type="button" class="settings-action-btn" @click="handleExport">
+          <div class="settings-row-control">
+            <Button variant="outline" size="icon" class="settings-action-btn" @click="handleExport">
               <Download class="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
 
-        <div class="settings-card-item">
-          <div class="settings-card-info">
-            <label class="settings-card-label">导入数据</label>
-            <span class="settings-card-desc">从 JSON 文件导入项目、服务器、环境配置。</span>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <label class="settings-row-label">导入数据</label>
+            <span class="settings-row-desc">从 JSON 文件导入项目、服务器、环境配置。</span>
           </div>
-          <div class="settings-card-control">
-            <button type="button" class="settings-action-btn" @click="handleImport">
+          <div class="settings-row-control">
+            <Button variant="outline" size="icon" class="settings-action-btn" @click="handleImport">
               <Upload class="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>
 
-      <div class="settings-card settings-card-danger">
-        <div class="settings-card-header">危险操作</div>
-        <div class="settings-card-item">
-          <div class="settings-card-info">
-            <label class="settings-card-label">清空部署历史</label>
-            <span class="settings-card-desc">删除所有部署历史记录，此操作不可撤销。</span>
+      <div class="settings-section settings-section-danger">
+        <div class="settings-section-header">危险操作</div>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <label class="settings-row-label">清空部署历史</label>
+            <span class="settings-row-desc">删除所有部署历史记录，此操作不可撤销。</span>
           </div>
-          <div class="settings-card-control">
-            <button type="button" class="settings-action-btn settings-action-danger" @click="handleClearHistory">
+          <div class="settings-row-control">
+            <Button variant="outline" size="icon" class="settings-action-danger" @click="handleClearHistory">
               <Trash2 class="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
 
-        <div class="settings-card-item">
-          <div class="settings-card-info">
-            <label class="settings-card-label">重置所有数据</label>
-            <span class="settings-card-desc">清除所有项目、服务器、环境配置和部署历史。</span>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <label class="settings-row-label">重置所有数据</label>
+            <span class="settings-row-desc">清除所有项目、服务器、环境配置和部署历史。</span>
           </div>
-          <div class="settings-card-control">
-            <button type="button" class="settings-action-btn settings-action-danger" @click="handleResetAll">
+          <div class="settings-row-control">
+            <Button variant="outline" size="icon" class="settings-action-danger" @click="handleResetAll">
               <RefreshCw class="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -141,38 +149,38 @@
 
     <!-- 关于 -->
     <div v-if="activeTab === 'about'" class="settings-content">
-      <div class="settings-card">
-        <div class="settings-card-item">
-          <div class="settings-card-info">
-            <label class="settings-card-label">当前版本</label>
-            <span class="settings-card-desc">XClaw 桌面应用</span>
+      <div class="settings-section">
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <label class="settings-row-label">当前版本</label>
+            <span class="settings-row-desc">XClaw 桌面应用</span>
           </div>
-          <div class="settings-card-control">
-            <span class="settings-badge">v{{ appVersion }}</span>
+          <div class="settings-row-control">
+            <Badge variant="secondary" class="settings-badge">v{{ appVersion }}</Badge>
           </div>
         </div>
 
-        <div class="settings-card-item">
-          <div class="settings-card-info">
-            <label class="settings-card-label">检查更新</label>
-            <span class="settings-card-desc">检查是否有新版本可用。</span>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <label class="settings-row-label">检查更新</label>
+            <span class="settings-row-desc">检查是否有新版本可用。</span>
           </div>
-          <div class="settings-card-control">
-            <button type="button" class="settings-action-btn" @click="handleCheckUpdate">
+          <div class="settings-row-control">
+            <Button variant="outline" size="icon" class="settings-action-btn" @click="handleCheckUpdate">
               <RefreshCw class="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
 
-        <div class="settings-card-item">
-          <div class="settings-card-info">
-            <label class="settings-card-label">GitHub</label>
-            <span class="settings-card-desc">访问项目源代码仓库。</span>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <label class="settings-row-label">GitHub</label>
+            <span class="settings-row-desc">访问项目源代码仓库。</span>
           </div>
-          <div class="settings-card-control">
-            <button type="button" class="settings-action-btn" @click="handleOpenGitHub">
+          <div class="settings-row-control">
+            <Button variant="outline" size="icon" class="settings-action-btn" @click="handleOpenGitHub">
               <ExternalLink class="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -183,6 +191,9 @@
 <script setup lang="ts">
 import { computed, ref, reactive, onMounted, markRaw } from "vue";
 import { Download, Upload, Trash2, RefreshCw, ExternalLink, Monitor, Moon, Sun } from "lucide-vue-next";
+import { Button } from "@/components/ui/button";
+import { NumberField, NumberFieldInput } from "@/components/ui/number-field";
+import { Badge } from "@/components/ui/badge";
 import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 
@@ -294,7 +305,7 @@ async function handleOpenGitHub() {
 
 .settings-header h1 {
   margin: 0;
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 18px;
   font-weight: 700;
   line-height: 1.4;
@@ -308,42 +319,42 @@ async function handleOpenGitHub() {
   gap: 16px;
 }
 
-.settings-card {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: #fdfcfc;
+.settings-section {
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  background: var(--surface);
   overflow: hidden;
 }
 
-.settings-card-danger {
-  border-color: rgba(255, 59, 48, 0.2);
+.settings-section-danger {
+  border-color: var(--danger-tint);
 }
 
-.settings-card-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  background: #f8f7f7;
-  color: #646262;
+.settings-section-header {
+  padding: 8px 16px;
+  background: var(--surface-hover);
+  color: var(--text-secondary);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.3px;
   text-transform: uppercase;
+  border-bottom: 1px solid var(--card-border);
 }
 
-.settings-card-item {
+.settings-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--card-border);
 }
 
-.settings-card-item:last-child {
+.settings-row:last-child {
   border-bottom: none;
 }
 
-.settings-card-info {
+.settings-row-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -351,19 +362,19 @@ async function handleOpenGitHub() {
   flex: 1;
 }
 
-.settings-card-label {
-  color: #201d1d;
+.settings-row-label {
+  color: var(--text-primary);
   font-size: 14px;
   font-weight: 500;
 }
 
-.settings-card-desc {
-  color: #a0a0a0;
+.settings-row-desc {
+  color: var(--text-muted);
   font-size: 12px;
   line-height: 1.5;
 }
 
-.settings-card-control {
+.settings-row-control {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -373,76 +384,45 @@ async function handleOpenGitHub() {
 .settings-input {
   width: 80px;
   height: 32px;
-  padding: 0 10px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: #f8f7f7;
-  color: #201d1d;
   font-size: 13px;
   text-align: right;
-  outline: none;
-  transition: border-color 120ms ease;
-}
-
-.settings-input:focus {
-  border-color: #646262;
 }
 
 .settings-unit {
-  color: #646262;
+  color: var(--text-muted);
   font-size: 13px;
   min-width: 24px;
 }
 
 .settings-badge {
-  display: inline-flex;
-  align-items: center;
-  height: 24px;
-  padding: 0 8px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: #f1eeee;
-  color: #646262;
   font-size: 12px;
-  font-weight: 500;
 }
 
 .settings-action-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: #fdfcfc;
-  color: #201d1d;
-  cursor: pointer;
-  transition: all 120ms ease;
+  color: var(--text-primary);
 }
 
 .settings-action-btn:hover {
-  background: #f1eeee;
-  border-color: #c8c8ca;
+  background: var(--surface-active);
 }
 
 .settings-action-danger {
-  color: #d70015;
-  border-color: rgba(255, 59, 48, 0.22);
+  color: var(--danger-soft);
+  border-color: var(--danger-tint);
 }
 
 .settings-action-danger:hover {
   background: var(--danger-tint);
-  border-color: rgba(255, 59, 48, 0.33);
+  border-color: var(--danger-tint);
 }
 
 .settings-select-group {
   display: flex;
   gap: 2px;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 4px;
   padding: 2px;
-  background: #f8f7f7;
+  background: var(--surface-hover);
 }
 
 .settings-select-btn {
@@ -454,34 +434,20 @@ async function handleOpenGitHub() {
   border: none;
   border-radius: 4px;
   background: transparent;
-  color: #646262;
+  color: var(--text-muted);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   transition: all 100ms ease;
 }
 
-.dark .settings-select-btn {
-  color: var(--text-secondary);
-}
-
 .settings-select-btn:hover {
-  color: #201d1d;
-}
-
-.dark .settings-select-btn:hover {
   color: var(--text-primary);
 }
 
 .settings-select-btn[data-active="true"] {
-  background: #fdfcfc;
-  color: #201d1d;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-}
-
-.dark .settings-select-btn[data-active="true"] {
-  background: var(--surface-active);
+  background: var(--surface);
   color: var(--text-primary);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 </style>

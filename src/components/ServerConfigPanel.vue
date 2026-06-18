@@ -7,7 +7,7 @@
             <Search class="server-search-icon h-4 w-4" />
             <InputText
               :model-value="searchKeyword"
-              class="server-search-input"
+              class="pl-[38px]"
               placeholder="搜索服务器名称、主机或用户名..."
               @update:model-value="searchKeyword = String($event ?? '')"
             />
@@ -15,7 +15,7 @@
         </template>
 
         <template #actions>
-          <Button class="server-add-button" variant="secondary" @click="$emit('create-server')">
+          <Button variant="secondary" @click="$emit('create-server')">
             <Plus class="h-4 w-4" />
             <span>新增服务器</span>
           </Button>
@@ -40,23 +40,24 @@
             </template>
 
             <template #meta>
-              <span class="server-auth-badge" :data-auth-type="server.authType">
+              <Badge variant="outline" class="server-auth-badge" :data-auth-type="server.authType">
                 <KeyRound v-if="server.authType === 'password'" class="h-3 w-3" aria-hidden="true" />
                 <ShieldCheck v-else class="h-3 w-3" aria-hidden="true" />
                 {{ server.authType === "password" ? "密码认证" : "私钥认证" }}
-              </span>
+              </Badge>
             </template>
 
             <template #actions>
-              <button
-                type="button"
-                class="delete-server-button"
+              <Button
+                variant="ghost"
+                size="icon-sm"
                 title="删除服务器"
                 aria-label="删除服务器"
+                class="delete-server-button"
                 @click.stop="$emit('delete-server-card', server.id)"
               >
                 <Trash2 class="h-4 w-4" aria-hidden="true" />
-              </button>
+              </Button>
             </template>
           </ResourceCard>
         </div>
@@ -67,16 +68,20 @@
         </div>
       </section>
 
-      <section v-else class="server-empty-state">
-        <Server class="server-empty-icon" :size="48" />
-        <p class="server-empty-title">暂无服务器</p>
-        <p class="server-empty-desc">点击上方「新增服务器」开始使用</p>
-      </section>
+      <Empty v-else class="server-empty-state border-0">
+        <EmptyMedia>
+          <Server class="server-empty-icon" :size="48" />
+        </EmptyMedia>
+        <EmptyContent>
+          <EmptyTitle class="server-empty-title">暂无服务器</EmptyTitle>
+          <EmptyDescription class="server-empty-desc">点击上方「新增服务器」开始使用</EmptyDescription>
+        </EmptyContent>
+      </Empty>
     </article>
 
     <Drawer :open="isCreating" direction="right" dismissible modal @update:open="handleDrawerOpenChange">
       <DrawerContent
-        class="create-drawer server-create-drawer border border-[var(--border)] bg-[#fdfcfc] text-[#201d1d] shadow-none"
+        class="create-drawer server-create-drawer border border-[var(--border)] bg-[var(--surface)] text-[var(--text-primary)] shadow-none"
       >
         <DrawerHeader class="server-create-header">
           <div class="server-create-head-copy">
@@ -233,8 +238,10 @@ import { Eye, EyeOff, KeyRound, Plus, Save, Search, Server, ShieldCheck, Trash2,
 
 import serverBackground from "@/assets/images/server-bg.png";
 import ResourceCard from "@/components/ResourceCard.vue";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Empty, EmptyContent, EmptyDescription, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Field, FieldContent, FieldLabel } from "@/components/ui/field";
 import { Input as InputText } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -329,28 +336,9 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   position: absolute;
   top: 50%;
   left: 14px;
-  color: #646262;
+  color: var(--text-muted);
   transform: translateY(-50%);
   pointer-events: none;
-}
-
-.server-search-input {
-  padding-left: 38px;
-}
-
-.server-add-button {
-  height: 34px;
-  padding-inline: 12px;
-  border: 1px solid #201d1d;
-  border-radius: 4px;
-  background: #201d1d;
-  color: #fdfcfc;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.server-add-button:hover {
-  background: #0f0000;
 }
 
 .server-library-section {
@@ -366,7 +354,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .server-section-header h2 {
   margin: 0;
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
@@ -386,7 +374,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   padding: 18px 16px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #f8f7f7;
+  background: var(--surface-hover);
 }
 
 .server-search-empty p,
@@ -395,29 +383,20 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .server-search-empty p {
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 14px;
   font-weight: 500;
 }
 
 .server-search-empty small {
-  color: #646262;
+  color: var(--text-muted);
   line-height: 1.6;
 }
 
 .server-auth-badge {
-  display: inline-flex;
-  align-items: center;
   gap: 5px;
   justify-self: start;
-  min-height: 22px;
-  padding: 0 9px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  font-size: var(--tag-font-size);
-  font-weight: 400;
-  letter-spacing: 0;
-  line-height: var(--tag-line-height);
+  font-size: 12px;
 }
 
 .server-auth-badge[data-auth-type="password"] {
@@ -431,31 +410,12 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .delete-server-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  background: transparent;
-  color: #d70015;
-  cursor: pointer;
-  transition:
-    background-color 150ms ease,
-    color 150ms ease;
+  color: var(--danger-soft);
 }
 
 .delete-server-button:hover {
-  border-color: rgba(255, 59, 48, 0.22);
   background: var(--danger-tint);
-  color: #a50011;
-}
-
-.delete-server-button:active {
-  transform: none;
+  color: var(--danger-soft);
 }
 
 .server-empty-state {
@@ -469,19 +429,19 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .server-empty-icon {
-  color: #c8c8ca;
+  color: var(--text-muted);
 }
 
 .server-empty-title {
   margin: 0;
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 16px;
   font-weight: 600;
 }
 
 .server-empty-desc {
   margin: 0;
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
 }
 
@@ -496,24 +456,16 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   height: 28px;
   width: 28px;
   transform: translateY(-50%);
-  color: #646262;
-}
-
-.dark .password-toggle {
   color: var(--text-muted);
 }
 
 .password-toggle:hover {
-  color: #201d1d;
-}
-
-.dark .password-toggle:hover {
   color: var(--text-primary);
 }
 
 .drawer-eyebrow {
   margin: 0 0 10px;
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0;
@@ -540,7 +492,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 .server-create-header {
   padding: 22px 24px 18px;
   border-bottom: 1px solid var(--border);
-  background: #f8f7f7;
+  background: var(--surface-hover);
 }
 
 .server-create-head-copy {
@@ -550,7 +502,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .server-create-header :deep(h2) {
   margin: 0;
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
@@ -583,7 +535,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .server-create-section-head h4 {
   margin: 0;
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
@@ -597,8 +549,8 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   height: 28px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #f8f7f7;
-  color: #646262;
+  background: var(--surface-hover);
+  color: var(--text-muted);
   font-size: 12px;
   font-weight: 700;
   line-height: 1;
@@ -609,7 +561,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   padding: 16px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #fdfcfc;
+  background: var(--surface);
 }
 
 .create-form-row {
@@ -629,7 +581,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .server-create-field-label {
-  color: #424245;
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 600;
 }
@@ -649,7 +601,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   justify-content: stretch;
   padding: 16px 24px 18px;
   border-top: 1px solid var(--border);
-  background: #f8f7f7;
+  background: var(--surface-hover);
 }
 
 .server-create-actions :deep(button) {

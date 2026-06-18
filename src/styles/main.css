@@ -119,7 +119,7 @@
 
 @layer utilities {
   .opencode-title {
-    color: #201d1d;
+    color: var(--text-primary);
     font-family: var(--font-heading);
     font-size: 16px;
     font-weight: 700;
@@ -128,7 +128,7 @@
   }
 
   .opencode-section-title {
-    color: #201d1d;
+    color: var(--text-primary);
     font-family: var(--font-heading);
     font-size: 16px;
     font-weight: 700;
@@ -137,7 +137,7 @@
   }
 
   .opencode-caption {
-    color: #424245;
+    color: var(--text-secondary);
     font-size: 14px;
     font-weight: 400;
     line-height: 2;
@@ -145,7 +145,7 @@
   }
 
   .opencode-caption-strong {
-    color: #201d1d;
+    color: var(--text-primary);
     font-size: 14px;
     font-weight: 700;
     line-height: 2;
@@ -153,7 +153,7 @@
   }
 
   .opencode-fine {
-    color: #646262;
+    color: var(--text-muted);
     font-size: 14px;
     font-weight: 400;
     line-height: 2;
@@ -161,11 +161,11 @@
   }
 
   .opencode-muted {
-    color: #424245;
+    color: var(--text-secondary);
   }
 
   .opencode-muted-dim {
-    color: #646262;
+    color: var(--text-muted);
   }
 
   .panel-surface {
@@ -225,10 +225,10 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-sm: 0.25rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.375rem;
 }
 
 :root {
@@ -280,6 +280,15 @@
   --sidebar-accent-foreground: #201d1d;
   --sidebar-border: rgba(15, 0, 0, 0.12);
   --sidebar-ring: rgba(15, 0, 0, 0.22);
+
+  /* === Semantic Aliases (used by components, auto-adapt in dark mode) === */
+  --text-primary: #201d1d;
+  --text-secondary: #424245;
+  --text-muted: #646262;
+  --surface: #fdfcfc;
+  --surface-hover: #f8f7f7;
+  --surface-active: #f1eeee;
+  --card-border: rgba(15, 0, 0, 0.12);
 }
 
 .dark {
@@ -375,49 +384,13 @@
   }
 }
 
-/* === Dark Mode Overrides for Hardcoded Colors === */
-.dark .app-shell-brand { color: var(--text-primary); }
-.dark .app-version-badge { background: var(--surface); color: var(--text-secondary); border-color: var(--card-border); }
-.dark .app-shell-nav-item { color: var(--text-secondary); }
-.dark .app-shell-nav-item svg { color: var(--text-muted); }
-.dark .app-shell-nav-item:hover { background: var(--surface-hover); color: var(--text-primary); border-color: var(--card-border); }
-.dark .app-shell-nav-item[data-active="true"] { background: var(--surface-active); color: var(--text-primary); border-color: rgba(255,255,255,0.12); }
-.dark .app-shell-nav-item[data-active="true"] svg { color: var(--text-primary); }
-.dark .app-shell-settings-back { color: var(--text-secondary) !important; }
-.dark .app-shell-settings-back:hover { color: var(--text-primary) !important; }
-.dark .app-shell-settings-title { color: var(--text-primary); }
-.dark .app-shell-nav-divider { background: var(--card-border); }
-.dark .app-shell-footer-entry { color: var(--text-secondary); }
-.dark .app-shell-footer-entry svg { color: var(--text-muted); }
-.dark .app-shell-footer-entry:hover { background: var(--surface-hover); color: var(--text-primary); }
-.dark .app-shell-footer-entry:hover svg { color: var(--text-primary); }
-
-.dark .settings-header h1 { color: var(--text-primary); }
-.dark .settings-section-header h2 { color: var(--text-primary); }
-.dark .settings-section-header p { color: var(--text-secondary); }
-.dark .settings-card { background: var(--surface); border-color: var(--card-border); }
-.dark .settings-card-header { background: var(--surface-hover); color: var(--text-secondary); border-color: var(--card-border); }
-.dark .settings-card-item { border-color: var(--card-border); }
-.dark .settings-card-label { color: var(--text-primary); }
-.dark .settings-card-desc { color: var(--text-secondary); }
-.dark .settings-card-danger { border-color: rgba(255, 69, 58, 0.15); }
-.dark .settings-input { background: var(--surface-hover); border-color: var(--card-border); color: var(--text-primary); }
-.dark .settings-input:focus { border-color: rgba(255,255,255,0.2); }
-.dark .settings-unit { color: var(--text-muted); }
-.dark .settings-badge { background: var(--surface-hover); color: var(--text-secondary); border-color: var(--card-border); }
-.dark .settings-action-btn { background: var(--surface); border-color: var(--card-border); color: var(--text-primary); }
-.dark .settings-action-btn:hover { background: var(--surface-hover); border-color: rgba(255,255,255,0.12); }
-.dark .settings-action-danger { color: var(--danger-soft); border-color: rgba(255, 69, 58, 0.2); }
-.dark .settings-action-danger:hover { background: var(--danger-tint); border-color: rgba(255, 69, 58, 0.3); }
-.dark .settings-select-group { background: var(--surface-hover); border-color: var(--card-border); }
-.dark .settings-select-btn { color: var(--text-muted); }
-.dark .settings-select-btn:hover { color: var(--text-primary); }
-.dark .settings-select-btn[data-active="true"] { background: var(--surface-active); color: var(--text-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+/* === Dark Mode Overrides for shadcn-vue data-slot components === */
+/* These overrides are needed because shadcn-vue components use inline Tailwind
+   classes with higher specificity than CSS variables in scoped styles. */
 .dark input[data-slot="input"] { background: var(--surface) !important; border-color: var(--card-border) !important; color: var(--text-primary) !important; }
 .dark input[data-slot="input"]::placeholder { color: var(--text-secondary) !important; }
 .dark input[data-slot="input"]:focus { border-color: rgba(255,255,255,0.2) !important; background: var(--surface-hover) !important; }
-.dark [data-slot="button"] { background: #e8e8e8 !important; border-color: #e8e8e8 !important; color: #1a1a1e !important; }
-.dark [data-slot="button"]:hover { background: #d0d0d4 !important; }
+
 .dark [data-slot="alert-dialog-content"] { background: var(--surface) !important; color: var(--text-primary) !important; }
 .dark [data-slot="alert-dialog-title"] { color: var(--text-primary) !important; }
 .dark [data-slot="alert-dialog-description"] { color: var(--text-secondary) !important; }
@@ -426,14 +399,6 @@
 .dark [data-slot="drawer-content"] { background: var(--surface) !important; color: var(--text-primary) !important; }
 .dark [data-slot="drawer-title"] { color: var(--text-primary) !important; }
 .dark [data-slot="drawer-description"] { color: var(--text-secondary) !important; }
-.dark .drawer-eyebrow { color: var(--text-secondary) !important; }
-.dark .create-form-label { color: var(--text-primary) !important; }
-.dark .create-form-sublabel { color: var(--text-muted) !important; }
-.dark .create-form-input { background: var(--surface-hover) !important; border-color: var(--card-border) !important; color: var(--text-primary) !important; }
-.dark .create-form-input::placeholder { color: var(--text-muted) !important; }
-.dark .create-form-input:focus { border-color: rgba(255,255,255,0.2) !important; }
-.dark .create-form-select { background: var(--surface-hover) !important; border-color: var(--card-border) !important; color: var(--text-primary) !important; }
-.dark .server-create-section-head { color: var(--text-muted) !important; }
 .dark [data-slot="select-trigger"] { background: var(--surface-hover) !important; border-color: var(--card-border) !important; color: var(--text-primary) !important; }
 .dark [data-slot="select-trigger"]:hover { border-color: rgba(255,255,255,0.15) !important; }
 .dark [data-slot="select-value"] { color: var(--text-primary) !important; }
@@ -443,78 +408,3 @@
 .dark [data-slot="select-item"][data-highlighted] { background: var(--surface-hover) !important; color: var(--text-primary) !important; }
 .dark [data-slot="select-separator"] { background: var(--card-border) !important; }
 .dark [data-slot="card"] { background: var(--surface) !important; border-color: var(--card-border) !important; }
-
-/* === Panel Card Dark Mode === */
-.dark .panel-card { background: var(--surface) !important; border-color: var(--card-border) !important; }
-.dark .card-head { border-color: var(--card-border) !important; }
-.dark .card-head h3 { color: var(--text-primary) !important; }
-.dark .config-card .card-head h3 { color: var(--text-primary) !important; }
-.dark .panel-grid > section > h3,
-.dark .panel-grid > section > h2 { color: var(--text-primary) !important; font-size: 16px; font-weight: 700; }
-.dark .panel-grid > section > p { color: var(--text-secondary) !important; }
-.dark [data-slot="card"] { background: var(--surface) !important; border-color: var(--card-border) !important; }
-.dark .project-overview-card { background: var(--surface) !important; border-color: var(--card-border) !important; }
-.dark .project-overview-card-header { color: var(--text-primary) !important; }
-.dark .project-overview-card-meta span { color: var(--text-secondary) !important; background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
-.dark .project-overview-field-label { color: var(--text-muted) !important; }
-.dark .project-overview-field-value { color: var(--text-primary) !important; }
-.dark .project-overview-field-edit { color: var(--text-muted) !important; }
-.dark .project-overview-field-edit:hover { color: var(--text-primary) !important; background: var(--surface-hover) !important; }
-.dark .project-overview-card-advanced-toggle { color: var(--text-secondary) !important; }
-.dark .project-overview-card-advanced-toggle:hover { color: var(--text-primary) !important; }
-.dark .environment-config-panel { background: var(--surface) !important; border-color: var(--card-border) !important; }
-.dark .environment-config-header { color: var(--text-primary) !important; }
-.dark .environment-card { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
-.dark .environment-card-name { color: var(--text-primary) !important; }
-.dark .environment-card-desc { color: var(--text-secondary) !important; }
-.dark .environment-card-status { color: var(--text-muted) !important; }
-.dark .execution-panel { background: var(--surface) !important; border-color: var(--card-border) !important; }
-.dark .execution-panel-header { color: var(--text-primary) !important; }
-.dark .execution-panel-label { color: var(--text-muted) !important; }
-.dark .execution-panel-value { color: var(--text-primary) !important; }
-.dark .workspace-detail-header { border-color: var(--card-border) !important; }
-.dark .workspace-detail-header-title-row h2 { color: var(--text-primary) !important; }
-.dark .workspace-detail-header-status { color: var(--text-secondary) !important; }
-.dark .workspace-detail-header-button { color: var(--text-secondary) !important; background: transparent !important; border-color: transparent !important; }
-.dark .workspace-detail-header-button:hover { color: var(--text-primary) !important; background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
-.dark .workspace-detail-header-button-save { color: var(--info-soft) !important; background: transparent !important; border-color: transparent !important; }
-.dark .workspace-detail-header-button-save:hover { color: #0a84ff !important; background: var(--info-tint) !important; border-color: var(--card-border) !important; }
-.dark .workspace-detail-header-button-danger { color: var(--danger-soft) !important; background: transparent !important; border-color: transparent !important; }
-.dark .workspace-detail-header-button-danger:hover { background: var(--danger-tint) !important; color: var(--danger-soft) !important; border-color: rgba(255,69,58,0.3) !important; }
-.dark .workspace-detail-header-status { background: var(--success-tint) !important; color: var(--success-soft) !important; border-color: rgba(48,209,88,0.3) !important; }
-.dark .summary-column { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
-.dark .summary-column-compact { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
-.dark .summary-column-advanced { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
-.dark .summary-row { border-color: var(--card-border) !important; }
-.dark .summary-row:last-child { border-bottom: none !important; }
-.dark .summary-field { background: transparent !important; border-color: transparent !important; }
-.dark .summary-label { color: var(--text-secondary) !important; }
-.dark .summary-value { color: var(--text-primary) !important; }
-.dark .overview-head h3 { color: var(--text-primary) !important; }
-.dark .overview-meta span { color: var(--text-secondary) !important; background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
-.dark .overview-advanced-toggle { color: var(--text-secondary) !important; }
-.dark .overview-advanced-toggle:hover { color: var(--text-primary) !important; }
-.dark .summary-section { color: var(--text-primary) !important; }
-.dark .summary-head h4 { color: var(--text-primary) !important; }
-.dark .summary-board { background: transparent !important; }
-.dark .summary-item { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
-.dark .summary-item span { color: var(--text-secondary) !important; }
-.dark .summary-item strong { color: var(--text-primary) !important; }
-.dark .environment-card-body strong { color: var(--text-primary) !important; }
-.dark .environment-card-body p { color: var(--text-secondary) !important; }
-.dark .environment-status-text { color: var(--text-muted) !important; }
-.dark .environment-card-foot span { color: var(--text-secondary) !important; }
-/* === Environment Drawer Dark Mode === */
-.dark .environment-drawer { background: var(--surface) !important; color: var(--text-primary) !important; }
-.dark .drawer-head { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
-.dark .drawer-head h2 { color: var(--text-primary) !important; }
-.dark .drawer-head p { color: var(--text-secondary) !important; }
-.dark .drawer-section-head h4 { color: var(--text-primary) !important; }
-.dark .drawer-section-card { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
-.dark .drawer-section-index { background: var(--surface) !important; border-color: var(--card-border) !important; color: var(--text-secondary) !important; }
-.dark .field span { color: var(--text-primary) !important; }
-.dark .field-inline-action span { color: var(--text-primary) !important; }
-.dark .switch-row small { color: var(--text-secondary) !important; }
-.dark .drawer-actions { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
-.dark .environment-check-button { background: var(--surface-hover) !important; border-color: var(--card-border) !important; color: var(--text-primary) !important; }
-.dark .environment-check-button:hover { background: var(--surface-active) !important; border-color: rgba(255,255,255,0.15) !important; }

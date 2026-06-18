@@ -5,7 +5,7 @@
         <h3>任务历史</h3>
         <p>展示当前项目最近执行结果，便于回看成功记录和失败原因。</p>
       </div>
-      <Badge variant="outline" class="rounded-sm border border-[var(--border)] bg-[var(--neutral-tint)] text-[#424245]">{{ records.length }} 条</Badge>
+      <Badge variant="outline" class="rounded-sm border border-[var(--border)] bg-[var(--neutral-tint)] text-[var(--text-secondary)]">{{ records.length }} 条</Badge>
     </header>
 
     <div v-if="records.length > 0" class="history-layout">
@@ -160,7 +160,7 @@ function formatDuration(durationMs: number) {
 .card-head h3,
 .log-preview-head h4 {
   margin: 0;
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
@@ -169,7 +169,7 @@ function formatDuration(durationMs: number) {
 
 .card-head p {
   margin: 8px 0 0;
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -194,32 +194,32 @@ function formatDuration(durationMs: number) {
   border: 1px solid var(--border);
   border-left: 2px solid transparent;
   border-radius: 0 4px 4px 0;
-  background: #f8f7f7;
+  background: var(--surface-hover);
   text-align: left;
   cursor: pointer;
   transition: border-color 180ms ease, background-color 180ms ease, border-left-color 180ms ease;
 }
 
 .history-item[data-active='true'] {
-  border-left-color: #201d1d;
-  background: #fdfcfc;
+  border-left-color: var(--text-primary);
+  background: var(--surface);
 }
 
 .history-item:focus-visible {
   outline: none;
-  background: #fdfcfc;
+  background: var(--surface);
 }
 
 .history-item strong,
 .detail-item strong {
-  color: #201d1d;
+  color: var(--text-primary);
   font-weight: 700;
   word-break: break-word;
 }
 
 .history-item small,
 .detail-item span {
-  color: #646262;
+  color: var(--text-muted);
 }
 
 .history-top {
@@ -228,7 +228,7 @@ function formatDuration(durationMs: number) {
   justify-content: space-between;
   gap: 8px;
   font-size: 14px;
-  color: #646262;
+  color: var(--text-muted);
 }
 
 .history-detail {
@@ -253,7 +253,7 @@ function formatDuration(durationMs: number) {
 }
 
 .error-text {
-  color: #d70015;
+  color: var(--danger-soft);
 }
 
 .log-preview {
@@ -262,7 +262,7 @@ function formatDuration(durationMs: number) {
   padding: 16px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #f8f7f7;
+  background: var(--surface-hover);
   min-width: 0;
 }
 
@@ -274,7 +274,7 @@ function formatDuration(durationMs: number) {
 }
 
 .log-preview-head h4 {
-  color: #201d1d;
+  color: var(--text-primary);
 }
 
 .log-lines {
@@ -286,7 +286,7 @@ function formatDuration(durationMs: number) {
 
 .log-lines p {
   margin: 0;
-  color: #424245;
+  color: var(--text-secondary);
   font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1.5;
@@ -295,7 +295,7 @@ function formatDuration(durationMs: number) {
 
 .muted-paragraph {
   margin: 0;
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
   line-height: 1.5;
 }

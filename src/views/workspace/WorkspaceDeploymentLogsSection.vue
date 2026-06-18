@@ -6,7 +6,7 @@
           <Search class="deployment-log-search-icon" :size="16" />
           <InputText
             :model-value="filter.keyword"
-            class="deployment-log-search-input"
+            class="pl-[38px]"
             placeholder="搜索项目名 / 服务器..."
             @update:model-value="(v: any) => (filter.keyword = v ?? '')"
           />
@@ -180,11 +180,11 @@
           </div>
 
           <div class="deployment-log-cell deployment-log-mode">
-            <span class="mode-chip" :data-mode="record.mode">{{ formatMode(record.mode) }}</span>
+            <Badge variant="outline" class="mode-chip" :data-mode="record.mode">{{ formatMode(record.mode) }}</Badge>
           </div>
 
           <div class="deployment-log-cell deployment-log-environment">
-            <span class="environment-chip">{{ formatEnvironmentLabel(record.environmentName) }}</span>
+            <Badge variant="outline" class="environment-chip">{{ formatEnvironmentLabel(record.environmentName) }}</Badge>
           </div>
 
           <div class="deployment-log-cell deployment-log-server">
@@ -193,20 +193,21 @@
           </div>
 
           <div class="deployment-log-cell deployment-log-result">
-            <span class="result-badge" :data-status="record.status">
+            <Badge variant="outline" class="result-badge" :data-status="record.status">
               {{ record.status === "success" ? "成功" : "失败" }}
-            </span>
+            </Badge>
           </div>
 
-          <button
-            type="button"
-            class="deployment-log-delete"
+          <Button
+            variant="ghost"
+            size="icon-sm"
             title="删除记录"
             aria-label="删除部署记录"
+            class="deployment-log-delete"
             @click="$emit('delete-record', record.id)"
           >
             <Trash2 class="h-4 w-4" aria-hidden="true" />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -229,6 +230,8 @@
 import { ref } from "vue"
 import { FileClock, Filter, Search, Trash2 } from "lucide-vue-next"
 
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import WorkspaceToolbarPanel from "@/components/workspace-header/WorkspaceToolbarPanel.vue"
 import { Input as InputText } from "@/components/ui/input"
 import Popover from "@/components/ui/popover/Popover.vue"
@@ -351,13 +354,9 @@ function formatMode(mode: ExecutionMode) {
   position: absolute;
   top: 50%;
   left: 14px;
-  color: #646262;
+  color: var(--text-muted);
   transform: translateY(-50%);
   pointer-events: none;
-}
-
-.deployment-log-search-input {
-  padding-left: 38px !important;
 }
 
 .deployment-log-table {
@@ -373,7 +372,7 @@ function formatMode(mode: ExecutionMode) {
   display: grid;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #fdfcfc;
+  background: var(--surface);
 }
 
 .deployment-log-head,
@@ -386,7 +385,7 @@ function formatMode(mode: ExecutionMode) {
 .deployment-log-head {
   min-height: 54px;
   background: transparent;
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0;
@@ -401,7 +400,7 @@ function formatMode(mode: ExecutionMode) {
 .deployment-log-row {
   min-height: 60px;
   border-bottom: 1px solid var(--border);
-  background: #fdfcfc;
+  background: var(--surface);
   transition: background-color 140ms ease;
 }
 
@@ -410,7 +409,7 @@ function formatMode(mode: ExecutionMode) {
 }
 
 .deployment-log-row:hover {
-  background: #f8f7f7;
+  background: var(--surface-hover);
 }
 
 .deployment-log-cell {
@@ -432,14 +431,14 @@ function formatMode(mode: ExecutionMode) {
   min-width: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
 }
 
 .deployment-log-cell span {
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -456,24 +455,62 @@ function formatMode(mode: ExecutionMode) {
 }
 
 .deployment-log-delete {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  justify-self: center;
-  width: 28px;
-  height: 28px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  background: transparent;
-  color: #d70015;
-  cursor: pointer;
-  transition: all 120ms ease;
+  color: var(--danger-soft);
 }
 
 .deployment-log-delete:hover {
-  border-color: rgba(255, 59, 48, 0.22);
   background: var(--danger-tint);
-  color: #a50011;
+  color: var(--danger-soft);
+}
+
+.mode-chip {
+  justify-self: start;
+  font-size: 12px;
+  background: var(--surface-active);
+  color: var(--text-muted);
+}
+
+.mode-chip[data-mode="build-and-deploy"] {
+  background: var(--info-tint);
+  color: var(--info);
+  border-color: rgba(0, 122, 255, 0.2);
+}
+
+.mode-chip[data-mode="deploy"] {
+  background: var(--success-tint);
+  color: var(--success-soft);
+  border-color: rgba(48, 209, 88, 0.2);
+}
+
+.mode-chip[data-mode="build"] {
+  background: var(--warning-tint);
+  color: var(--warning-soft);
+  border-color: rgba(255, 159, 10, 0.2);
+}
+
+.environment-chip {
+  justify-self: start;
+  font-size: 12px;
+  background: var(--surface-active);
+  color: var(--text-muted);
+}
+
+.result-badge {
+  justify-self: start;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.result-badge[data-status="success"] {
+  background: var(--success-tint);
+  color: var(--success-soft);
+  border-color: rgba(48, 209, 88, 0.2);
+}
+
+.result-badge[data-status="error"] {
+  background: var(--danger-tint);
+  color: var(--danger-soft);
+  border-color: rgba(255, 59, 48, 0.2);
 }
 
 .deployment-log-mode,
@@ -493,31 +530,31 @@ function formatMode(mode: ExecutionMode) {
   width: 18px;
   height: 18px;
   border: 1px solid transparent;
-  border-radius: 3px;
+  border-radius: 4px;
   background: transparent;
-  color: #a0a0a0;
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 100ms ease;
 }
 
 .deployment-log-header-filter:hover {
-  background: #f1eeee;
-  color: #201d1d;
+  background: var(--surface-active);
+  color: var(--text-primary);
   border-color: var(--border);
 }
 
 .deployment-log-header-filter[data-active="true"] {
-  background: #201d1d;
-  border-color: #201d1d;
-  color: #fdfcfc;
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+  color: var(--surface);
 }
 
 .deployment-log-popover {
   width: 130px;
   padding: 2px;
   border: 1px solid var(--border);
-  border-radius: 6px;
-  background: #fdfcfc;
+  border-radius: 4px;
+  background: var(--surface);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -525,7 +562,7 @@ function formatMode(mode: ExecutionMode) {
   padding: 4px 6px 2px;
   font-size: 12px;
   font-weight: 500;
-  color: #a0a0a0;
+  color: var(--text-muted);
   letter-spacing: 0;
 }
 
@@ -540,9 +577,9 @@ function formatMode(mode: ExecutionMode) {
   width: 100%;
   padding: 6px 8px;
   border: none;
-  border-radius: 3px;
+  border-radius: 4px;
   background: transparent;
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 13px;
   text-align: left;
   cursor: pointer;
@@ -550,34 +587,14 @@ function formatMode(mode: ExecutionMode) {
 }
 
 .deployment-log-popover-item:hover {
-  background: #f1eeee;
+  background: var(--surface-active);
 }
 
 .deployment-log-popover-item[data-active="true"] {
-  background: #201d1d;
-  color: #fdfcfc;
+  background: var(--text-primary);
+  color: var(--surface);
 }
 
-/* Dark Mode Overrides */
-.dark .deployment-log-body { background: var(--surface); border-color: var(--card-border); }
-.dark .deployment-log-head { color: var(--text-muted); }
-.dark .deployment-log-row { background: var(--surface); border-color: var(--card-border); }
-.dark .deployment-log-row:hover { background: var(--surface-hover); }
-.dark .deployment-log-cell strong { color: var(--text-primary); }
-.dark .deployment-log-cell span { color: var(--text-secondary); }
-.dark .deployment-log-header-filter { color: var(--text-muted); }
-.dark .deployment-log-header-filter:hover { background: var(--surface-hover); color: var(--text-primary); }
-.dark .deployment-log-header-filter[data-active="true"] { background: var(--text-primary); border-color: var(--text-primary); color: var(--surface); }
-.dark .deployment-log-popover { background: var(--surface); border-color: var(--card-border); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-.dark .deployment-log-popover-header { color: var(--text-muted); }
-.dark .deployment-log-popover-item { color: var(--text-primary); }
-.dark .deployment-log-popover-item:hover { background: var(--surface-hover); }
-.dark .deployment-log-popover-item[data-active="true"] { background: var(--text-primary); color: var(--surface); }
-.dark .deployment-log-delete { color: var(--danger-soft); }
-.dark .deployment-log-delete:hover { background: var(--danger-tint); border-color: rgba(255,69,58,0.3); }
-.dark .deployment-log-empty p { color: var(--text-primary); }
-.dark .deployment-log-empty small { color: var(--text-secondary); }
-.dark .deployment-log-empty svg { color: var(--text-muted); }
 
 @media (max-width: 1180px) {
   .deployment-log-cell {

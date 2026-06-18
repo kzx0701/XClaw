@@ -5,7 +5,7 @@
         <h3>环境配置</h3>
       </div>
       <div class="actions">
-        <Button class="app-primary-button" :disabled="!projectId" @click="$emit('create-environment')">
+        <Button variant="secondary" :disabled="!projectId" @click="$emit('create-environment')">
           <Plus class="h-4 w-4" />
           <span>新增环境</span>
         </Button>
@@ -61,21 +61,27 @@
         </button>
       </div>
 
-      <div v-else class="empty-state">
-        <Compass class="empty-icon" aria-hidden="true" />
-        <h4>还没有部署环境</h4>
-        <Button class="app-primary-button" @click="$emit('create-environment')">
-          <Plus class="h-4 w-4" />
-          <span>新增第一个环境</span>
-        </Button>
-      </div>
+      <Empty v-else class="empty-state border-0">
+        <EmptyMedia>
+          <Compass class="empty-icon" aria-hidden="true" />
+        </EmptyMedia>
+        <EmptyContent>
+          <EmptyTitle>还没有部署环境</EmptyTitle>
+          <EmptyDescription>
+            <Button variant="secondary" @click="$emit('create-environment')">
+              <Plus class="h-4 w-4" />
+              <span>新增第一个环境</span>
+            </Button>
+          </EmptyDescription>
+        </EmptyContent>
+      </Empty>
     </div>
 
     <p v-else class="muted-paragraph">请先导入并选中项目。</p>
 
     <Drawer :open="editorVisible" direction="right" dismissible modal @update:open="handleDrawerOpenChange">
       <DrawerContent
-        class="environment-drawer border border-[var(--border)] bg-[#fdfcfc] text-[#201d1d] shadow-none"
+        class="environment-drawer border border-[var(--border)] bg-[var(--surface)] text-[var(--text-primary)] shadow-none"
         :style="{ width: 'clamp(720px, 46vw, 860px)', maxWidth: '94vw' }"
       >
         <DrawerHeader class="drawer-head">
@@ -222,6 +228,7 @@ import { computed } from "vue";
 import { ChevronRight, Compass, FolderSearch, Plus, RotateCcw, Save, Trash2 } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Empty, EmptyContent, EmptyDescription, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Input as InputText } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Switch from "@/components/ui/switch/Switch.vue";
@@ -356,7 +363,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .card-head h3 {
   margin: 0;
-  color: #201d1d;
+  color: var(--text-primary);
   font-family: var(--font-heading);
   font-size: 16px;
   font-weight: 700;
@@ -389,7 +396,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   padding: 15px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #f8f7f7;
+  background: var(--surface-hover);
   color: inherit;
   text-align: left;
   cursor: pointer;
@@ -401,7 +408,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .environment-card:hover {
-  background: #fdfcfc;
+  background: var(--surface);
 }
 
 .environment-card-top,
@@ -434,7 +441,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 .environment-status-text {
   display: inline-flex;
   align-items: center;
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
   font-weight: 500;
   line-height: 1;
@@ -447,23 +454,23 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   height: 7px;
   margin-right: 6px;
   border-radius: 999px;
-  background: #9a9898;
+  background: var(--text-muted);
 }
 
 .environment-status-text[data-status="configured"] {
-  color: #8ad48a;
+  color: var(--success-soft);
 }
 
 .environment-status-text[data-status="configured"]::before {
-  background: #48c78e;
+  background: var(--success);
 }
 
 .environment-status-text[data-status="pending"] {
-  color: #d4c48a;
+  color: var(--warning-soft);
 }
 
 .environment-status-text[data-status="pending"]::before {
-  background: #e0a340;
+  background: var(--warning);
 }
 
 .environment-icon {
@@ -474,8 +481,8 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   height: 36px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #f1eeee;
-  color: #201d1d;
+  background: var(--surface-active);
+  color: var(--text-primary);
   font-size: 16px;
   flex: 0 0 auto;
 }
@@ -507,7 +514,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
   font-weight: 500;
   line-height: 1;
@@ -523,7 +530,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .environment-card-body strong {
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
@@ -534,7 +541,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 .environment-card-foot span,
 .muted-paragraph {
   margin: 0;
-  color: #646262;
+  color: var(--text-muted);
 }
 
 .environment-card-body p,
@@ -554,31 +561,17 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .empty-state {
-  display: grid;
   justify-items: center;
-  gap: 10px;
-  padding: 22px 18px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: #f8f7f7;
-  text-align: center;
 }
 
 .empty-icon {
-  width: 20px;
-  height: 20px;
-  color: #7a7a7a;
-}
-
-.empty-state h4,
-.empty-state p {
-  margin: 0;
+  color: var(--text-muted);
 }
 
 .drawer-head {
   padding: 22px 24px 18px;
   border-bottom: 1px solid var(--border);
-  background: #f8f7f7;
+  background: var(--surface-hover);
 }
 
 .drawer-head-copy {
@@ -588,7 +581,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .drawer-eyebrow {
   margin: 0 0 10px;
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0;
@@ -622,7 +615,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .drawer-section-head h4 {
   margin: 0;
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
@@ -636,8 +629,8 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   height: 28px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #f8f7f7;
-  color: #646262;
+  background: var(--surface-hover);
+  color: var(--text-muted);
   font-size: 12px;
   font-weight: 700;
   line-height: 1;
@@ -648,7 +641,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   padding: 16px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #fdfcfc;
+  background: var(--surface);
 }
 
 .create-form-grid {
@@ -673,7 +666,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .field span {
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
@@ -688,7 +681,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 }
 
 .switch-row small {
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
 }
 
@@ -707,7 +700,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   justify-content: stretch;
   padding: 16px 24px 18px;
   border-top: 1px solid var(--border);
-  background: #f8f7f7;
+  background: var(--surface-hover);
 }
 
 .environment-create-actions :deep(button) {
@@ -722,14 +715,14 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 .environment-check-button {
   min-width: 92px;
   justify-content: center;
-  background: #f8f7f7;
-  color: #201d1d;
+  background: var(--surface-hover);
+  color: var(--text-primary);
   border-color: var(--border);
 }
 
 .environment-check-button:hover {
-  background: #f1eeee;
-  color: #201d1d;
+  background: var(--surface-active);
+  color: var(--text-primary);
 }
 
 :deep(.environment-drawer) {
@@ -740,7 +733,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
   height: 100vh;
   padding: 0;
   overflow: hidden;
-  background: #fdfcfc;
+  background: var(--surface);
 }
 
 @media (max-width: 960px) {

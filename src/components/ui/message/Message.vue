@@ -28,21 +28,21 @@ const variant = computed(() => {
 
 const toneClass = computed(() => {
   if (props.severity === 'success') {
-    return 'border-[#14532d] bg-[#0d2a1e] text-[#8ad48a]'
+    return 'border-[var(--success-soft)] bg-[var(--success-tint)] text-[var(--success)]'
   }
 
   if (props.severity === 'warn') {
-    return 'border-[#7c2d12] bg-[#2d1a0e] text-[#d4c48a]'
+    return 'border-[var(--warning-soft)] bg-[var(--warning-tint)] text-[var(--warning)]'
   }
 
   if (props.severity === 'error') {
-    return 'border-[#7f1d1d] bg-[#2d1316] text-[#e06060]'
+    return 'border-[var(--danger-soft)] bg-[var(--danger-tint)] text-[var(--danger-soft)]'
   }
 
   if (props.severity === 'secondary') {
-    return 'border border-[var(--border)] bg-[#fdfcfc] text-[#424245]'
+    return 'border border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)]'
   }
 
-  return 'border-[var(--border)] bg-[var(--info-tint)] text-[#007aff]'
+  return 'border-[var(--border)] bg-[var(--info-tint)] text-[var(--info)]'
 })
 </script>

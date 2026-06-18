@@ -17,7 +17,7 @@
   margin-inline: -32px;
   padding: 16px 32px;
   border-bottom: 1px solid var(--border);
-  background: #fdfcfc;
+  background: var(--surface);
 }
 
 .dark .workspace-toolbar-panel {

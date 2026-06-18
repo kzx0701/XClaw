@@ -24,13 +24,13 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
     data-slot="switch"
     v-bind="forwarded"
     :class="cn(
-      'peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-[#f1eeee] inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-sm border border-[var(--border)] shadow-none transition-colors outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
+      'peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-[var(--surface-active)] inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-sm border border-[var(--border)] shadow-none transition-colors outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
       props.class,
     )"
   >
     <SwitchThumb
       data-slot="switch-thumb"
-      :class="cn('bg-[#fdfcfc] pointer-events-none block size-4 rounded-sm ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0')"
+      :class="cn('bg-[var(--surface)] pointer-events-none block size-4 rounded-sm ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0')"
     >
       <slot name="thumb" v-bind="slotProps" />
     </SwitchThumb>

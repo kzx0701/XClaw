@@ -20,7 +20,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
     data-slot="checkbox"
     v-bind="forwarded"
     :class="
-      cn('peer data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 shrink-0 rounded-[4px] border border-[var(--border)] bg-[#f8f7f7] shadow-none transition-colors outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
+      cn('peer data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 shrink-0 rounded-[4px] border border-[var(--border)] bg-[var(--surface-hover)] shadow-none transition-colors outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
          props.class)"
   >
     <CheckboxIndicator

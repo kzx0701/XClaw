@@ -9,15 +9,15 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "border-[#201d1d] bg-[#201d1d] text-[#fdfcfc] hover:bg-[#0f0000]",
+          "border-[var(--text-primary)] bg-[var(--text-primary)] text-[var(--surface)] hover:bg-[var(--text-secondary)]",
         destructive:
-          "border-[#ff3b30] bg-[#ff3b30] text-[#fdfcfc] hover:bg-[#d70015] focus-visible:ring-destructive/20",
+          "border-[var(--destructive)] bg-[var(--destructive)] text-[var(--surface)] hover:bg-[var(--danger-soft)] focus-visible:ring-destructive/20",
         outline:
-          "border-[var(--border)] bg-[#fdfcfc] text-[#201d1d] hover:bg-[#f1eeee]",
+          "border-[var(--card-border)] bg-[var(--surface)] text-[var(--text-primary)] hover:bg-[var(--surface-active)]",
         secondary:
-          "border-[var(--border)] bg-[#f8f7f7] text-[#201d1d] hover:bg-[#f1eeee]",
+          "border-[var(--card-border)] bg-[var(--surface-hover)] text-[var(--text-primary)] hover:bg-[var(--surface-active)]",
         ghost:
-          "border-transparent text-[#424245] hover:border-[var(--border)] hover:bg-[#f8f7f7] hover:text-[#201d1d]",
+          "border-transparent text-[var(--text-secondary)] hover:border-[var(--card-border)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {

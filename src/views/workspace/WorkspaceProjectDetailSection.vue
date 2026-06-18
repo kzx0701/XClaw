@@ -48,9 +48,9 @@
       </div>
 
       <div v-else class="project-detail-skeleton" aria-hidden="true">
-        <div class="skeleton-card" />
-        <div class="skeleton-card" />
-        <div class="skeleton-card" />
+        <Skeleton class="skeleton-card" />
+        <Skeleton class="skeleton-card" />
+        <Skeleton class="skeleton-card" />
       </div>
     </div>
   </section>
@@ -60,6 +60,7 @@
 import { computed, onBeforeUnmount, ref, watch } from "vue"
 
 import Alert from "@/components/ui/alert/Alert.vue"
+import { Skeleton } from "@/components/ui/skeleton"
 import EnvironmentConfigPanel from "@/components/EnvironmentConfigPanel.vue"
 import ProjectOverviewCard from "@/components/ProjectOverviewCard.vue"
 import WorkspaceDetailHeader from "@/components/workspace-header/WorkspaceDetailHeader.vue"
@@ -160,7 +161,6 @@ onBeforeUnmount(() => {
   min-height: 180px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #f8f7f7;
 }
 
 .panel-grid {
@@ -179,12 +179,12 @@ onBeforeUnmount(() => {
   padding: 24px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #fdfcfc;
+  background: var(--surface);
 }
 
 .muted-paragraph {
   margin: 0;
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
   line-height: 1.5;
 }

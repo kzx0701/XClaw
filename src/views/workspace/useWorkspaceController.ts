@@ -1,4 +1,4 @@
-import { watch, onMounted, ref } from "vue";
+import { watch, onMounted, onBeforeUnmount, ref } from "vue";
 import { TriangleAlert } from "lucide-vue-next";
 
 import { getTaskHistory, deleteTaskHistoryRecord } from "@/services/task-history/repository";
@@ -143,7 +143,27 @@ export function useWorkspaceController() {
     }
   }
 
+  watch(() => appStore.projectPanelTrigger, () => {
+    if (appStore.activePanel === 'config') {
+      selectedProjectId.value = null
+    }
+  })
+
+  let prevPanel = appStore.activePanel
+
+  watch(() => appStore.activePanel, (panel) => {
+    if (panel === 'config' && prevPanel !== 'config') {
+      selectedProjectId.value = null
+    }
+    prevPanel = panel
+  })
+
+  function handleNavigateProjectList() {
+    selectedProjectId.value = null
+  }
+
   onMounted(async () => {
+    window.addEventListener('xclaw:navigate-project-list', handleNavigateProjectList)
     await projectManager.refreshProjects();
     await serverManager.refreshServers();
     await refreshDeploymentHistory();
@@ -152,6 +172,10 @@ export function useWorkspaceController() {
       await environmentManager.loadEnvironmentDraft(selectedProjectId.value, projectManager.projects.value);
       await refreshTaskHistory(selectedProjectId.value);
     }
+  });
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('xclaw:navigate-project-list', handleNavigateProjectList)
   });
 
   return {

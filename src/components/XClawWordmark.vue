@@ -43,7 +43,7 @@ const wordmarkStyle = computed(() => ({
   border: 0;
   border-radius: 0;
   background: transparent;
-  color: #201d1d;
+  color: var(--text-primary);
   cursor: pointer;
   font-family: var(--font-sans);
   line-height: 1;
@@ -56,7 +56,7 @@ const wordmarkStyle = computed(() => ({
 }
 
 .dark .xclaw-wordmark {
-  color: #e8e8e8;
+  color: var(--text-primary);
 }
 
 .xclaw-wordmark:focus-visible {
@@ -68,7 +68,7 @@ const wordmarkStyle = computed(() => ({
   display: inline-flex;
   align-items: baseline;
   min-width: 0;
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: var(--fs-size);
   font-weight: 700;
   line-height: 1;
@@ -77,7 +77,7 @@ const wordmarkStyle = computed(() => ({
 }
 
 .dark .xclaw-wordmark-copy {
-  color: #e8e8e8;
+  color: var(--text-primary);
 }
 
 .xclaw-wordmark-x {

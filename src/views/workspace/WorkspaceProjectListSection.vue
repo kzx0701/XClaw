@@ -7,7 +7,7 @@
             <Search class="workspace-list-search-icon h-4 w-4" />
             <InputText
               :model-value="searchKeyword"
-              class="workspace-list-search-input"
+              class="pl-[38px]"
               placeholder="搜索项目名称、本地路径..."
               @update:model-value="searchKeyword = String($event ?? '')"
             />
@@ -15,7 +15,7 @@
         </template>
 
         <template #actions>
-          <Button class="workspace-list-add-button" variant="secondary" :loading="isImporting" @click="$emit('pick-directory')">
+          <Button variant="secondary" :loading="isImporting" @click="$emit('pick-directory')">
             <Plus class="h-4 w-4" />
             <span>导入项目</span>
           </Button>
@@ -44,22 +44,29 @@
             </template>
 
             <template #meta>
-              <span class="project-type-badge">{{ project.type }}</span>
+              <Badge variant="outline" class="project-type-badge">{{ project.type }}</Badge>
             </template>
 
             <template #actions>
-              <button
-                type="button"
-                class="quick-deploy-button"
+              <Button
+                variant="ghost"
+                size="icon-sm"
                 :disabled="!project.quickDeployAvailable"
                 title="一键部署"
+                class="quick-deploy-button"
                 @click.stop="$emit('open-quick-deploy', project.id)"
               >
                 <Send class="h-4 w-4" aria-hidden="true" />
-              </button>
-              <button type="button" class="delete-project-button" title="删除项目" @click.stop="$emit('delete-project', project.id)">
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                title="删除项目"
+                class="delete-project-button"
+                @click.stop="$emit('delete-project', project.id)"
+              >
                 <Trash2 class="h-4 w-4" aria-hidden="true" />
-              </button>
+              </Button>
             </template>
           </ResourceCard>
         </div>
@@ -70,11 +77,15 @@
         </section>
       </section>
 
-      <section v-else class="project-empty-state">
-        <FolderOpen class="project-empty-icon" :size="48" />
-        <p class="project-empty-title">暂无项目</p>
-        <p class="project-empty-desc">点击上方「导入项目」开始使用</p>
-      </section>
+      <Empty v-else class="project-empty-state border-0">
+        <EmptyMedia>
+          <FolderOpen class="project-empty-icon" :size="48" />
+        </EmptyMedia>
+        <EmptyContent>
+          <EmptyTitle class="project-empty-title">暂无项目</EmptyTitle>
+          <EmptyDescription class="project-empty-desc">点击上方「导入项目」开始使用</EmptyDescription>
+        </EmptyContent>
+      </Empty>
     </article>
   </section>
 </template>
@@ -84,7 +95,9 @@ import { computed, ref } from "vue"
 import { FolderOpen, Plus, Search, Send, Trash2 } from "lucide-vue-next"
 
 import Alert from "@/components/ui/alert/Alert.vue"
+import { Badge } from "@/components/ui/badge"
 import Button from "@/components/ui/button/Button.vue"
+import { Empty, EmptyContent, EmptyDescription, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Input as InputText } from "@/components/ui/input"
 import ResourceCard from "@/components/ResourceCard.vue"
 import WorkspaceToolbarPanel from "@/components/workspace-header/WorkspaceToolbarPanel.vue"
@@ -142,36 +155,13 @@ const filteredProjects = computed(() => {
   position: absolute;
   top: 50%;
   left: 14px;
-  color: #646262;
+  color: var(--text-muted);
   transform: translateY(-50%);
   pointer-events: none;
 }
 
 .workspace-list-search-input {
   padding-left: 38px;
-}
-
-.workspace-list-add-button {
-  height: 34px;
-  padding-inline: 12px;
-  border: 1px solid #201d1d;
-  border-radius: 4px;
-  background: #201d1d;
-  color: #fdfcfc;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.workspace-list-add-button:hover {
-  background: #0f0000;
-}
-
-.workspace-list-add-button:hover {
-  background: #0f0000;
-}
-
-.workspace-list-add-button:hover {
-  background: #0f0000;
 }
 
 .project-library-section {
@@ -187,7 +177,7 @@ const filteredProjects = computed(() => {
 
 .project-section-header h2 {
   margin: 0;
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
@@ -218,7 +208,7 @@ const filteredProjects = computed(() => {
   border: 1px solid var(--border);
   border-radius: 4px;
   background: var(--info-tint);
-  color: #007aff;
+  color: var(--info);
   font-size: var(--tag-font-size);
   font-weight: 400;
   letter-spacing: 0;
@@ -226,68 +216,26 @@ const filteredProjects = computed(() => {
 }
 
 .quick-deploy-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: #007aff;
-  cursor: pointer;
+  color: var(--info);
   opacity: 0.6;
-  transition:
-    background-color 150ms ease,
-    color 150ms ease,
-    opacity 150ms ease;
 }
 
 .quick-deploy-button:not(:disabled):hover {
-  border-color: var(--border);
-  background: #f1eeee;
-  color: #0056b3;
+  color: var(--info);
   opacity: 1;
 }
 
 .quick-deploy-button:disabled {
-  color: rgba(107, 107, 122, 0.4);
   opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.quick-deploy-button:active {
-  transform: none;
 }
 
 .delete-project-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  background: transparent;
-  color: #d70015;
-  cursor: pointer;
-  transition:
-    background-color 150ms ease,
-    color 150ms ease;
+  color: var(--danger-soft);
 }
 
 .delete-project-button:hover {
-  border-color: rgba(255, 59, 48, 0.22);
   background: var(--danger-tint);
-  color: #a50011;
-}
-
-.delete-project-button:active {
-  transform: none;
+  color: var(--danger-soft);
 }
 
 .project-search-empty {
@@ -296,7 +244,7 @@ const filteredProjects = computed(() => {
   padding: 18px 16px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #f8f7f7;
+  background: var(--surface-hover);
 }
 
 .project-search-empty p,
@@ -305,13 +253,13 @@ const filteredProjects = computed(() => {
 }
 
 .project-search-empty p {
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 14px;
   font-weight: 500;
 }
 
 .project-search-empty small {
-  color: #646262;
+  color: var(--text-muted);
   line-height: 1.6;
 }
 
@@ -326,28 +274,20 @@ const filteredProjects = computed(() => {
 }
 
 .project-empty-icon {
-  color: #c8c8ca;
+  color: var(--text-muted);
 }
 
 .project-empty-title {
   margin: 0;
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 16px;
   font-weight: 600;
 }
 
-.dark .project-empty-title {
-  color: var(--text-primary);
-}
-
 .project-empty-desc {
   margin: 0;
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
-}
-
-.dark .project-empty-desc {
-  color: var(--text-secondary);
 }
 
 @media (max-width: 960px) {

@@ -36,12 +36,12 @@
                     @update:model-value="updateTextField('defaultBuildCommand', $event)"
                   />
                   <div class="summary-editor-actions">
-                    <button type="button" class="summary-action summary-action-confirm" title="保存" aria-label="保存默认打包命令" @click="commitField">
+                    <Button type="button" variant="ghost" size="icon-sm" title="保存" aria-label="保存默认打包命令" class="summary-action-confirm" @click="commitField">
                       <Check class="h-4 w-4" />
-                    </button>
-                    <button type="button" class="summary-action" title="取消" aria-label="取消编辑默认打包命令" @click="cancelEditing">
+                    </Button>
+                    <Button type="button" variant="ghost" size="icon-sm" title="取消" aria-label="取消编辑默认打包命令" @click="cancelEditing">
                       <X class="h-4 w-4" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </template>
@@ -71,12 +71,12 @@
                     @update:model-value="updateTextField('defaultOutputDir', $event)"
                   />
                   <div class="summary-editor-actions">
-                    <button type="button" class="summary-action summary-action-confirm" title="保存" aria-label="保存默认产物目录" @click="commitField">
+                    <Button type="button" variant="ghost" size="icon-sm" title="保存" aria-label="保存默认产物目录" @click="commitField">
                       <Check class="h-4 w-4" />
-                    </button>
-                    <button type="button" class="summary-action" title="取消" aria-label="取消编辑默认产物目录" @click="cancelEditing">
+                    </Button>
+                    <Button type="button" variant="ghost" size="icon-sm" title="取消" aria-label="取消编辑默认产物目录" @click="cancelEditing">
                       <X class="h-4 w-4" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </template>
@@ -134,12 +134,12 @@
                     @update:model-value="updateTextField('defaultPrecheckCommand', $event)"
                   />
                   <div class="summary-editor-actions">
-                    <button type="button" class="summary-action summary-action-confirm" title="保存" aria-label="保存检查命令" @click="commitField">
+                    <Button type="button" variant="ghost" size="icon-sm" title="保存" aria-label="保存检查命令" @click="commitField">
                       <Check class="h-4 w-4" />
-                    </button>
-                    <button type="button" class="summary-action" title="取消" aria-label="取消编辑检查命令" @click="cancelEditing">
+                    </Button>
+                    <Button type="button" variant="ghost" size="icon-sm" title="取消" aria-label="取消编辑检查命令" @click="cancelEditing">
                       <X class="h-4 w-4" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </template>
@@ -176,6 +176,7 @@
 import { computed, ref, watch } from "vue"
 import { Check, ChevronDown, Compass, Pencil, X } from "lucide-vue-next"
 import { Input as InputText } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import type { ProjectRecord } from "@/types/task"
 
 type EditableField = "defaultBuildCommand" | "defaultOutputDir" | "defaultPrecheckCommand"
@@ -292,7 +293,7 @@ function togglePrecheck() {
 }
 
 .summary-label {
-  color: #646262;
+  color: var(--text-muted);
   font-size: 13px;
   font-weight: 400;
   line-height: 1.5;
@@ -300,7 +301,7 @@ function togglePrecheck() {
 }
 
 .overview-head h3 {
-  color: #201d1d;
+  color: var(--text-primary);
   font-family: var(--font-heading);
   font-size: 16px;
   font-weight: 700;
@@ -322,8 +323,8 @@ function togglePrecheck() {
   padding: 0 8px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #f8f7f7;
-  color: #424245;
+  background: var(--surface-hover);
+  color: var(--text-secondary);
   font-size: 13px;
   line-height: 1.4;
   white-space: nowrap;
@@ -342,15 +343,15 @@ function togglePrecheck() {
   border: 1px solid var(--border);
   border-radius: 4px;
   overflow: hidden;
-  background: #fdfcfc;
+  background: var(--surface);
 }
 
 .summary-column-compact {
-  background: #f8f7f7;
+  background: var(--surface-hover);
 }
 
 .summary-column-advanced {
-  background: #f8f7f7;
+  background: var(--surface-hover);
 }
 
 .summary-row {
@@ -378,7 +379,7 @@ function togglePrecheck() {
 }
 
 .summary-value {
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 15px;
   font-weight: 700;
   line-height: 1.6;
@@ -419,30 +420,6 @@ function togglePrecheck() {
   font-size: 14px;
 }
 
-.summary-action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: #f8f7f7;
-  color: #646262;
-  cursor: pointer;
-  transition:
-    background-color 140ms ease,
-    color 140ms ease,
-    border-color 140ms ease;
-  flex: 0 0 auto;
-}
-
-.summary-action:hover {
-  background: #f1eeee;
-  color: #201d1d;
-}
-
 .summary-edit-button {
   border-color: transparent;
   background: transparent;
@@ -451,12 +428,14 @@ function togglePrecheck() {
 .summary-edit-button:hover {
   border-color: transparent;
   background: transparent;
-  color: #007aff;
+  color: var(--info);
 }
 
 .summary-action-confirm {
-  border-color: rgba(72, 199, 142, 0.3);
-  background: var(--success-tint);
+  color: var(--success);
+}
+
+.summary-action-confirm:hover {
   color: var(--success-soft);
 }
 
@@ -473,7 +452,7 @@ function togglePrecheck() {
   border: 1px solid transparent;
   border-radius: 4px;
   background: transparent;
-  color: #646262;
+  color: var(--text-muted);
   cursor: pointer;
   transition:
     background-color 140ms ease,
@@ -483,8 +462,8 @@ function togglePrecheck() {
 
 .overview-advanced-toggle:hover {
   border-color: var(--border);
-  background: #f8f7f7;
-  color: #201d1d;
+  background: var(--surface-hover);
+  color: var(--text-primary);
 }
 
 .overview-advanced-toggle svg {
@@ -499,7 +478,7 @@ function togglePrecheck() {
   padding: 18px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #fdfcfc;
+  background: var(--surface);
 }
 
 .overview-empty-icon {
@@ -510,8 +489,8 @@ function togglePrecheck() {
   height: 32px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #f1eeee;
-  color: #201d1d;
+  background: var(--surface-active);
+  color: var(--text-primary);
 }
 
 .overview-empty-copy {
@@ -520,7 +499,7 @@ function togglePrecheck() {
 }
 
 .overview-empty-copy h3 {
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 18px;
   font-weight: 700;
   line-height: 1.4;

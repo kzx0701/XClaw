@@ -34,7 +34,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
       v-bind="{ ...$attrs, ...forwarded }"
       :class="
         cn(
-          'bg-[#fdfcfc] text-[#201d1d] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 z-50 w-72 rounded-sm border border-[var(--border)] p-4 shadow-none origin-(--reka-popover-content-transform-origin) outline-hidden',
+          'bg-[var(--surface)] text-[var(--text-primary)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 z-50 w-72 rounded-sm border border-[var(--border)] p-4 shadow-none origin-(--reka-popover-content-transform-origin) outline-hidden',
           props.class,
         )
       "

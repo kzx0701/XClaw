@@ -44,7 +44,7 @@ const show = ref(false)
       type="button"
       variant="ghost"
       size="icon"
-      class="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2 text-[#646262] hover:text-[#201d1d]"
+      class="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
       :aria-label="show ? '隐藏密码' : '显示密码'"
       @click="show = !show"
     >

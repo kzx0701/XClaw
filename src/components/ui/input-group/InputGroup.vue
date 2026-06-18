@@ -12,7 +12,7 @@ const props = defineProps<{
     data-slot="input-group"
     role="group"
     :class="cn(
-      'group/input-group bg-[#f8f7f7] relative flex w-full items-center rounded-sm border border-[var(--border)] shadow-none transition-colors outline-none',
+      'group/input-group bg-[var(--surface-hover)] relative flex w-full items-center rounded-sm border border-[var(--border)] shadow-none transition-colors outline-none',
       'h-9 min-w-0 has-[>textarea]:h-auto',
 
       // Variants based on alignment.
@@ -22,7 +22,7 @@ const props = defineProps<{
       'has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-end]]:[&>input]:pt-3',
 
       // Focus state.
-      'has-[[data-slot=input-group-control]:focus-visible]:bg-[#fdfcfc] has-[[data-slot=input-group-control]:focus-visible]:ring-0',
+      'has-[[data-slot=input-group-control]:focus-visible]:bg-[var(--surface)] has-[[data-slot=input-group-control]:focus-visible]:ring-0',
 
       // Error state.
       'has-[[data-slot][aria-invalid=true]]:ring-0',

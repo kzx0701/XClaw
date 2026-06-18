@@ -46,8 +46,8 @@ defineEmits<{
   padding: 15px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #fdfcfc;
-  color: #201d1d;
+  background: var(--surface);
+  color: var(--text-primary);
   cursor: pointer;
   transition: background-color 160ms ease;
 }
@@ -58,7 +58,7 @@ defineEmits<{
 }
 
 .resource-card:hover {
-  background: #f8f7f7;
+  background: var(--surface-hover);
 }
 
 .dark .resource-card:hover {
@@ -67,7 +67,7 @@ defineEmits<{
 
 .resource-card:focus-visible {
   outline: none;
-  background: #f8f7f7;
+  background: var(--surface-hover);
 }
 
 .resource-card-top {
@@ -93,8 +93,8 @@ defineEmits<{
   height: 36px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #f1eeee;
-  color: #201d1d;
+  background: var(--surface-active);
+  color: var(--text-primary);
   flex: 0 0 auto;
 }
 
@@ -115,7 +115,7 @@ defineEmits<{
 }
 
 .resource-card-body strong {
-  color: #201d1d;
+  color: var(--text-primary);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.5;
@@ -126,7 +126,7 @@ defineEmits<{
 }
 
 .resource-card-body p {
-  color: #646262;
+  color: var(--text-muted);
   font-size: 14px;
   line-height: 1.5;
   white-space: nowrap;
@@ -139,7 +139,7 @@ defineEmits<{
 }
 
 .resource-card-enter-icon {
-  color: #9a9898;
+  color: var(--text-muted);
   flex: 0 0 auto;
   transition: color 160ms ease;
 }
@@ -149,7 +149,7 @@ defineEmits<{
 }
 
 .resource-card:hover .resource-card-enter-icon {
-  color: #201d1d;
+  color: var(--text-primary);
 }
 
 .dark .resource-card:hover .resource-card-enter-icon {
