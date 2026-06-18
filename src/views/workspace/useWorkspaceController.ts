@@ -166,6 +166,9 @@ export function useWorkspaceController() {
     window.addEventListener('xclaw:navigate-project-list', handleNavigateProjectList)
     await projectManager.refreshProjects();
     await serverManager.refreshServers();
+    await environmentManager.refreshProjectEnvironmentMapWithData(
+      projectManager.projects.value.map((p: any) => p.id)
+    );
     await refreshDeploymentHistory();
 
     if (selectedProjectId.value) {
