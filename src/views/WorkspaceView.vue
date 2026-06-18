@@ -6,10 +6,14 @@
         :import-error="workspace.importError"
         :is-importing="workspace.isImporting"
         :projects="projectListItems"
+        :quick-deploy-options="workspace.quickDeployOptionsByProject"
+        :deploying-project-id="workspace.quickDeployProjectId"
+        :deploying-environment-name="workspace.quickDeployEnvironmentName"
+        :deploy-stage="workspace.quickDeployStage"
         @delete-project="workspace.openProjectDeleteDialog"
-        @open-quick-deploy="workspace.openQuickDeployWorkspace"
         @pick-directory="workspace.handlePickDirectory"
         @select-project="workspace.handleSelectProject"
+        @start-quick-deploy="workspace.startQuickDeploy"
       />
 
       <WorkspaceProjectDetailSection
@@ -107,7 +111,6 @@ const workspaceContentClass = computed(() => "px-8 pt-0 pb-6 bg-background")
 const projectListItems = computed(() =>
   workspace.projectSummaries.map((project) => ({
     ...project,
-    quickDeployAvailable: workspace.hasQuickDeployOptions(project.id),
   })),
 )
 </script>

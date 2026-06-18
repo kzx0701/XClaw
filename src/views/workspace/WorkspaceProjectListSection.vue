@@ -44,20 +44,37 @@
             </template>
 
             <template #meta>
-              <Badge variant="outline" class="project-type-badge">{{ project.type }}</Badge>
+              <div class="project-card-deploy-actions">
+                <template v-if="getDeployOptions(project.id).length > 0">
+                  <Button
+                    v-for="option in getDeployOptions(project.id)"
+                    :key="option.environment.name"
+                    variant="outline"
+                    size="sm"
+                    class="deploy-env-button"
+                    :class="getDeployButtonClass(project.id, option.environment.name)"
+                    :loading="isDeploying(project.id, option.environment.name)"
+                    :disabled="isDeployingOther(project.id, option.environment.name)"
+                    @click.stop="$emit('start-quick-deploy', option)"
+                  >
+                    <Send v-if="!isDeploying(project.id, option.environment.name)" class="h-3.5 w-3.5" />
+                    <span>{{ formatEnvironmentLabel(option.environment.name) }}</span>
+                  </Button>
+                </template>
+                <Button
+                  v-else
+                  variant="ghost"
+                  size="sm"
+                  class="deploy-env-setup-button"
+                  @click.stop="$emit('select-project', project.id)"
+                >
+                  <Plus class="h-3.5 w-3.5" />
+                  <span>配置环境</span>
+                </Button>
+              </div>
             </template>
 
             <template #actions>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                :disabled="!project.quickDeployAvailable"
-                title="一键部署"
-                class="quick-deploy-button"
-                @click.stop="$emit('open-quick-deploy', project.id)"
-              >
-                <Send class="h-4 w-4" aria-hidden="true" />
-              </Button>
               <Button
                 variant="ghost"
                 size="icon-sm"
@@ -95,29 +112,33 @@ import { computed, ref } from "vue"
 import { FolderOpen, Plus, Search, Send, Trash2 } from "lucide-vue-next"
 
 import Alert from "@/components/ui/alert/Alert.vue"
-import { Badge } from "@/components/ui/badge"
 import Button from "@/components/ui/button/Button.vue"
 import { Empty, EmptyContent, EmptyDescription, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Input as InputText } from "@/components/ui/input"
 import ResourceCard from "@/components/ResourceCard.vue"
 import WorkspaceToolbarPanel from "@/components/workspace-header/WorkspaceToolbarPanel.vue"
-import projectFolderBackground from "@/assets/images/folder-bg2.png"
 import projectFolderIcon from "@/assets/images/folder.png"
 import { resolveAlertToneClass, resolveAlertVariant } from "@/lib/ui-status"
 
+import { formatEnvironmentLabel } from "./formatters"
+import type { QuickDeployEnvironmentOption } from "./types"
 import type { WorkspaceProjectListItem } from "./types"
 
 defineEmits<{
   "delete-project": [projectId: string]
-  "open-quick-deploy": [projectId: string]
   "pick-directory": []
   "select-project": [projectId: string]
+  "start-quick-deploy": [option: QuickDeployEnvironmentOption]
 }>()
 
 const props = defineProps<{
+  deployStage: "confirm" | "running" | "success" | "error"
+  deployingEnvironmentName: string | null
+  deployingProjectId: string | null
   importError: string
   isImporting: boolean
   projects: WorkspaceProjectListItem[]
+  quickDeployOptions: Map<string, QuickDeployEnvironmentOption[]>
 }>()
 
 const searchKeyword = ref("")
@@ -132,6 +153,26 @@ const filteredProjects = computed(() => {
     return [project.name, project.path].some((field) => field.toLowerCase().includes(keyword))
   })
 })
+
+function getDeployOptions(projectId: string): QuickDeployEnvironmentOption[] {
+  return props.quickDeployOptions.get(projectId) ?? []
+}
+
+function isDeploying(projectId: string, environmentName: string): boolean {
+  return props.deployStage === "running" && props.deployingProjectId === projectId && props.deployingEnvironmentName === environmentName
+}
+
+function isDeployingOther(projectId: string, environmentName: string): boolean {
+  if (props.deployStage !== "running") return false
+  return !(props.deployingProjectId === projectId && props.deployingEnvironmentName === environmentName)
+}
+
+function getDeployButtonClass(projectId: string, environmentName: string): string {
+  if (props.deployingProjectId !== projectId || props.deployingEnvironmentName !== environmentName) return ""
+  if (props.deployStage === "success") return "deploy-env-success"
+  if (props.deployStage === "error") return "deploy-env-error"
+  return ""
+}
 </script>
 
 <style scoped>
@@ -158,10 +199,6 @@ const filteredProjects = computed(() => {
   color: var(--text-muted);
   transform: translateY(-50%);
   pointer-events: none;
-}
-
-.workspace-list-search-input {
-  padding-left: 38px;
 }
 
 .project-library-section {
@@ -198,35 +235,47 @@ const filteredProjects = computed(() => {
   object-fit: contain;
 }
 
-.project-type-badge {
-  margin: 0;
-  display: inline-flex;
+.project-card-deploy-actions {
+  display: flex;
   align-items: center;
-  justify-self: start;
-  min-height: 22px;
-  padding: 0 9px;
-  border: 1px solid var(--border);
+  gap: 6px;
+}
+
+.deploy-env-button {
+  height: 26px;
+  padding-inline: 8px;
+  font-size: 12px;
+  gap: 4px;
   border-radius: 4px;
-  background: var(--info-tint);
-  color: var(--info);
-  font-size: var(--tag-font-size);
-  font-weight: 400;
-  letter-spacing: 0;
-  line-height: var(--tag-line-height);
 }
 
-.quick-deploy-button {
-  color: var(--info);
-  opacity: 0.6;
+.deploy-env-button :deep(svg) {
+  width: 12px;
+  height: 12px;
 }
 
-.quick-deploy-button:not(:disabled):hover {
-  color: var(--info);
-  opacity: 1;
+.deploy-env-success {
+  border-color: var(--success-soft) !important;
+  color: var(--success-soft) !important;
+  background: var(--success-tint) !important;
 }
 
-.quick-deploy-button:disabled {
-  opacity: 0.3;
+.deploy-env-error {
+  border-color: var(--danger-soft) !important;
+  color: var(--danger-soft) !important;
+  background: var(--danger-tint) !important;
+}
+
+.deploy-env-setup-button {
+  height: 26px;
+  padding-inline: 8px;
+  font-size: 12px;
+  gap: 4px;
+  color: var(--text-muted);
+}
+
+.deploy-env-setup-button:hover {
+  color: var(--text-primary);
 }
 
 .delete-project-button {

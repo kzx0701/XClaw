@@ -29,6 +29,4 @@ export type WorkspaceEnvironmentCard = {
   serverLabel: string
 }
 
-export type WorkspaceProjectListItem = ProjectSummary & {
-  quickDeployAvailable: boolean
-}
+export type WorkspaceProjectListItem = ProjectSummary

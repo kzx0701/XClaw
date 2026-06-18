@@ -230,6 +230,7 @@ export function useWorkspaceController() {
     copyLogs: logs.copyLogs,
     formatEnvironmentLabel: environmentManager.formatEnvironmentLabel,
     hasQuickDeployOptions: quickDeploy.hasQuickDeployOptions,
+    quickDeployOptionsByProject: quickDeploy.quickDeployOptionsByProject,
     handlePickDirectory: projectManager.handlePickDirectory,
     handleSelectProject,
     openQuickDeployWorkspace: quickDeploy.openQuickDeployWorkspace,
