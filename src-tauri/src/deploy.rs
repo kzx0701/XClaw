@@ -26,6 +26,8 @@ pub struct LocalDeployRequest {
     private_key_path: String,
     upload_strategy: String,
     post_deploy_command: String,
+    ssh_timeout: u64,
+    deploy_timeout: u64,
 }
 
 #[derive(Deserialize)]
@@ -84,14 +86,17 @@ fn execute_local_deploy(request: LocalDeployRequest) -> Result<LocalDeployResult
         return Err("本地产物路径不是目录，无法执行部署".into());
     }
 
+    let ssh_timeout_secs = if request.ssh_timeout > 0 { request.ssh_timeout } else { 20 };
+    let deploy_timeout_secs = if request.deploy_timeout > 0 { request.deploy_timeout } else { 300 };
+
     let tcp = TcpStream::connect(format!("{}:{}", request.host.trim(), request.port))
         .map_err(|error| format!("连接服务器失败: {error}"))?;
-    let _ = tcp.set_read_timeout(Some(Duration::from_secs(20)));
-    let _ = tcp.set_write_timeout(Some(Duration::from_secs(20)));
+    let _ = tcp.set_read_timeout(Some(Duration::from_secs(ssh_timeout_secs)));
+    let _ = tcp.set_write_timeout(Some(Duration::from_secs(ssh_timeout_secs)));
 
     let mut session = Session::new().map_err(|error| format!("初始化 SSH 会话失败: {error}"))?;
     session.set_tcp_stream(tcp);
-    session.set_timeout(20_000);
+    session.set_timeout((ssh_timeout_secs * 1000) as u32);
     session
         .handshake()
         .map_err(|error| format!("SSH 握手失败: {error}"))?;
@@ -130,7 +135,7 @@ fn execute_local_deploy(request: LocalDeployRequest) -> Result<LocalDeployResult
 
     if !post_command.is_empty() {
         steps.push("正在执行部署后命令".into());
-        let output = run_remote_command(&session, post_command)?;
+        let output = run_remote_command(&session, post_command, deploy_timeout_secs)?;
         if !output.trim().is_empty() {
             logs.push(output);
         }
@@ -258,9 +263,8 @@ fn authenticate_check_session(
     )
 }
 
-const REMOTE_COMMAND_TIMEOUT: Duration = Duration::from_secs(300);
-
-fn run_remote_command(session: &Session, command: &str) -> Result<String, String> {
+fn run_remote_command(session: &Session, command: &str, timeout_secs: u64) -> Result<String, String> {
+    let timeout = Duration::from_secs(timeout_secs);
     let mut channel = session
         .channel_session()
         .map_err(|error| format!("创建远端命令通道失败: {error}"))?;
@@ -274,10 +278,10 @@ fn run_remote_command(session: &Session, command: &str) -> Result<String, String
     let mut stderr = String::new();
 
     loop {
-        if start_time.elapsed() > REMOTE_COMMAND_TIMEOUT {
+        if start_time.elapsed() > timeout {
             let _ = channel.close();
             let _ = channel.wait_close();
-            return Err(format!("远端命令执行超时（{} 秒）", REMOTE_COMMAND_TIMEOUT.as_secs()));
+            return Err(format!("远端命令执行超时（{} 秒）", timeout_secs));
         }
 
         if channel.eof() {

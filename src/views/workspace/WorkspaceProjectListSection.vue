@@ -46,31 +46,27 @@
             <template #meta>
               <div class="project-card-deploy-actions">
                 <template v-if="getDeployOptions(project.id).length > 0">
-                  <Button
+                  <button
                     v-for="option in getDeployOptions(project.id)"
                     :key="option.environment.name"
-                    variant="outline"
-                    size="sm"
-                    class="deploy-env-button"
-                    :class="getDeployButtonClass(project.id, option.environment.name)"
-                    :loading="isDeploying(project.id, option.environment.name)"
+                    class="deploy-env-tag"
+                    :class="[getDeployTagTheme(option.environment.name), getDeployButtonClass(project.id, option.environment.name)]"
                     :disabled="isDeployingOther(project.id, option.environment.name)"
                     @click.stop="$emit('start-quick-deploy', option)"
                   >
-                    <Send v-if="!isDeploying(project.id, option.environment.name)" class="h-3.5 w-3.5" />
+                    <Loader2 v-if="isDeploying(project.id, option.environment.name)" class="h-3 w-3 deploy-spinning" />
+                    <Send v-else class="h-3 w-3" />
                     <span>{{ formatEnvironmentLabel(option.environment.name) }}</span>
-                  </Button>
+                  </button>
                 </template>
-                <Button
+                <button
                   v-else
-                  variant="ghost"
-                  size="sm"
-                  class="deploy-env-setup-button"
+                  class="deploy-env-setup-tag"
                   @click.stop="$emit('select-project', project.id)"
                 >
-                  <Plus class="h-3.5 w-3.5" />
+                  <Plus class="h-3 w-3" />
                   <span>配置环境</span>
-                </Button>
+                </button>
               </div>
             </template>
 
@@ -109,7 +105,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue"
-import { FolderOpen, Plus, Search, Send, Trash2 } from "lucide-vue-next"
+import { FolderOpen, Loader2, Plus, Search, Send, Trash2 } from "lucide-vue-next"
 
 import Alert from "@/components/ui/alert/Alert.vue"
 import Button from "@/components/ui/button/Button.vue"
@@ -169,9 +165,14 @@ function isDeployingOther(projectId: string, environmentName: string): boolean {
 
 function getDeployButtonClass(projectId: string, environmentName: string): string {
   if (props.deployingProjectId !== projectId || props.deployingEnvironmentName !== environmentName) return ""
-  if (props.deployStage === "success") return "deploy-env-success"
-  if (props.deployStage === "error") return "deploy-env-error"
+  if (props.deployStage === "success") return "deploy-tag-success"
+  if (props.deployStage === "error") return "deploy-tag-error"
   return ""
+}
+
+function getDeployTagTheme(environmentName: string): string {
+  if (environmentName === "prod") return "deploy-tag-prod"
+  return "deploy-tag-test"
 }
 </script>
 
@@ -223,10 +224,9 @@ function getDeployButtonClass(projectId: string, environmentName: string): strin
 
 .project-card-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 376px));
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  align-items: start;
-  justify-content: start;
+  max-width: 860px;
 }
 
 .project-icon-image {
@@ -241,41 +241,105 @@ function getDeployButtonClass(projectId: string, environmentName: string): strin
   gap: 6px;
 }
 
-.deploy-env-button {
+/* === 部署环境标签按钮 === */
+.deploy-env-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   height: 26px;
-  padding-inline: 8px;
-  font-size: 12px;
-  gap: 4px;
+  padding: 0 10px;
+  border: 1px solid var(--card-border);
   border-radius: 4px;
+  background: var(--surface);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 160ms ease;
 }
 
-.deploy-env-button :deep(svg) {
-  width: 12px;
-  height: 12px;
+.deploy-env-tag:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
-.deploy-env-success {
+.deploy-env-tag:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--text-muted);
+  color: var(--text-primary);
+}
+
+/* 测试环境 */
+.deploy-tag-test {
+  border-color: var(--info);
+  color: var(--info);
+}
+
+.deploy-tag-test:hover:not(:disabled) {
+  background: var(--info-tint);
+  border-color: var(--info);
+  color: var(--info);
+}
+
+/* 生产环境 */
+.deploy-tag-prod {
+  border-color: var(--warning);
+  color: var(--warning-soft);
+}
+
+.deploy-tag-prod:hover:not(:disabled) {
+  background: var(--warning-tint);
+  border-color: var(--warning);
+  color: var(--warning-soft);
+}
+
+/* 部署成功 */
+.deploy-tag-success {
   border-color: var(--success-soft) !important;
   color: var(--success-soft) !important;
   background: var(--success-tint) !important;
 }
 
-.deploy-env-error {
+/* 部署失败 */
+.deploy-tag-error {
   border-color: var(--danger-soft) !important;
   color: var(--danger-soft) !important;
   background: var(--danger-tint) !important;
 }
 
-.deploy-env-setup-button {
-  height: 26px;
-  padding-inline: 8px;
-  font-size: 12px;
-  gap: 4px;
-  color: var(--text-muted);
+/* 旋转动画 */
+.deploy-spinning {
+  animation: deploy-spin 1s linear infinite;
 }
 
-.deploy-env-setup-button:hover {
+@keyframes deploy-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* === 配置环境标签 === */
+.deploy-env-setup-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px;
+  border: 1px dashed var(--card-border);
+  border-radius: 4px;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+
+.deploy-env-setup-tag:hover {
+  border-color: var(--text-muted);
   color: var(--text-primary);
+  background: var(--surface-hover);
 }
 
 .delete-project-button {
@@ -339,7 +403,7 @@ function getDeployButtonClass(projectId: string, environmentName: string): strin
   font-size: 14px;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 680px) {
   .project-card-list {
     grid-template-columns: 1fr;
   }

@@ -75,18 +75,6 @@
 
       <WorkspaceSettingsSection v-else />
     </PageTransition>
-
-    <WorkspaceQuickDeployDialog
-      :dialog-title="workspace.quickDeployDialogTitle"
-      :options="workspace.quickDeployDialogOptions"
-      :project="workspace.quickDeploySelectedProject"
-      :selected-environment-name="workspace.quickDeployEnvironmentName"
-      :stage="workspace.quickDeployStage"
-      :visible="workspace.isQuickDeployDialogVisible"
-      @hide="workspace.handleCloseQuickDeployDialog"
-      @start="workspace.startQuickDeploy"
-      @update:visible="workspace.isQuickDeployDialogVisible = $event"
-    />
   </AppShell>
 </template>
 
@@ -100,13 +88,15 @@ import PageTransition from "@/components/PageTransition.vue"
 import WorkspaceDeploymentLogsSection from "./workspace/WorkspaceDeploymentLogsSection.vue"
 import WorkspaceProjectDetailSection from "./workspace/WorkspaceProjectDetailSection.vue"
 import WorkspaceProjectListSection from "./workspace/WorkspaceProjectListSection.vue"
-import WorkspaceQuickDeployDialog from "./workspace/WorkspaceQuickDeployDialog.vue"
 import WorkspaceSettingsSection from "./workspace/WorkspaceSettingsSection.vue"
 import { useWorkspaceController } from "./workspace/useWorkspaceController"
 
 const workspace = proxyRefs(useWorkspaceController())
 
-const workspaceContentClass = computed(() => "px-8 pt-0 pb-6 bg-background")
+const workspaceContentClass = computed(() => {
+  const isMac = navigator.platform.toUpperCase().includes("MAC")
+  return `px-8 ${isMac ? 'pt-8' : 'pt-0'} pb-6 bg-background`
+})
 
 const projectListItems = computed(() =>
   workspace.projectSummaries.map((project) => ({

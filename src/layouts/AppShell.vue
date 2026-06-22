@@ -1,6 +1,6 @@
 <template>
   <div class="app-shell-root grid h-screen grid-cols-[220px_minmax(0,1fr)] overflow-hidden text-foreground">
-    <aside class="app-shell-sidebar flex min-h-0 flex-col bg-sidebar">
+    <aside class="app-shell-sidebar flex min-h-0 flex-col bg-sidebar" :class="{ 'app-shell-sidebar--macos': isMacOS }">
       <div class="app-shell-brand-wrap">
         <div class="app-shell-brand">
           <XClawWordmark font-size="1.42rem" @click="openReleasePage" />
@@ -86,6 +86,7 @@ defineProps<{
 const appStore = useAppStore();
 const appVersion = ref("1.0.0");
 const releaseUrl = "https://github.com/kzx0701/XClaw/releases";
+const isMacOS = navigator.platform.toUpperCase().includes("MAC");
 
 const navItems = [
   { value: "config", label: "项目", icon: FolderKanban },
@@ -144,6 +145,10 @@ onMounted(async () => {
   justify-content: center;
   height: 76px;
   padding: 0 12px;
+}
+
+.app-shell-sidebar--macos .app-shell-brand-wrap {
+  padding-top: 28px;
 }
 
 .app-shell-brand {

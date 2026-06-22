@@ -127,7 +127,7 @@ defineEmits<{
 
 .resource-card-body p {
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.5;
   white-space: nowrap;
   overflow: hidden;

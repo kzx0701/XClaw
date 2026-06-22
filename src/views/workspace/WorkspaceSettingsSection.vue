@@ -40,7 +40,7 @@
             <span class="settings-row-desc">打包命令执行的最大等待时间，超时后将自动终止进程。</span>
           </div>
           <div class="settings-row-control">
-            <NumberField :model-value="settings.buildTimeout" :min="60" :max="3600" @update:model-value="settings.buildTimeout = $event">
+            <NumberField :model-value="settings.buildTimeout" :min="60" :max="3600" @update:model-value="handleSettingChange('buildTimeout', $event)">
               <NumberFieldInput class="settings-input" />
             </NumberField>
             <span class="settings-unit">秒</span>
@@ -53,7 +53,7 @@
             <span class="settings-row-desc">远端部署后执行命令的最大等待时间。</span>
           </div>
           <div class="settings-row-control">
-            <NumberField :model-value="settings.deployTimeout" :min="30" :max="1800" @update:model-value="settings.deployTimeout = $event">
+            <NumberField :model-value="settings.deployTimeout" :min="30" :max="1800" @update:model-value="handleSettingChange('deployTimeout', $event)">
               <NumberFieldInput class="settings-input" />
             </NumberField>
             <span class="settings-unit">秒</span>
@@ -66,7 +66,7 @@
             <span class="settings-row-desc">SSH 连接建立的最大等待时间。</span>
           </div>
           <div class="settings-row-control">
-            <NumberField :model-value="settings.sshTimeout" :min="5" :max="120" @update:model-value="settings.sshTimeout = $event">
+            <NumberField :model-value="settings.sshTimeout" :min="5" :max="120" @update:model-value="handleSettingChange('sshTimeout', $event)">
               <NumberFieldInput class="settings-input" />
             </NumberField>
             <span class="settings-unit">秒</span>
@@ -84,7 +84,7 @@
             <span class="settings-row-desc">保留最近的部署记录条数，超出部分将自动清理。</span>
           </div>
           <div class="settings-row-control">
-            <NumberField :model-value="settings.historyLimit" :min="10" :max="500" @update:model-value="settings.historyLimit = $event">
+            <NumberField :model-value="settings.historyLimit" :min="10" :max="500" @update:model-value="handleHistoryLimitChange">
               <NumberFieldInput class="settings-input" />
             </NumberField>
             <span class="settings-unit">条</span>
@@ -183,29 +183,79 @@
             </Button>
           </div>
         </div>
+
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <label class="settings-row-label">意见反馈</label>
+            <span class="settings-row-desc">有问题或建议？联系开发者。</span>
+          </div>
+          <div class="settings-row-control">
+            <Button variant="outline" size="icon" class="settings-action-btn" @click="feedbackVisible = true">
+              <MessageSquare class="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
+
+  <!-- 意见反馈弹窗 -->
+  <Dialog :open="feedbackVisible" @update:open="feedbackVisible = $event">
+    <DialogContent class="feedback-dialog">
+      <DialogHeader class="feedback-header">
+        <div class="feedback-avatar">
+          <User class="h-6 w-6" />
+        </div>
+        <DialogTitle class="feedback-title">意见反馈</DialogTitle>
+        <DialogDescription class="feedback-desc">
+          如有问题或建议，欢迎通过邮箱联系开发者
+        </DialogDescription>
+      </DialogHeader>
+
+      <div class="feedback-card">
+        <div class="feedback-info-row">
+          <span class="feedback-label">开发者</span>
+          <span class="feedback-value">寇子轩</span>
+        </div>
+        <div class="feedback-info-row">
+          <span class="feedback-label">联系邮箱</span>
+          <button class="feedback-email" @click="handleCopyEmail">839711518@qq.com</button>
+        </div>
+      </div>
+
+      <div class="feedback-tip">
+        <Mail class="h-3.5 w-3.5" />
+        <span>点击邮箱地址即可复制</span>
+      </div>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, reactive, onMounted, markRaw } from "vue";
-import { Download, Upload, Trash2, RefreshCw, ExternalLink, Monitor, Moon, Sun } from "lucide-vue-next";
+import { Download, Upload, Trash2, RefreshCw, ExternalLink, Monitor, Moon, Sun, MessageSquare, User, Mail } from "lucide-vue-next";
 import { Button } from "@/components/ui/button";
 import { NumberField, NumberFieldInput } from "@/components/ui/number-field";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
+import { save, open } from "@tauri-apps/plugin-dialog";
 
 import { showToast } from "@/services/ui/toast";
 import { useConfirm } from "@/services/ui/confirm";
 import { useAppStore } from "@/stores/app";
 import { useTheme } from "@/composables/useTheme";
+import { loadProjects, saveProjects } from "@/services/storage/projects";
+import { loadServers, saveServers } from "@/services/storage/servers";
+import { loadEnvironments, saveEnvironments } from "@/services/storage/environments";
+import { loadTaskHistory, saveTaskHistory } from "@/services/storage/task-history";
 
 const confirm = useConfirm();
 const appStore = useAppStore();
 const { theme } = useTheme();
 const appVersion = ref("1.0.0");
+const feedbackVisible = ref(false);
 
 const activeTab = computed(() => appStore.activeSettingsTab);
 
@@ -224,12 +274,47 @@ const themeOptions = [
   { value: "light", label: "浅色", icon: markRaw(Sun) },
 ];
 
+const HISTORY_LIMIT_KEY = "claw-deploy:history-limit"
+const BUILD_TIMEOUT_KEY = "claw-deploy:build-timeout"
+const DEPLOY_TIMEOUT_KEY = "claw-deploy:deploy-timeout"
+const SSH_TIMEOUT_KEY = "claw-deploy:ssh-timeout"
+
+function loadNumberSetting(key: string, min: number, max: number, fallback: number): number {
+  try {
+    const raw = localStorage.getItem(key)
+    if (raw) {
+      const val = parseInt(raw, 10)
+      if (val >= min && val <= max) return val
+    }
+  } catch {}
+  return fallback
+}
+
 const settings = reactive({
-  buildTimeout: 600,
-  deployTimeout: 300,
-  sshTimeout: 20,
-  historyLimit: 50,
+  buildTimeout: loadNumberSetting(BUILD_TIMEOUT_KEY, 60, 3600, 600),
+  deployTimeout: loadNumberSetting(DEPLOY_TIMEOUT_KEY, 30, 1800, 300),
+  sshTimeout: loadNumberSetting(SSH_TIMEOUT_KEY, 5, 120, 20),
+  historyLimit: loadNumberSetting(HISTORY_LIMIT_KEY, 10, 500, 50),
 });
+
+function handleHistoryLimitChange(value: number) {
+  settings.historyLimit = value
+  localStorage.setItem(HISTORY_LIMIT_KEY, String(value))
+  showToast("已保存", "success")
+}
+
+function handleSettingChange(key: keyof typeof settings, value: number) {
+  settings[key] = value
+  const keyMap: Record<string, string> = {
+    buildTimeout: BUILD_TIMEOUT_KEY,
+    deployTimeout: DEPLOY_TIMEOUT_KEY,
+    sshTimeout: SSH_TIMEOUT_KEY,
+  }
+  if (keyMap[key]) {
+    localStorage.setItem(keyMap[key], String(value))
+  }
+  showToast("已保存", "success")
+}
 
 onMounted(async () => {
   try {
@@ -239,12 +324,92 @@ onMounted(async () => {
   }
 });
 
-function handleExport() {
-  showToast("数据导出功能开发中", "info");
+async function handleExport() {
+  try {
+    const filePath = await save({
+      defaultPath: "xclaw-data.json",
+      filters: [{ name: "JSON", extensions: ["json"] }],
+      title: "导出数据",
+    })
+
+    if (!filePath) return
+
+    const [projects, servers, environments, taskHistory] = await Promise.all([
+      loadProjects(),
+      loadServers(),
+      loadEnvironments(),
+      loadTaskHistory(),
+    ])
+
+    const data = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      projects,
+      servers,
+      environments,
+      taskHistory,
+    }
+
+    await invoke("write_json_file", {
+      path: filePath,
+      content: JSON.stringify(data, null, 2),
+    })
+
+    showToast("数据已导出", "success")
+  } catch (error) {
+    if (typeof error === "string" && error.includes("取消")) return
+    showToast("导出失败：" + (error instanceof Error ? error.message : String(error)), "error")
+  }
 }
 
-function handleImport() {
-  showToast("数据导入功能开发中", "info");
+async function handleImport() {
+  try {
+    const filePath = await open({
+      multiple: false,
+      filters: [{ name: "JSON", extensions: ["json"] }],
+      title: "导入数据",
+    })
+
+    if (!filePath) return
+
+    const path = typeof filePath === "string" ? filePath : filePath
+
+    const content = await invoke<string>("read_json_file", { path })
+    const data = JSON.parse(content)
+
+    if (!data || typeof data !== "object") {
+      showToast("文件格式无效", "error")
+      return
+    }
+
+    if (!data.projects && !data.servers && !data.environments) {
+      showToast("文件中未找到有效的配置数据", "error")
+      return
+    }
+
+    confirm.require({
+      message: "导入将覆盖当前的项目、服务器和环境配置，是否继续？",
+      header: "确认导入",
+      icon: Upload,
+      rejectLabel: "取消",
+      acceptLabel: "导入",
+      accept: async () => {
+        try {
+          if (Array.isArray(data.projects)) await saveProjects(data.projects)
+          if (Array.isArray(data.servers)) await saveServers(data.servers)
+          if (Array.isArray(data.environments)) await saveEnvironments(data.environments)
+          if (Array.isArray(data.taskHistory)) await saveTaskHistory(data.taskHistory)
+          showToast("数据已导入，即将刷新页面", "success")
+          setTimeout(() => window.location.reload(), 1000)
+        } catch (e) {
+          showToast("导入失败：" + (e instanceof Error ? e.message : String(e)), "error")
+        }
+      },
+    })
+  } catch (error) {
+    if (typeof error === "string" && error.includes("取消")) return
+    showToast("导入失败：" + (error instanceof Error ? error.message : String(error)), "error")
+  }
 }
 
 function handleClearHistory() {
@@ -253,30 +418,47 @@ function handleClearHistory() {
     header: "确认清空",
     icon: Trash2,
     rejectLabel: "取消",
-    acceptLabel: "清空",
+    acceptLabel: "确认清空",
     acceptClass: "p-button-danger",
-    accept: () => {
-      showToast("部署历史已清空", "success");
+    accept: async () => {
+      await saveTaskHistory([])
+      showToast("部署历史已清空", "success")
     },
-  });
+  })
 }
 
 function handleResetAll() {
   confirm.require({
-    message: "确认重置所有数据？这将清除所有项目、服务器、环境配置和部署历史。此操作不可撤销！",
+    message: "确认重置所有数据？这将清除所有项目、服务器、环境配置和部署历史，此操作不可撤销！",
     header: "确认重置",
     icon: Trash2,
     rejectLabel: "取消",
-    acceptLabel: "重置",
+    acceptLabel: "确认重置",
     acceptClass: "p-button-danger",
-    accept: () => {
-      showToast("所有数据已重置", "success");
+    accept: async () => {
+      await Promise.all([
+        saveProjects([]),
+        saveServers([]),
+        saveEnvironments([]),
+        saveTaskHistory([]),
+      ])
+      showToast("所有数据已重置，即将刷新页面", "success")
+      setTimeout(() => window.location.reload(), 1000)
     },
-  });
+  })
 }
 
 function handleCheckUpdate() {
-  showToast("当前已是最新版本", "success");
+  showToast("自动更新功能暂未开放", "info");
+}
+
+async function handleCopyEmail() {
+  try {
+    await navigator.clipboard.writeText("839711518@qq.com")
+    showToast("邮箱已复制", "success")
+  } catch {
+    showToast("复制失败", "error")
+  }
 }
 
 async function handleOpenGitHub() {
@@ -306,7 +488,7 @@ async function handleOpenGitHub() {
 .settings-header h1 {
   margin: 0;
   color: var(--text-primary);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1.4;
 }
@@ -327,7 +509,14 @@ async function handleOpenGitHub() {
 }
 
 .settings-section-danger {
-  border-color: var(--danger-tint);
+  border-color: color-mix(in srgb, var(--danger-soft) 40%, transparent);
+  background: var(--danger-tint);
+}
+
+.settings-section-danger .settings-section-header {
+  color: color-mix(in srgb, var(--danger-soft) 70%, transparent);
+  background: var(--danger-tint);
+  border-bottom-color: color-mix(in srgb, var(--danger-soft) 40%, transparent);
 }
 
 .settings-section-header {
@@ -385,7 +574,7 @@ async function handleOpenGitHub() {
   width: 80px;
   height: 32px;
   font-size: 13px;
-  text-align: right;
+  text-align: center;
 }
 
 .settings-unit {
@@ -407,13 +596,13 @@ async function handleOpenGitHub() {
 }
 
 .settings-action-danger {
-  color: var(--danger-soft);
-  border-color: var(--danger-tint);
+  color: color-mix(in srgb, var(--danger-soft) 70%, transparent);
+  border-color: color-mix(in srgb, var(--danger-soft) 30%, transparent);
 }
 
 .settings-action-danger:hover {
   background: var(--danger-tint);
-  border-color: var(--danger-tint);
+  border-color: color-mix(in srgb, var(--danger-soft) 40%, transparent);
 }
 
 .settings-select-group {
@@ -449,5 +638,103 @@ async function handleOpenGitHub() {
   background: var(--surface);
   color: var(--text-primary);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* === 意见反馈弹窗 === */
+.feedback-dialog {
+  max-width: 360px !important;
+  border: 1px solid var(--card-border) !important;
+  border-radius: 4px !important;
+  background: var(--surface) !important;
+  padding: 28px 24px 24px !important;
+  box-shadow: none !important;
+}
+
+.feedback-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.feedback-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--info-tint);
+  color: var(--info);
+}
+
+.feedback-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.feedback-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.feedback-card {
+  margin-top: 20px;
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.feedback-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.feedback-info-row:last-child {
+  border-bottom: none;
+}
+
+.feedback-label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.feedback-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.feedback-email {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--info);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 160ms ease;
+}
+
+.feedback-email:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.feedback-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--text-muted);
 }
 </style>

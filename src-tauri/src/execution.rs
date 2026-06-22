@@ -2,8 +2,9 @@ use serde::{Deserialize, Serialize};
 use std::env;
 use std::path::Path;
 use std::process::Command;
-use std::time::SystemTime;
+use std::time::{Duration, SystemTime};
 use tauri::async_runtime;
+use wait_timeout::ChildExt;
 
 use crate::build_artifact::{resolve_artifact_dir, ArtifactResolution};
 use crate::utils::combine_command_output;
@@ -16,6 +17,7 @@ pub struct LocalBuildRequest {
     output_dir: String,
     precheck_command: String,
     run_precheck: bool,
+    build_timeout: u64,
 }
 
 #[derive(Serialize)]
@@ -67,8 +69,14 @@ fn execute_local_build(request: LocalBuildRequest) -> Result<LocalBuildResult, S
     let mut precheck_success = true;
     let precheck_ran = request.run_precheck && !precheck_command.is_empty();
 
+    let build_timeout = if request.build_timeout > 0 {
+        Duration::from_secs(request.build_timeout)
+    } else {
+        Duration::from_secs(600)
+    };
+
     if precheck_ran {
-        let precheck = run_shell_command(project_path, &precheck_command)?;
+        let precheck = run_shell_command(project_path, &precheck_command, Some(build_timeout))?;
         precheck_success = precheck.status == 0;
         precheck_output = combine_command_output(&precheck.stdout, &precheck.stderr);
 
@@ -91,7 +99,7 @@ fn execute_local_build(request: LocalBuildRequest) -> Result<LocalBuildResult, S
         }
     }
 
-    let build = run_shell_command(project_path, &build_command)?;
+    let build = run_shell_command(project_path, &build_command, Some(build_timeout))?;
     let build_output = combine_command_output(&build.stdout, &build.stderr);
     let artifact = if build.status == 0 {
         resolve_artifact_dir(project_path, &output_dir, build_started_at)
@@ -133,7 +141,7 @@ struct CommandOutput {
     stdout: String,
 }
 
-fn run_shell_command(project_path: &Path, command: &str) -> Result<CommandOutput, String> {
+fn run_shell_command(project_path: &Path, command: &str, timeout: Option<Duration>) -> Result<CommandOutput, String> {
     #[cfg(target_os = "windows")]
     let mut shell_command = {
         let mut shell_command = Command::new("cmd");
@@ -156,24 +164,29 @@ fn run_shell_command(project_path: &Path, command: &str) -> Result<CommandOutput
         .spawn()
         .map_err(|error| format!("执行命令失败: {error}"))?;
 
-    let mut stdout = String::new();
-    let mut stderr = String::new();
+    let timeout_duration = timeout.unwrap_or(Duration::from_secs(600));
 
-    if let Some(mut buf) = child.stdout.take() {
-        std::io::Read::read_to_string(&mut buf, &mut stdout).unwrap_or(0);
+    match child.wait_timeout(timeout_duration) {
+        Ok(Some(status)) => {
+            let mut stdout = String::new();
+            let mut stderr = String::new();
+            if let Some(mut buf) = child.stdout.take() {
+                std::io::Read::read_to_string(&mut buf, &mut stdout).unwrap_or(0);
+            }
+            if let Some(mut buf) = child.stderr.take() {
+                std::io::Read::read_to_string(&mut buf, &mut stderr).unwrap_or(0);
+            }
+            Ok(CommandOutput {
+                status: status.code().unwrap_or(-1),
+                stdout,
+                stderr,
+            })
+        }
+        Ok(None) => {
+            let _ = child.kill();
+            let _ = child.wait();
+            Err(format!("命令执行超时（{} 秒），已自动终止", timeout_duration.as_secs()))
+        }
+        Err(error) => Err(format!("等待命令完成失败: {error}")),
     }
-
-    if let Some(mut buf) = child.stderr.take() {
-        std::io::Read::read_to_string(&mut buf, &mut stderr).unwrap_or(0);
-    }
-
-    let exit_status = child
-        .wait()
-        .map_err(|error| format!("等待命令完成失败: {error}"))?;
-
-    Ok(CommandOutput {
-        status: exit_status.code().unwrap_or(-1),
-        stdout,
-        stderr,
-    })
 }

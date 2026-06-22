@@ -30,6 +30,8 @@ export async function runLocalDeploy(context: DeployExecutionContext): Promise<L
         remotePath: context.remotePath,
         uploadStrategy: context.uploadStrategy,
         username: context.server.username,
+        sshTimeout: context.sshTimeout,
+        deployTimeout: context.deployTimeout,
       },
     })
   } catch (error) {

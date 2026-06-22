@@ -1,14 +1,32 @@
-import { ref, computed, nextTick } from "vue"
+import { ref, computed } from "vue"
+import { Rocket } from "lucide-vue-next"
 
 import { runLocalBuild } from "@/services/execution/build"
 import { runLocalDeploy } from "@/services/execution/deploy-local"
 import { appendTaskHistory } from "@/services/task-history/repository"
+import { useConfirm } from "@/services/ui/confirm"
+import { useDeploymentProgress } from "@/services/ui/deployment-progress"
 import { showToast } from "@/services/ui/toast"
 import { useAppStore } from "@/stores/app"
 import type { ExecutionMode, ProjectRecord, ServerRecord, TaskHistoryRecord } from "@/types/task"
 import { getErrorMessage, formatEnvironmentLabel, formatUploadStrategyLabel } from "./utils"
 import type { QuickDeployEnvironmentOption } from "../types"
 import type { Ref } from "vue"
+
+const BUILD_TIMEOUT_KEY = "claw-deploy:build-timeout"
+const DEPLOY_TIMEOUT_KEY = "claw-deploy:deploy-timeout"
+const SSH_TIMEOUT_KEY = "claw-deploy:ssh-timeout"
+
+function loadTimeout(key: string, fallback: number): number {
+  try {
+    const raw = localStorage.getItem(key)
+    if (raw) {
+      const val = parseInt(raw, 10)
+      if (val > 0) return val
+    }
+  } catch {}
+  return fallback
+}
 
 interface UseQuickDeployOptions {
   selectedProjectId: Ref<string | null>
@@ -23,6 +41,8 @@ interface UseQuickDeployOptions {
 
 export function useQuickDeploy(options: UseQuickDeployOptions) {
   const appStore = useAppStore()
+  const confirm = useConfirm()
+  const deploymentProgress = useDeploymentProgress()
 
   const {
     selectedProjectId,
@@ -35,9 +55,9 @@ export function useQuickDeploy(options: UseQuickDeployOptions) {
     refreshTaskHistory,
   } = options
 
+  // 保留用于卡片按钮状态展示
   const quickDeployProjectId = ref<string | null>(null)
   const quickDeployEnvironmentName = ref<string | null>(null)
-  const isQuickDeployDialogVisible = ref(false)
   const quickDeployStage = ref<"confirm" | "running" | "success" | "error">("confirm")
   const quickDeployMessage = ref("")
   const quickDeployLogs = ref<string[]>([])
@@ -62,55 +82,6 @@ export function useQuickDeploy(options: UseQuickDeployOptions) {
     return result
   })
 
-  const quickDeployDialogOptions = computed(() =>
-    quickDeployProjectId.value ? (quickDeployOptionsByProject.value.get(quickDeployProjectId.value) ?? []) : [],
-  )
-
-  const quickDeploySelectedOption = computed<QuickDeployEnvironmentOption | null>(() => {
-    if (!quickDeployProjectId.value || !quickDeployEnvironmentName.value) {
-      return null
-    }
-
-    const options = quickDeployOptionsByProject.value.get(quickDeployProjectId.value) ?? []
-    return options.find((item) => item.environment.name === quickDeployEnvironmentName.value) ?? null
-  })
-
-  const quickDeploySelectedProject = computed(() => {
-    if (quickDeploySelectedOption.value?.project) {
-      return quickDeploySelectedOption.value.project
-    }
-
-    if (!quickDeployProjectId.value) {
-      return null
-    }
-
-    return projects.value.find((project) => project.id === quickDeployProjectId.value) ?? null
-  })
-
-  const quickDeploySelectedEnvironmentLabel = computed(() =>
-    quickDeploySelectedOption.value ? formatEnvironmentLabel(quickDeploySelectedOption.value.environment.name) : "--",
-  )
-
-  const quickDeploySelectedServerLabel = computed(() => {
-    const server = quickDeploySelectedOption.value?.server
-
-    if (!server) {
-      return "--"
-    }
-
-    return `${server.name} / ${server.host}:${server.port}`
-  })
-
-  const quickDeploySelectedStrategyLabel = computed(() =>
-    quickDeploySelectedOption.value ? formatUploadStrategyLabel(quickDeploySelectedOption.value.environment.uploadStrategy) : "--",
-  )
-
-  const quickDeploySelectedRemotePath = computed(() => quickDeploySelectedOption.value?.environment.remotePath?.trim() || "--")
-
-  const quickDeployDialogTitle = computed(() => {
-    return "选择当前项目已配置的环境，直接发起部署。"
-  })
-
   function hasQuickDeployOptions(projectId: string) {
     return (quickDeployOptionsByProject.value.get(projectId) ?? []).length > 0
   }
@@ -122,60 +93,38 @@ export function useQuickDeploy(options: UseQuickDeployOptions) {
     quickDeployLogs.value = [...quickDeployLogs.value, `[${timestamp}] ${message}`]
   }
 
-  function resetQuickDeployState() {
-    quickDeployProjectId.value = null
-    quickDeployEnvironmentName.value = null
-    quickDeployStage.value = "confirm"
-    quickDeployMessage.value = ""
-    quickDeployLogs.value = []
+  /**
+   * 入口：点击卡片部署按钮 → 弹出确认弹框 → 确认后执行部署
+   */
+  function startQuickDeploy(option: QuickDeployEnvironmentOption) {
+    const envLabel = formatEnvironmentLabel(option.environment.name)
+    const server = option.server
+
+    confirm.require({
+      header: `部署到${envLabel}`,
+      icon: Rocket,
+      message: `确认将「${option.project.name}」部署到${envLabel}？`,
+      detailLabel: "目标服务器",
+      detailValue: server ? `${server.name} (${server.host}:${server.port})` : "未配置",
+      detailCode: option.environment.remotePath || "",
+      rejectLabel: "取消",
+      acceptLabel: "确认部署",
+      accept: () => {
+        executeDeploy(option)
+      },
+    })
   }
 
-  function openQuickDeployWorkspace(projectId: string) {
-    if (!hasQuickDeployOptions(projectId)) {
-      return
-    }
+  /**
+   * 执行部署（确认后调用）
+   */
+  async function executeDeploy(option: QuickDeployEnvironmentOption) {
+    const envLabel = formatEnvironmentLabel(option.environment.name)
 
-    quickDeployProjectId.value = projectId
-    quickDeployStage.value = "confirm"
-    quickDeployMessage.value = ""
-    quickDeployLogs.value = []
-    isQuickDeployDialogVisible.value = true
-  }
-
-  function openQuickDeployDialog(option: QuickDeployEnvironmentOption) {
-    quickDeployProjectId.value = option.project.id
-    quickDeployEnvironmentName.value = option.environment.name
-    quickDeployStage.value = "confirm"
-    quickDeployMessage.value = ""
-    quickDeployLogs.value = []
-    isQuickDeployDialogVisible.value = true
-  }
-
-  async function startQuickDeploy(option: QuickDeployEnvironmentOption) {
-    openQuickDeployDialog(option)
-    await nextTick()
-    await new Promise((resolve) => requestAnimationFrame(() => resolve(undefined)))
-    await handleConfirmQuickDeploy()
-  }
-
-  function handleCloseQuickDeployDialog() {
-    quickDeployStage.value = "confirm"
-    quickDeployMessage.value = ""
-  }
-
-  async function handleConfirmQuickDeploy() {
-    const option = quickDeploySelectedOption.value
-
-    if (!option) {
-      showToast("当前项目没有可用的测试环境或生产环境配置", "warning")
-      isQuickDeployDialogVisible.value = false
-      return
-    }
-
+    // 前置校验
     if (!option.project.defaultBuildCommand.trim()) {
       quickDeployStage.value = "error"
       quickDeployMessage.value = "当前项目缺少默认打包命令，请先在项目配置中保存后再执行一键部署。"
-      pushQuickDeployLog(quickDeployMessage.value)
       showToast(quickDeployMessage.value, "warning")
       return
     }
@@ -183,7 +132,6 @@ export function useQuickDeploy(options: UseQuickDeployOptions) {
     if (!option.project.defaultOutputDir.trim()) {
       quickDeployStage.value = "error"
       quickDeployMessage.value = "当前项目缺少默认产物目录，请先在项目配置中保存后再执行一键部署。"
-      pushQuickDeployLog(quickDeployMessage.value)
       showToast(quickDeployMessage.value, "warning")
       return
     }
@@ -191,7 +139,6 @@ export function useQuickDeploy(options: UseQuickDeployOptions) {
     if (!option.server) {
       quickDeployStage.value = "error"
       quickDeployMessage.value = "当前环境绑定的服务器不存在，请先重新保存环境配置。"
-      pushQuickDeployLog(quickDeployMessage.value)
       showToast(quickDeployMessage.value, "error")
       return
     }
@@ -199,7 +146,6 @@ export function useQuickDeploy(options: UseQuickDeployOptions) {
     if (option.server.authType === "password" && !option.server.password.trim()) {
       quickDeployStage.value = "error"
       quickDeployMessage.value = "当前服务器使用密码认证，但密码为空。"
-      pushQuickDeployLog(quickDeployMessage.value)
       showToast(quickDeployMessage.value, "error")
       return
     }
@@ -207,10 +153,33 @@ export function useQuickDeploy(options: UseQuickDeployOptions) {
     if (option.server.authType === "privateKey" && !option.server.privateKeyPath.trim()) {
       quickDeployStage.value = "error"
       quickDeployMessage.value = "当前服务器使用私钥认证，但私钥路径为空。"
-      pushQuickDeployLog(quickDeployMessage.value)
       showToast(quickDeployMessage.value, "error")
       return
     }
+
+    // 设置卡片按钮状态
+    quickDeployProjectId.value = option.project.id
+    quickDeployEnvironmentName.value = option.environment.name
+    quickDeployStage.value = "running"
+    quickDeployMessage.value = "部署任务正在执行，请稍候。"
+    quickDeployLogs.value = []
+
+    // 创建部署进度任务
+    const taskId = deploymentProgress.addTask({
+      id: crypto.randomUUID(),
+      projectId: option.project.id,
+      projectName: option.project.name,
+      environmentName: option.environment.name,
+      environmentLabel: envLabel,
+      serverName: option.server.name,
+      serverHost: `${option.server.host}:${option.server.port}`,
+      remotePath: option.environment.remotePath,
+      stage: "running",
+      message: "准备部署...",
+      progress: 5,
+      startedAt: new Date().toISOString(),
+      finishedAt: null,
+    })
 
     const startedAt = new Date().toISOString()
     const logStartCount = executionLogs.value.length
@@ -219,26 +188,25 @@ export function useQuickDeploy(options: UseQuickDeployOptions) {
     let historySummary = ""
     let historyErrorMessage = ""
 
-    quickDeployStage.value = "running"
-    quickDeployMessage.value = "部署任务正在执行，请稍候。"
-    quickDeployLogs.value = []
-
     pushQuickDeployLog(`准备部署项目 ${option.project.name}`)
-    pushQuickDeployLog(`目标环境：${formatEnvironmentLabel(option.environment.name)}`)
+    pushQuickDeployLog(`目标环境：${envLabel}`)
     pushQuickDeployLog(`部署方式：${deployMode === "deploy" ? "直接部署" : "打包 + 部署"}`)
     pushQuickDeployLog(`部署策略：${formatUploadStrategyLabel(option.environment.uploadStrategy)}`)
     pushQuickDeployLog(`目标目录：${option.environment.remotePath}`)
 
-    pushExecutionLog("info", `开始一键部署：${option.project.name} -> ${formatEnvironmentLabel(option.environment.name)}`)
+    pushExecutionLog("info", `开始一键部署：${option.project.name} -> ${envLabel}`)
 
     try {
       if (deployMode === "build-and-deploy") {
+        deploymentProgress.updateTask(taskId, { message: "正在本地打包...", progress: 15 })
+
         const buildResult = await runLocalBuild({
           projectPath: option.project.localPath,
           buildCommand: option.project.defaultBuildCommand,
           outputDir: option.project.defaultOutputDir,
           precheckCommand: option.project.defaultPrecheckCommand,
           runPrecheck: option.project.defaultPrecheckEnabled,
+          buildTimeout: loadTimeout(BUILD_TIMEOUT_KEY, 600),
         })
 
         if (buildResult.precheckRan) {
@@ -260,6 +228,7 @@ export function useQuickDeploy(options: UseQuickDeployOptions) {
 
         buildOutputPath = buildResult.outputPath
         pushQuickDeployLog(`本地打包完成：${buildResult.outputPath}`)
+        deploymentProgress.updateTask(taskId, { progress: 45 })
         pushExecutionLog("success", `一键部署打包完成：${buildResult.outputPath}`)
         if (buildResult.artifactMessage.trim()) {
           pushQuickDeployLog(buildResult.artifactMessage)
@@ -276,7 +245,10 @@ export function useQuickDeploy(options: UseQuickDeployOptions) {
       } else {
         pushQuickDeployLog(`直接使用已有产物目录：${buildOutputPath}`)
         pushExecutionLog("info", `一键部署直接使用已有产物目录：${buildOutputPath}`)
+        deploymentProgress.updateTask(taskId, { progress: 40 })
       }
+
+      deploymentProgress.updateTask(taskId, { message: "正在上传到服务器...", progress: 55 })
 
       pushQuickDeployLog(`开始连接服务器：${option.server.host}:${option.server.port}`)
       pushQuickDeployLog(`远端部署目录：${option.environment.remotePath}`)
@@ -290,6 +262,8 @@ export function useQuickDeploy(options: UseQuickDeployOptions) {
         remotePath: option.environment.remotePath,
         server: option.server,
         uploadStrategy: option.environment.uploadStrategy,
+        sshTimeout: loadTimeout(SSH_TIMEOUT_KEY, 20),
+        deployTimeout: loadTimeout(DEPLOY_TIMEOUT_KEY, 300),
       })
 
       deployResult.steps.forEach((step) => {
@@ -306,16 +280,26 @@ export function useQuickDeploy(options: UseQuickDeployOptions) {
         pushExecutionLog("info", deployResult.commandOutput.trim())
       }
 
-      historySummary = `一键部署成功，已发布到${formatEnvironmentLabel(option.environment.name)}`
+      deploymentProgress.updateTask(taskId, { progress: 90 })
+
+      // 成功
+      historySummary = `一键部署成功，已发布到${envLabel}`
       quickDeployStage.value = "success"
-      quickDeployMessage.value = `${option.project.name} 已成功部署到 ${formatEnvironmentLabel(option.environment.name)}。`
+      quickDeployMessage.value = `${option.project.name} 已成功部署到 ${envLabel}。`
       pushQuickDeployLog(quickDeployMessage.value)
       pushExecutionLog("success", quickDeployMessage.value)
       appStore.setBannerMessage(quickDeployMessage.value)
       showToast("一键部署成功", "success")
+
+      deploymentProgress.updateTask(taskId, {
+        stage: "success",
+        message: `已成功部署到 ${envLabel}`,
+        progress: 100,
+        finishedAt: new Date().toISOString(),
+      })
     } catch (error) {
       const message = getErrorMessage(error, "一键部署失败")
-      historySummary = `一键部署失败，目标环境 ${formatEnvironmentLabel(option.environment.name)}`
+      historySummary = `一键部署失败，目标环境 ${envLabel}`
       historyErrorMessage = message
       quickDeployStage.value = "error"
       quickDeployMessage.value = message
@@ -323,6 +307,12 @@ export function useQuickDeploy(options: UseQuickDeployOptions) {
       pushExecutionLog("error", message)
       appStore.setBannerMessage(message)
       showToast(message, "error")
+
+      deploymentProgress.updateTask(taskId, {
+        stage: "error",
+        message: message,
+        finishedAt: new Date().toISOString(),
+      })
     } finally {
       const finishedAt = new Date().toISOString()
       const newLogs = executionLogs.value
@@ -357,30 +347,28 @@ export function useQuickDeploy(options: UseQuickDeployOptions) {
       if (selectedProjectId.value === option.project.id) {
         await refreshTaskHistory(option.project.id)
       }
+
+      // 部署结束后延迟清除卡片按钮状态（让用户看到成功/失败反馈）
+      setTimeout(() => {
+        if (quickDeployProjectId.value === option.project.id && quickDeployEnvironmentName.value === option.environment.name) {
+          quickDeployProjectId.value = null
+          quickDeployEnvironmentName.value = null
+          quickDeployStage.value = "confirm"
+          quickDeployMessage.value = ""
+          quickDeployLogs.value = []
+        }
+      }, 3000)
     }
   }
 
   return {
     quickDeployProjectId,
     quickDeployEnvironmentName,
-    isQuickDeployDialogVisible,
     quickDeployStage,
     quickDeployMessage,
     quickDeployLogs,
     quickDeployOptionsByProject,
-    quickDeployDialogOptions,
-    quickDeploySelectedOption,
-    quickDeploySelectedProject,
-    quickDeploySelectedEnvironmentLabel,
-    quickDeploySelectedServerLabel,
-    quickDeploySelectedStrategyLabel,
-    quickDeploySelectedRemotePath,
-    quickDeployDialogTitle,
     hasQuickDeployOptions,
-    openQuickDeployWorkspace,
-    openQuickDeployDialog,
     startQuickDeploy,
-    handleCloseQuickDeployDialog,
-    handleConfirmQuickDeploy,
   }
 }

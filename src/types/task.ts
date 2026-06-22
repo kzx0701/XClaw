@@ -155,6 +155,7 @@ export interface LocalBuildRequest {
   outputDir: string
   precheckCommand: string
   runPrecheck: boolean
+  buildTimeout: number
 }
 
 export interface LocalBuildResult {
@@ -181,6 +182,8 @@ export interface DeployExecutionContext {
   remotePath: string
   server: ServerRecord
   uploadStrategy: UploadStrategy
+  sshTimeout: number
+  deployTimeout: number
 }
 
 export interface ServerConnectionCheckRequest {

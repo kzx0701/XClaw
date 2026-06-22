@@ -362,10 +362,9 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 
 .server-card-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 376px));
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  align-items: start;
-  justify-content: start;
+  max-width: 864px;
 }
 
 .server-search-empty {
@@ -624,7 +623,7 @@ function handleDrawerOpenChange(nextOpen: boolean) {
 .dark .server-create-field-label { color: var(--text-primary) !important; }
 .dark .server-create-actions { background: var(--surface-hover) !important; border-color: var(--card-border) !important; }
 
-@media (max-width: 960px) {
+@media (max-width: 680px) {
   .server-card-list {
     grid-template-columns: 1fr;
   }

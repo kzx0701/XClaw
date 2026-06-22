@@ -143,7 +143,7 @@ export function useWorkspaceController() {
     }
   }
 
-  watch(() => appStore.projectPanelTrigger, () => {
+  watch(() => (appStore as any).projectPanelTrigger, () => {
     if (appStore.activePanel === 'config') {
       selectedProjectId.value = null
     }
@@ -211,18 +211,11 @@ export function useWorkspaceController() {
     serverDraft: serverManager.serverDraft,
     quickDeployProjectId: quickDeploy.quickDeployProjectId,
     quickDeployEnvironmentName: quickDeploy.quickDeployEnvironmentName,
-    isQuickDeployDialogVisible: quickDeploy.isQuickDeployDialogVisible,
     quickDeployStage: quickDeploy.quickDeployStage,
     quickDeployMessage: quickDeploy.quickDeployMessage,
     quickDeployLogs: quickDeploy.quickDeployLogs,
     projectSummaries: projectManager.projectSummaries,
-    quickDeployDialogOptions: quickDeploy.quickDeployDialogOptions,
-    quickDeploySelectedProject: quickDeploy.quickDeploySelectedProject,
-    quickDeploySelectedEnvironmentLabel: quickDeploy.quickDeploySelectedEnvironmentLabel,
-    quickDeploySelectedServerLabel: quickDeploy.quickDeploySelectedServerLabel,
-    quickDeploySelectedStrategyLabel: quickDeploy.quickDeploySelectedStrategyLabel,
-    quickDeploySelectedRemotePath: quickDeploy.quickDeploySelectedRemotePath,
-    quickDeployDialogTitle: quickDeploy.quickDeployDialogTitle,
+    quickDeployOptionsByProject: quickDeploy.quickDeployOptionsByProject,
     environmentCards: environmentManager.environmentCards,
     executionEnvironmentOptions: environmentManager.executionEnvironmentOptions,
     isPresetEnvironment: environmentManager.isPresetEnvironment,
@@ -233,7 +226,6 @@ export function useWorkspaceController() {
     quickDeployOptionsByProject: quickDeploy.quickDeployOptionsByProject,
     handlePickDirectory: projectManager.handlePickDirectory,
     handleSelectProject,
-    openQuickDeployWorkspace: quickDeploy.openQuickDeployWorkspace,
     openProjectDeleteDialog: projectManager.openProjectDeleteDialog,
     handleBackToProjectList: projectManager.handleBackToProjectList,
     handleSaveProjectConfig: projectManager.handleSaveProjectConfig,
@@ -302,6 +294,5 @@ export function useWorkspaceController() {
     handleSaveServer: serverManager.handleSaveServer,
     handleSelectServer: serverManager.handleSelectServer,
     startQuickDeploy: quickDeploy.startQuickDeploy,
-    handleCloseQuickDeployDialog: quickDeploy.handleCloseQuickDeployDialog,
   };
 }
