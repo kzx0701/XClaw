@@ -94,8 +94,7 @@ import { useWorkspaceController } from "./workspace/useWorkspaceController"
 const workspace = proxyRefs(useWorkspaceController())
 
 const workspaceContentClass = computed(() => {
-  const isMac = navigator.platform.toUpperCase().includes("MAC")
-  return `px-8 ${isMac ? 'pt-8' : 'pt-0'} pb-6 bg-background`
+  return `px-8 pt-0 pb-6 bg-background`
 })
 
 const projectListItems = computed(() =>

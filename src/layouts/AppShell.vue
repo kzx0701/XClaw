@@ -1,8 +1,8 @@
 <template>
   <div class="app-shell-root grid h-screen grid-cols-[220px_minmax(0,1fr)] overflow-hidden text-foreground">
     <aside class="app-shell-sidebar flex min-h-0 flex-col bg-sidebar" :class="{ 'app-shell-sidebar--macos': isMacOS }">
-      <div class="app-shell-brand-wrap">
-        <div class="app-shell-brand">
+      <div class="app-shell-brand-wrap" :data-tauri-drag-region="isMacOS">
+        <div class="app-shell-brand" :data-tauri-drag-region="isMacOS">
           <XClawWordmark font-size="1.42rem" @click="openReleasePage" />
           <span class="app-version-badge">v{{ appVersion }}</span>
         </div>
@@ -62,7 +62,8 @@
     </aside>
 
     <main class="app-shell-main min-w-0 bg-background">
-      <div :class="['h-screen overflow-auto', contentClass || 'px-8 py-6']">
+      <div v-if="isMacOS" class="app-shell-drag-bar" data-tauri-drag-region></div>
+      <div :class="['h-screen overflow-auto', isMacOS ? 'app-shell-main-scroll--macos' : '', contentClass || 'px-8 py-6']">
         <slot />
       </div>
     </main>
@@ -137,6 +138,19 @@ onMounted(async () => {
 
 .app-shell-main {
   background: var(--background);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-shell-drag-bar {
+  flex-shrink: 0;
+  height: 28px;
+  background: var(--background);
+}
+
+.app-shell-main-scroll--macos {
+  height: calc(100vh - 28px);
 }
 
 .app-shell-brand-wrap {
