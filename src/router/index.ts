@@ -10,6 +10,11 @@ const router = createRouter({
       name: 'workspace',
       component: WorkspaceView,
     },
+    {
+      path: '/tray-popup',
+      name: 'tray-popup',
+      component: () => import('@/views/TrayPopupView.vue'),
+    },
   ],
 })
 

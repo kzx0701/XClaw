@@ -24,6 +24,11 @@ function initTheme() {
   }
 }
 
+// popup 窗口：在 Vue 挂载前立即透明化 html/body，让原生 vibrancy 透出
+if (window.location.hash === '#/tray-popup') {
+  document.documentElement.classList.add('tray-popup-window')
+}
+
 initTheme()
 
 const app = createApp(App)
