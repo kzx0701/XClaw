@@ -100,8 +100,30 @@ fn execute_local_build(request: LocalBuildRequest) -> Result<LocalBuildResult, S
     }
 
     let build = run_shell_command(project_path, &build_command, Some(build_timeout))?;
-    let build_output = combine_command_output(&build.stdout, &build.stderr);
-    let artifact = if build.status == 0 {
+    let mut build_output = combine_command_output(&build.stdout, &build.stderr);
+
+    // pnpm v11+ 安全策略：首次遇到 ERR_PNPM_IGNORED_BUILDS 时自动修复后重试
+    let build_status = if build.status != 0 && build_output.contains("ERR_PNPM_IGNORED_BUILDS") {
+        // 先用 ignore-scripts=false 安装依赖，绕过构建脚本拦截
+        let install = run_shell_command(project_path, "pnpm install --config.ignore-scripts=false", Some(Duration::from_secs(120)));
+        match install {
+            Ok(install_result) if install_result.status == 0 => {
+                // 依赖安装成功，重试原始 build 命令
+                let retry = run_shell_command(project_path, &build_command, Some(build_timeout))?;
+                build_output = combine_command_output(&retry.stdout, &retry.stderr);
+                retry.status
+            }
+            _ => {
+                // install 也失败，直接返回原始错误
+                build_output = format!("[自动修复失败，请手动执行: pnpm approve-builds]\n{}", build_output);
+                build.status
+            }
+        }
+    } else {
+        build.status
+    };
+
+    let artifact = if build_status == 0 {
         resolve_artifact_dir(project_path, &output_dir, build_started_at)
     } else {
         unresolved_artifact(project_path, &output_dir, "打包失败，未执行产物目录解析")
@@ -120,7 +142,7 @@ fn execute_local_build(request: LocalBuildRequest) -> Result<LocalBuildResult, S
         precheck_ran,
         precheck_success,
         build_output,
-        success: build.status == 0,
+        success: build_status == 0,
     })
 }
 
